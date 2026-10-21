@@ -1,5 +1,9 @@
 # Page and menu styling audit
 
+### First-navigation theme timing (1.2.4)
+
+The content script now applies the default Dark appearance at `document_start` before reading browser-local preferences. The saved theme is applied when that read completes. This targets the unthemed flash on first navigation; it is not a claim that every authenticated page has been visually verified.
+
 October 21, 2026. Authenticated originals were inspected through read-only browser DOM access. The installable theme was verified on fictional local structures and in isolated Chrome extension tests. These are separate kinds of evidence; this is not a claim that the new build has been installed and visually checked on every live page.
 
 | Page or control | Inspection and changes |

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.4 — 2026-10-21
+
+- Apply the default appearance at document start while browser-local preferences load, then switch immediately to the saved appearance. This avoids an unthemed flash on first navigation.
+- No new permissions, network calls, course-data access or background process.
+
 ## 1.2.3 — 2026-10-21
 
 - Added the user-supplied blue gradient logo to the browser toolbar, extension manager and popup, with local PNG sizes 16/32/48/128.

@@ -87,9 +87,10 @@ const race = vm.createContext({ document: {}, BrightTheme: {create: () => ({appl
   subscribe: fn => subscriber = fn, read: () => new Promise(resolve => resolveRead = resolve)
 } });
 vm.runInContext(await read('content.js'), race);
+assert.deepEqual(applied, ['dark']); // Present before the asynchronous preference read resolves.
 subscriber({theme:'warm'}); resolveRead({theme:'dark',enabled:true});
 await new Promise(resolve => setImmediate(resolve));
-assert.deepEqual(applied, ['warm','warm']);
+assert.deepEqual(applied, ['dark','warm','warm']);
 // A partial event must not discard the other key returned by the initial read.
 vm.runInContext(await read('content.js'), race);
 subscriber({enabled:true}); resolveRead({theme:'dim',enabled:false});
