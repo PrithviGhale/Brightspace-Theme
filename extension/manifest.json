@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Brightspace After Hours",
+  "version": "1.2.0",
+  "homepage_url": "https://github.com/PrithviGhale/Brightspace-Theme",
+  "description": "Private, local dark, dim and warm themes for SNHU Brightspace.",
+  "permissions": ["storage"],
+  "action": {
+    "default_title": "Brightspace After Hours",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [{
+    "matches": ["https://learn.snhu.edu/*"],
+    "js": ["preferences.js", "theme-engine.js", "content.js"],
+    "run_at": "document_start",
+    "all_frames": true,
+    "match_about_blank": true,
+    "match_origin_as_fallback": true
+  }, {
+    "matches": [
+      "https://d1i6rhttasws5m.cloudfront.net/production/*",
+      "https://d1zg7b99iisfa6.cloudfront.net/production/*"
+    ],
+    "js": ["widget-context.js", "preferences.js", "theme-engine.js", "content.js"],
+    "run_at": "document_start",
+    "all_frames": true
+  }],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; connect-src 'none'"
+  }
+}
