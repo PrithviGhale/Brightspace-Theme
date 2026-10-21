@@ -147,6 +147,25 @@ try {
   assert.equal(await evaluate(`getComputedStyle(document.querySelector('d2l-menu-item-link')).backgroundColor`),'rgb(255, 255, 255)');
   assert.equal(await evaluate(`getComputedStyle(document.querySelector('.legacy-gray')).backgroundColor`),'rgb(242, 242, 242)');
   console.log('PASS: all three themes on menu hosts/links/hover, inset keyboard focus, account tabs/forms, calendar filters/sidebar, progress panel, ePortfolio editor, rich-text toolbar icons and floating toolbar; Original restoration. Screenshots: dist/menus-{dark,dim,warm}.png');
+  await cdp('Page.navigate',{url:`http://127.0.0.1:${server.address().port}/preview/submission-tables.html`});
+  await until(`document.readyState==='complete' && !!document.querySelector('d2l-html-block')?.shadowRoot`);
+  for(const [theme,surface,raised,text] of [
+    ['dark','rgb(28, 37, 48)','rgb(40, 53, 69)','rgb(231, 237, 245)'],
+    ['dim','rgb(48, 57, 69)','rgb(59, 71, 86)','rgb(240, 242, 246)'],
+    ['warm','rgb(255, 247, 232)','rgb(232, 220, 196)','rgb(56, 45, 35)']
+  ]) {
+    await set(theme);await until(`!!document.querySelector('d2l-html-block').shadowRoot.querySelector('style[data-brightspace-theme]')`);
+    const result=await evaluate(`(()=>{const style=e=>getComputedStyle(e);const effective=e=>{for(let n=e;n;){const c=style(n).backgroundColor;if(c!=='rgba(0, 0, 0, 0)')return c;n=n.parentElement||(n.getRootNode().host??null);}return ''};return {panels:[...document.querySelectorAll('.d2l-panel,.d2l-filedrop')].map(e=>({bg:style(e).backgroundColor,color:style(e).color})),headers:[...document.querySelectorAll('th[scope="col"]')].map(e=>style(e).backgroundColor),rows:[...document.querySelectorAll('tr[data-data-row]')].map(row=>({cells:[...row.children].map(e=>style(e).backgroundColor),nested:[...row.querySelectorAll('.d2l-htmlblock,d2l-html-block')].map(e=>({cell:style(e.closest('td,th')).backgroundColor,paint:effective(e.shadowRoot?.querySelector('.d2l-htmlblock')||e),color:style(e.shadowRoot?.querySelector('.d2l-htmlblock')||e).color}))})),meter:style(document.querySelector('.similarity-meter')).backgroundColor}})()`);
+    for(const panel of result.panels){assert.equal(panel.bg,surface,`${theme}: submission/attachment panel`);assert.equal(panel.color,text);}
+    for(const header of result.headers)assert.equal(header,raised,`${theme}: column header`);
+    for(const row of result.rows){assert.equal(new Set(row.cells).size,1,`${theme}: row headers and data cells must have the same surface`);for(const nested of row.nested){assert.equal(nested.paint,nested.cell,`${theme}: no text backplate, including shadow HTML blocks`);assert.equal(nested.color,text);}}
+    assert.equal(result.meter,'rgb(70, 166, 97)',`${theme}: preserve semantic status color`);
+    await cdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false}).then(r=>writeFile(path.join(root,'dist',`submissions-${theme}.png`),Buffer.from(r.data,'base64')));
+  }
+  await set('original');await until(`!document.querySelector('style[data-brightspace-theme]')`);
+  assert.equal(await evaluate(`getComputedStyle(document.querySelector('.d2l-filedrop')).backgroundColor`),'rgb(255, 255, 255)');
+  assert(await evaluate(`[...document.querySelectorAll('d2l-html-block')].every(e=>!e.shadowRoot.querySelector('style[data-brightspace-theme]'))`));
+  console.log('PASS: three-theme submission/attachment panels; mixed th/td rows; nested light/shadow HTML block surfaces; preserved similarity-meter color; Original restoration. Screenshots: dist/submissions-{dark,dim,warm}.png');
   await set('dark');
   await cdp('Page.navigate',{url:`http://127.0.0.1:${server.address().port}/preview/registry-null.html`});
   await until(`document.readyState==='complete' && !!document.querySelector('#existing')?.shadowRoot`);

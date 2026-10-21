@@ -1,6 +1,6 @@
 # Brightspace After Hours
 
-This is the detailed development/coverage guide. For a short introduction, installation steps and downloads, see the [project README](../README.md). The current version is **1.2.0**: the popup includes its installed version and a user-clicked link to the latest GitHub release. It does not fetch release metadata or update code automatically. Test screenshots contain fictional data only.
+This is the detailed development/coverage guide. For a short introduction, installation steps and downloads, see the [project README](../README.md). The current version is **1.2.1**: the popup includes its installed version and a user-clicked link to the latest GitHub release. It does not fetch release metadata or update code automatically. Test screenshots contain fictional data only.
 
 A lightweight, unofficial Manifest V3 extension for **Chrome and Opera**, covering **https://learn.snhu.edu/** on every path and two explicitly approved embedded widget hosts. Dark, Dim, Warm / sepia, and Original appearances; a keyboard-accessible popup; an on/off switch; and preferences saved on your device. No background worker or runtime dependencies.
 
@@ -119,7 +119,7 @@ Only `enabled` (boolean) and `theme` (`dark`, `dim`, `warm`, `original`) are wri
 - `preview/`: fictional local visual lab, sample frame/media, and preview storage adapter.
 - `tests/`: dependency-free checks and Chrome integration tests.
 - `tools/`: localhost preview server and ZIP packaging script.
-- `dist/brightspace-after-hours-1.2.0.zip`: current sharing package with extension files, the main README and `PAGE_AUDIT.md`; `manifest.json` is at its root. Preview scripts, tests, browser profiles and screenshots are excluded. Older ZIPs are retained locally; install only the current version.
+- `dist/brightspace-after-hours-1.2.1.zip`: current sharing package with extension files, the main README and `PAGE_AUDIT.md`; `manifest.json` is at its root. Preview scripts, tests, browser profiles and screenshots are excluded. Older ZIPs are retained locally; install only the current version.
 
 To share, send the ZIP and have the recipient extract it and follow the Load unpacked instructions. A ZIP is not a store listing or signed installer. **Public Chrome Web Store or Opera Add-ons distribution requires developer registration, submission, and review under each store's policies.** Nothing has been published or submitted by this project.
 

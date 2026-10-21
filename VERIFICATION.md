@@ -1,8 +1,10 @@
 # Verification record
 
-Initial checks ran October 20, 2026. Version 1.2.0 checks ran October 21, 2026 with Node.js 24.11.1 and Chrome 155.0.8059.85 on Windows.
+Initial checks ran October 20, 2026. Version 1.2.1 checks ran October 21, 2026 with Node.js 24.11.1 and Chrome 155.0.8059.85 on Windows.
 
 All final checks passed:
+
+Version 1.2.1: reproduced missing white submission panels before the fix, then passed submission, attachment, feedback and mixed-heading table checks in all three palettes. Nested light-DOM and open-shadow HTML blocks now match each row's surface; Original restores white surfaces and removes shadow styles. Green similarity/status color stays unchanged. Visually reviewed `dist/submissions-{dark,dim,warm}.png`. Re-ran all three Node suites (static/preferences, Chrome rendering, actual MV3 integration), including browser restart persistence and scope guards; all passed. Live structural inspection included the embedded project submission view, without uploading, typing or submitting. See `PAGE_AUDIT.md` for the distinction between live inspection and local theme testing.
 
 Version 1.2.0: added a user-clicked latest-release link with `target="_blank"` and `rel="noopener noreferrer"`, plus the installed version from the extension manifest. No fetch/API calls, extra permissions or background process were added. Actual-extension checks validate the link destination, referrer/opener protection and version, and verify the popup fits at 360×600. Screenshot uses the actual extension popup, with no course data. The test does not navigate to GitHub.
 
@@ -14,7 +16,7 @@ Fixed observed `.d2l-le-disc-post` white backgrounds, navigation-trigger shadow 
 
 A startup timing regression was caught during these checks and fixed: unresolved candidates receive a bounded post-render check following each document-ready/load event. The missing-registry and delayed-render tests now pass without polling or repeat full-page scans.
 
-The in-app browser supports read-only DOM evaluation; the extension was not installed into that authenticated session. Real-page inspection and local themed-fixture verification are distinct. The final authenticated appearance must still be checked after installing 1.2.0.
+The in-app browser supports read-only DOM evaluation; the extension was not installed into that authenticated session. Real-page inspection and local themed-fixture verification are distinct. The final authenticated appearance must still be checked after installing 1.2.1.
 
 Version 1.0.2 follow-up: fixed the user-reported null-registry `.get` crash that aborted shadow discovery. Added a real-browser fixture with `window.customElements === null`, an unregistered element before course cards, delayed root attachment and dynamic insertion. It verifies uninterrupted discovery, correct course-card background, no runtime exceptions, Original cleanup and re-enable. The actual-extension test now also places an unregistered element before a fixed-white `d2l-card` and asserts that its open root receives the stylesheet and its computed background is dark. Both browser tests and the static/preference checks passed after the fix.
 
@@ -25,6 +27,6 @@ Version 1.0.1 follow-up: reproduced the reported white-card/navigation problem u
 - `node tests/extension.mjs`: Chrome accepted the actual unpacked extension; real extension storage; popup interactions synchronized two tabs; matching HTML and srcdoc frames; open root; off/on removal and restoration; outside host excluded; full browser shutdown/relaunch preserved preferences and theme. Automation reloads the session-scoped unpacked extension after relaunch. All page requests were intercepted and fulfilled with fictional local HTML; no SNHU requests or credentials were used.
 - `powershell -NoProfile -File tools/package.ps1`: ZIP has ten expected root files including `manifest.json`, the widget embedding guard, README and page-audit record; excludes preview adapters, tests, browser profiles, and screenshots.
 
-Current artifacts: `dist/brightspace-after-hours-1.2.0.zip`, `dist/popup.png`, `dist/preview-{dark,dim,warm}.png`, `dist/dashboard-{dark,dim,warm}.png`, `dist/course-{dark,dim,warm}.png`, and `dist/menus-{dark,dim,warm}.png`. Selected fictional screenshots are copied to `docs/screenshots/` for the repository. Older ZIPs are retained locally; use 1.2.0. ZIPs and temporary browser profiles are excluded from Git.
+Current artifacts: `dist/brightspace-after-hours-1.2.1.zip`, `dist/popup.png`, `dist/preview-{dark,dim,warm}.png`, `dist/dashboard-{dark,dim,warm}.png`, `dist/course-{dark,dim,warm}.png`, and `dist/menus-{dark,dim,warm}.png`. Selected fictional screenshots are copied to `docs/screenshots/` for the repository. Older ZIPs are retained locally; use 1.2.1. ZIPs and temporary browser profiles are excluded from Git.
 
 Not verified: Opera runtime, final extension rendering on authenticated pages, every Brightspace component/template, real PDF/Office/LTI integrations, screen-reader behavior, or comprehensive accessibility. The README lists the manual checks and technical coverage limits. No public store submission or publication was performed.

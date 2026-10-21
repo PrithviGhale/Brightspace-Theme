@@ -17,6 +17,8 @@ I made this because I'm used to having dark mode, and Brightspace felt too brigh
 
 Screenshots show a local preview with fictional data. **Original** removes the theme styles and restores Brightspace's own appearance.
 
+Version **1.2.1** also fixes white submission/attachment panels and patchy table cells. See the fictional [Dark](docs/screenshots/submissions-dark.png), [Dim](docs/screenshots/submissions-dim.png), and [Warm](docs/screenshots/submissions-warm.png) submission/table previews.
+
 ## What it does
 
 - Changes the colors of Brightspace pages, menus, discussions, tables, forms, and supported widgets.
@@ -31,7 +33,7 @@ Screenshots show a local preview with fictional data. **Original** removes the t
 ## Install
 
 1. Open the **[latest release](https://github.com/PrithviGhale/Brightspace-Theme/releases/latest)**.
-2. Download **`brightspace-after-hours-1.2.0.zip`** from **Assets**. Use the extension ZIP, rather than GitHub's automatically generated “Source code” download.
+2. Download **`brightspace-after-hours-1.2.1.zip`** from **Assets**. Use the extension ZIP, rather than GitHub's automatically generated “Source code” download.
 3. Extract the ZIP into a permanent folder. Don't load the ZIP itself.
 4. Follow the steps for your browser:
 

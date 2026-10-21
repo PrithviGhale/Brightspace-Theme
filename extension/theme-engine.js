@@ -90,7 +90,22 @@
     :where(button,[role="button"]):hover { background-color: var(--bs-surface) !important; }
     :where(:disabled,[aria-disabled="true"]) { opacity: .65; }
     :where(table,thead,tbody,tfoot,tr,td,th) { background-color: var(--bs-surface) !important; color: var(--bs-text) !important; border-color: var(--bs-border) !important; }
-    :where(th, tr:nth-child(even) td, pre, code, kbd) { background-color: var(--bs-raised) !important; color: var(--bs-text) !important; }
+    /* Brightspace uses <th> for both column headings and body row labels.
+       Set the surface token on each cell so nested HTML-block shadow roots
+       inherit the exact row tone instead of drawing darker text backplates. */
+    :where(td, th) { --bs-surface: var(--bs-panel); }
+    :where(tbody > tr:nth-child(even) > td, tbody > tr:nth-child(even) > th,
+      thead > tr > td, thead > tr > th, th[scope="col"], th.d_hch) {
+      --bs-surface: var(--bs-raised);
+    }
+    :where(pre, code, kbd) { background-color: var(--bs-raised) !important; color: var(--bs-text) !important; }
+    /* Shared by embedded assignment views, feedback cards and both attachment UIs. */
+    :where(.d2l-panel, .d2l-fileinput, .d2l-filedrop, .d2l-filedrop-default-style,
+      .d2l-fileinput-file, .d2l-fileinput-list, .d2l-fileinput-upload-progress-container) {
+      background-color: var(--bs-surface) !important;
+      color: var(--bs-text) !important;
+      border-color: var(--bs-border) !important;
+    }
     :where(hr,fieldset) { border-color: var(--bs-border) !important; }
     :where(.d2l-validation-error,[role="alert"],[aria-invalid="true"]) { color: var(--bs-danger) !important; }
     :where(.d2l-success) { color: var(--bs-success) !important; }
@@ -150,7 +165,7 @@
   function css(theme, shadow = false, embedded = false) {
     const p = palettes[theme];
     if (!p) return '';
-    const tokens = Object.entries(p).filter(([key]) => key !== 'scheme').map(([key,value]) => `--bs-${key}:${value};`).join('');
+    const tokens = `--bs-panel:${p.surface};` + Object.entries(p).filter(([key]) => key !== 'scheme').map(([key,value]) => `--bs-${key}:${value};`).join('');
     const hostSurfaces = shadow ? `
       :host(d2l-card), :host(d2l-enrollment-card),
       :host(d2l-navigation-main-header), :host(d2l-navigation-main-footer),

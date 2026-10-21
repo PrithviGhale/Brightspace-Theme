@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.1 — 2026-10-21
+
+- Fixed white assignment submission panels, uploaded-file lists, feedback panels and discussion attachment drop zones.
+- Fixed uneven table colors in Grades, Assignments and Classlist: row headings now match adjacent cells instead of being styled as column headings.
+- Nested feedback and open-shadow HTML components inherit their table row's surface, removing contrasting rectangles behind text.
+- Added a fictional submission/table preview and regression checks for Dark, Dim, Warm and Original. Status colors, images and videos remain preserved; no new permissions or background work.
+
 ## 1.2.0 — 2026-10-21
 
 First GitHub release of Brightspace After Hours.

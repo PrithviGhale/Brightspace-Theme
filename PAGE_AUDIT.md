@@ -21,6 +21,12 @@ The in-app browser was returned to the dashboard. No credentials, private screen
 
 ## Theme verification
 
+### Submission and table follow-up (1.2.1)
+
+Inspected the assignment list, Grades and embedded HTML project submission view read-only. The missing white surfaces use stable `.d2l-panel` and `.d2l-filedrop` / `.d2l-fileinput` classes. Legacy tables use both column-heading and row-heading `th` cells, sometimes inside `tbody`. The old blanket heading background caused mismatched columns; fixed row-level surface inheritance also lets nested HTML components blend with their cells. No upload, editor change or submission occurred.
+
+The fictional `preview/submission-tables.html` reproduces these structures without course data or working upload controls. Its regression failed against the old engine on the white submission panel, then passed after the fix in Dark, Dim and Warm. Checks cover panels, attachment drop zones, mixed row headings/data cells, nested plain/open-shadow HTML blocks, preserved green status color and Original restoration. All three new screenshots were visually reviewed. This is local regression evidence, not a live installation test.
+
 `tests/browser.mjs` checks Dark, Dim and Warm / sepia independently using the actual theme engine: normal and hover menu rows, menu-link colors, visible keyboard focus with an inset ring, selected/unselected settings tabs, Calendar filters/sidebar, ePortfolio/Progress panels, form fields, editor glyphs and floating toolbar backgrounds. Original restores the original white/gray surfaces and removes theme styles. Existing dashboard, course widgets, frame, media-preservation and discovery checks also pass.
 
 `tests/extension.mjs` loads the actual unpacked extension and checks scope restrictions, real local preferences, two-tab and frame synchronization, widget embedding restrictions, off/on removal and full-browser restart persistence. Test pages are local synthetic responses; the integration test does not use the authenticated browser or send requests to SNHU.
