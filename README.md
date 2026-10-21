@@ -19,10 +19,13 @@ Screenshots show a local preview with fictional data. **Original** removes the t
 
 Version **1.2.1** also fixes white submission/attachment panels and patchy table cells. See the fictional [Dark](docs/screenshots/submissions-dark.png), [Dim](docs/screenshots/submissions-dim.png), and [Warm](docs/screenshots/submissions-warm.png) submission/table previews.
 
+Version **1.2.2** protects profile photo controls and removes the added logo plate. Fictional profile previews: [Dark](docs/screenshots/profiles-dark.png), [Dim](docs/screenshots/profiles-dim.png), [Warm](docs/screenshots/profiles-warm.png).
+
 ## What it does
 
 - Changes the colors of Brightspace pages, menus, discussions, tables, forms, and supported widgets.
 - Keeps images and videos in their original colors.
+- Keeps profile photo controls transparent. The navigation logo has no added white box; Dark and Dim add a small outline around its artwork for readability. Photos stay unfiltered.
 - Remembers your chosen theme on your device and updates your open Brightspace tabs.
 - Includes an on/off switch and visible keyboard focus indicators.
 - Adds **Check for updates**, which opens the latest GitHub release.
@@ -33,7 +36,7 @@ Version **1.2.1** also fixes white submission/attachment panels and patchy table
 ## Install
 
 1. Open the **[latest release](https://github.com/PrithviGhale/Brightspace-Theme/releases/latest)**.
-2. Download **`brightspace-after-hours-1.2.1.zip`** from **Assets**. Use the extension ZIP, rather than GitHub's automatically generated “Source code” download.
+2. Download **`brightspace-after-hours-1.2.2.zip`** from **Assets**. Use the extension ZIP, rather than GitHub's automatically generated “Source code” download.
 3. Extract the ZIP into a permanent folder. Don't load the ZIP itself.
 4. Follow the steps for your browser:
 

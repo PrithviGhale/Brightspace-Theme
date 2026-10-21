@@ -66,9 +66,12 @@
       border-color: var(--bs-border) !important;
     }
     :where(.d2l-navigation-s-logo, .d2l-navigation-s-logo-link, .d2l-navigation-s-logo-image) {
-      /* Give a dark institutional logo a light backing without filtering its pixels. */
-      background-color: #f4f6f9 !important;
-      border-radius: 4px;
+      background-color: transparent !important;
+    }
+    /* A tight contour keeps dark logo lettering readable without a rectangular plate.
+       This is restricted to navigation branding, never profile photos or course media. */
+    :where(.d2l-navigation-s-logo img, img.d2l-navigation-s-logo-image) {
+      filter: var(--bs-logo-contour) !important;
     }
     :is(.d2l-navigation-s-main, .d2l-navigation-s-main-wrapper, .d2l-navigation-main-footer)
       :where(button, [role="button"]) {
@@ -82,12 +85,17 @@
     :where(div,p,span,section,article,td,th)[style*="background"], :where([bgcolor]) { background-color: var(--bs-surface) !important; }
     :where(a, a:visited, [role="link"], .d2l-link) { color: var(--bs-link) !important; }
     :where(a:hover) { text-decoration: underline !important; }
-    :where(input:not([type="image"]),select,textarea,button,[role="button"],summary,.d2l-button) {
+    :where(input:not([type="image"]),select,textarea,button,[role="button"]:not(.d2l-imagelink),summary,.d2l-button) {
       background-color: var(--bs-raised) !important; color: var(--bs-text) !important;
       border-color: var(--bs-border) !important; accent-color: var(--bs-link);
     }
     :where(input,textarea)::placeholder { color: var(--bs-muted) !important; opacity: 1; }
-    :where(button,[role="button"]):hover { background-color: var(--bs-surface) !important; }
+    :where(button,[role="button"]:not(.d2l-imagelink)):hover { background-color: var(--bs-surface) !important; }
+    /* Legacy profile handles are image controls, not filled action buttons. Keep
+       their native photo/placeholder paint, sizing and hover/focus behavior. */
+    :where(.d2l-user-profile-handle-image, .d2l-imagelink[role="button"]) {
+      background-color: transparent !important;
+    }
     :where(:disabled,[aria-disabled="true"]) { opacity: .65; }
     :where(table,thead,tbody,tfoot,tr,td,th) { background-color: var(--bs-surface) !important; color: var(--bs-text) !important; border-color: var(--bs-border) !important; }
     /* Brightspace uses <th> for both column headings and body row labels.
@@ -165,7 +173,7 @@
   function css(theme, shadow = false, embedded = false) {
     const p = palettes[theme];
     if (!p) return '';
-    const tokens = `--bs-panel:${p.surface};` + Object.entries(p).filter(([key]) => key !== 'scheme').map(([key,value]) => `--bs-${key}:${value};`).join('');
+    const tokens = `--bs-panel:${p.surface};--bs-logo-contour:${theme === 'warm' ? 'none' : 'drop-shadow(0 0 .5px #f4f6f9) drop-shadow(0 0 1px #f4f6f9)'};` + Object.entries(p).filter(([key]) => key !== 'scheme').map(([key,value]) => `--bs-${key}:${value};`).join('');
     const hostSurfaces = shadow ? `
       :host(d2l-card), :host(d2l-enrollment-card),
       :host(d2l-navigation-main-header), :host(d2l-navigation-main-footer),
@@ -189,6 +197,14 @@
       }
       :host(d2l-tab) { color: var(--bs-text) !important; background-color: var(--bs-surface) !important; }
       :host(d2l-tab[selected]) { color: var(--bs-link) !important; background-color: var(--bs-raised) !important; }
+      :host(d2l-labs-navigation-link-image.d2l-navigation-s-logo),
+      :host(d2l-labs-navigation-link-image.d2l-navigation-s-logo) a,
+      :host(d2l-labs-navigation-link-image.d2l-navigation-s-logo) .d2l-labs-navigation-link-image-container {
+        background-color: transparent !important;
+      }
+      :host(d2l-labs-navigation-link-image.d2l-navigation-s-logo) img {
+        filter: var(--bs-logo-contour) !important;
+      }
       /* Navigation triggers are transparent controls, not filled action buttons. */
       :host(d2l-labs-navigation-button-icon) button,
       :host(d2l-labs-navigation-dropdown-button-icon) button,

@@ -96,7 +96,7 @@ try {
     assert.equal(result.navigation,surface,`${theme}: white navigation strip`);
     assert.equal(result.button,'rgba(0, 0, 0, 0)',`${theme}: nav dropdown should blend into the strip`);
     assert.equal(result.footer,surface);assert.equal(result.innerFooter,surface);
-    assert.equal(result.logo,'rgb(244, 246, 249)');assert.equal(result.image,'none');
+    assert.equal(result.logo,'rgba(0, 0, 0, 0)');assert.equal(result.image,'none');
     assert.equal(await evaluate(`getComputedStyle(document.documentElement).backgroundColor`), await bg(),`${theme}: viewport must not retain a light background`);
     await cdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false}).then(r=>writeFile(path.join(root,'dist',`dashboard-${theme}.png`),Buffer.from(r.data,'base64')));
   }
@@ -166,7 +166,26 @@ try {
   assert.equal(await evaluate(`getComputedStyle(document.querySelector('.d2l-filedrop')).backgroundColor`),'rgb(255, 255, 255)');
   assert(await evaluate(`[...document.querySelectorAll('d2l-html-block')].every(e=>!e.shadowRoot.querySelector('style[data-brightspace-theme]'))`));
   console.log('PASS: three-theme submission/attachment panels; mixed th/td rows; nested light/shadow HTML block surfaces; preserved similarity-meter color; Original restoration. Screenshots: dist/submissions-{dark,dim,warm}.png');
+  await cdp('Page.navigate',{url:`http://127.0.0.1:${server.address().port}/preview/profiles.html`});
+  await until(`document.readyState==='complete' && document.querySelector('d2l-profile-image-base')?.shadowRoot`);
+  for(const theme of ['dark','dim','warm','original']) {
+    await set(theme);
+    await until(`!!document.querySelector('style[data-brightspace-theme]') === ${theme!=='original'}`);
+    const photos=await evaluate(`(()=>{const imgs=[...document.querySelectorAll('img'),...document.querySelector('d2l-profile-image-base').shadowRoot.querySelectorAll('img')];return imgs.map(e=>{const s=getComputedStyle(e),r=e.getBoundingClientRect(),root=e.getRootNode();return {loaded:e.complete&&e.naturalWidth>0,filter:s.filter,opacity:s.opacity,visibility:s.visibility,width:r.width,height:r.height,uncovered:root.elementFromPoint(r.x+r.width/2,r.y+r.height/2)===e}})})()`);
+    for(const photo of photos){assert(photo.loaded&&photo.uncovered,`${theme}: loaded photo is the painted hit target`);assert(photo.width>0&&photo.height>0);assert.equal(photo.filter,'none');assert.equal(photo.opacity,'1');assert.equal(photo.visibility,'visible');}
+    assert.equal(await evaluate(`getComputedStyle(document.querySelector('.d2l-imagelink')).backgroundColor`),'rgba(0, 0, 0, 0)',`${theme}: image control must not receive an action-button fill`);
+    assert.equal(await evaluate(`getComputedStyle(document.querySelector('.d2l-navigation-s-logo')).backgroundColor`),'rgba(0, 0, 0, 0)');
+    const filter=await evaluate(`getComputedStyle(document.querySelector('.d2l-navigation-s-logo').shadowRoot.querySelector('img')).filter`);
+    assert.equal(filter.includes('drop-shadow'),theme==='dark'||theme==='dim');
+    await evaluate(`document.querySelector('.d2l-imagelink').focus()`);
+    if(theme!=='original')assert.equal(await evaluate(`getComputedStyle(document.querySelector('.d2l-imagelink')).outlineWidth`),'3px');
+    await cdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false}).then(r=>writeFile(path.join(root,'dist',`profiles-${theme}.png`),Buffer.from(r.data,'base64')));
+  }
   await set('dark');
+  await evaluate(`document.querySelector('#add-profile').click()`);
+  await until(`!!document.querySelector('#profiles d2l-profile-image-base')?.shadowRoot?.querySelector('style[data-brightspace-theme]')`);
+  assert.equal(await evaluate(`getComputedStyle(document.querySelector('#profiles d2l-profile-image-base').shadowRoot.querySelector('img')).filter`),'none');
+  console.log('PASS: discussion image controls, classlist photos, profile cards, open-shadow and added profile images; loaded/uncovered photos and no filtering; transparent branding with logo-only contour; all themes/Original. Screenshots dist/profiles-{dark,dim,warm,original}.png');
   await cdp('Page.navigate',{url:`http://127.0.0.1:${server.address().port}/preview/registry-null.html`});
   await until(`document.readyState==='complete' && !!document.querySelector('#existing')?.shadowRoot`);
   assert.equal(await evaluate(`customElements`),null);
@@ -184,7 +203,7 @@ try {
   assert.deepEqual(errors,[]);
   console.log('PASS: real Chrome fixture; three themes, popup selection/toggle, persistence on reload, HTML frame sync, dynamic and nested open shadows, original/off cleanup, focus, dialog, original media colors; no runtime exceptions.');
   console.log('Screenshots: dist/preview-{dark,dim,warm}.png');
-  console.log('PASS: dashboard regression; hardcoded/adopted white card hosts, slotted title, navigation strip/dropdowns, shadow navigation surfaces, unfiltered logo backing, all three themes and Original restoration. Screenshots: dist/dashboard-{dark,dim,warm}.png');
+  console.log('PASS: dashboard regression; hardcoded/adopted white card hosts, slotted title, navigation strip/dropdowns, shadow navigation surfaces, transparent logo backing, all three themes and Original restoration. Screenshots: dist/dashboard-{dark,dim,warm}.png');
 } finally {
   clearTimeout(deadline);
   socket?.close(); browser.kill(); server.close();

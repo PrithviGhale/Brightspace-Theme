@@ -21,6 +21,14 @@ The in-app browser was returned to the dashboard. No credentials, private screen
 
 ## Theme verification
 
+### Profile photos and branding follow-up (1.2.2)
+
+Inspected a discussion thread's original profile controls and Classlist photo structure without saving photos or records. Legacy discussion handles use `.d2l-user-profile-handle-image > .d2l-imagelink[role="button"] > img`; Classlist uses ordinary `.di_i.d2l-badge-userprofile` images. Header profiles can use open-shadow `d2l-profile-image-base`. The logo is an image inside the open-shadow `d2l-labs-navigation-link-image.d2l-navigation-s-logo` component.
+
+Image-link controls are now excluded from general button fills and their control backgrounds stay transparent. Photo sources, loading behavior, dimensions and popup handlers are unchanged. The extension-added logo plate is removed; only navigation logo artwork receives a contour in Dark/Dim. Warm and Original have no contour. No student photo is filtered, copied or replaced.
+
+The fictional `preview/profiles.html` verifies loaded photos with nonzero dimensions, visible/uncovered image hit targets, no photo filters, transparent controls, keyboard focus, open-shadow and added profiles across all appearances. Screenshots `dist/profiles-{dark,dim,warm,original}.png` were reviewed. The original live pages were inspected but the exact missing-photo symptom was not reproduced in that unthemed browser; confirm the result in your installed extension after updating.
+
 ### Submission and table follow-up (1.2.1)
 
 Inspected the assignment list, Grades and embedded HTML project submission view read-only. The missing white surfaces use stable `.d2l-panel` and `.d2l-filedrop` / `.d2l-fileinput` classes. Legacy tables use both column-heading and row-heading `th` cells, sometimes inside `tbody`. The old blanket heading background caused mismatched columns; fixed row-level surface inheritance also lets nested HTML components blend with their cells. No upload, editor change or submission occurred.

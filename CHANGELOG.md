@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.2 — 2026-10-21
+
+- Excluded Brightspace's legacy profile image controls from filled-button styling; control backgrounds stay transparent.
+- Removed the added white navigation logo plate. Dark and Dim use a small logo-only contour for lettering; Warm and Original use the unfiltered logo.
+- Added fictional photo regression coverage for discussion handles, profile cards, Classlist, shared open-shadow profile components and dynamically added profiles. Photos stay unfiltered in every appearance.
+- No added permissions, network calls, course-data access or background process.
+
 ## 1.2.1 — 2026-10-21
 
 - Fixed white assignment submission panels, uploaded-file lists, feedback panels and discussion attachment drop zones.

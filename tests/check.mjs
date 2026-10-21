@@ -94,7 +94,13 @@ function contrast(a,b) { const x=luminance(a),y=luminance(b);return (Math.max(x,
 for (const [name, palette] of Object.entries(context.BrightTheme.palettes)) {
   for (const bg of ['bg','surface','raised']) for (const fg of ['text','muted','link','danger','success']) assert(contrast(palette[bg],palette[fg])>=4.5, `${name}: ${fg}/${bg} contrast`);
   assert(contrast(palette.focus,palette.surface)>=3, `${name}: focus contrast`);
-  assert(!/filter\s*:/.test(context.BrightTheme.css(name)));
+  // Only navigation branding may gain a contour; photos/course media stay untouched.
+  for (const shadow of [false,true]) {
+    const css=context.BrightTheme.css(name,shadow);
+    const filterRules=[...css.matchAll(/([^{}]+)\{[^{}]*\bfilter\s*:[^{}]*\}/g)];
+    assert.equal(filterRules.length,shadow?2:1);
+    for(const rule of filterRules){assert(rule[1].includes('d2l-navigation-s-logo'));assert(rule[0].includes('filter: var(--bs-logo-contour)'));}
+  }
 }
 assert.equal(context.BrightTheme.css('original'), '');
 console.log('PASS: manifest scope/assets; JavaScript syntax/privacy checks; preference defaults, validation, writes, events and read race; palette text/link/status contrast ≥4.5:1; focus contrast ≥3:1.');
