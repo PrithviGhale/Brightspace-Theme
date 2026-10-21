@@ -21,6 +21,12 @@ The in-app browser was returned to the dashboard. No credentials, private screen
 
 ## Theme verification
 
+### Small reply avatars follow-up (1.2.3)
+
+The user confirmed 1.2.2 still hides photos and supplied the affected 36px `.d2l-imagelink > img` markup. Only structural selectors and dimensions were retained; private image URLs, names and IDs were not copied into artifacts. Read-only inspection of the open original thread confirmed loaded photo/default-image elements. Their live themed disappearance was not reproduced in this browser.
+
+Added scoped visibility/non-shrinking size protection for legacy avatar controls and the profile-image endpoint, plus a local stacking context above post backgrounds. Transparent default-image pixels have a light canvas for contrast. No photo URL is read, rewritten or fetched by extension code. This is defensive protection rather than a confirmed explanation of the original symptom. Local regression tests now include 36px photo/default-icon controls and an explicitly synthetic collision case that collapses and covers an unprotected image. Each themed palette restores visibility and photo hit targets; Original removes protection. Check the installed result on the live thread after updating.
+
 ### Profile photos and branding follow-up (1.2.2)
 
 Inspected a discussion thread's original profile controls and Classlist photo structure without saving photos or records. Legacy discussion handles use `.d2l-user-profile-handle-image > .d2l-imagelink[role="button"] > img`; Classlist uses ordinary `.di_i.d2l-badge-userprofile` images. Header profiles can use open-shadow `d2l-profile-image-base`. The logo is an image inside the open-shadow `d2l-labs-navigation-link-image.d2l-navigation-s-logo` component.

@@ -1,8 +1,12 @@
 # Verification record
 
-Initial checks ran October 20, 2026. Version 1.2.2 checks ran October 21, 2026 with Node.js 24.11.1 and Chrome 155.0.8059.85 on Windows.
+Initial checks ran October 20, 2026. Version 1.2.3 checks ran October 21, 2026 with Node.js 24.11.1 and Chrome 155.0.8059.85 on Windows.
 
 All final checks passed:
+
+The final integration rerun exposed a test-harness startup/restart connection failure. The harness now uses Chrome's live advertised debugger endpoint instead of a potentially stale browser GUID from the profile's port file. The complete integration suite passed after this correction; it does not change extension runtime behavior.
+
+Version 1.2.3: added the supplied local logo to popup/action/manifest with validated PNG dimensions. Extended fictional profile fixtures to 36px reply images and transparent default silhouettes. A deliberately synthetic collision case collapses the unprotected image; scoped CSS restores dimensions, opacity, visibility and unobstructed hit targets in all three palettes. Reviewed profile and actual-popup screenshots; the full three-suite checks pass. This does not establish the exact live disappearance cause. No private photo URLs or course content were saved, and live installed confirmation remains required.
 
 Version 1.2.2: profile image controls are excluded from general button styling; navigation logo plates are transparent. New fictional profile fixtures test loaded/uncovered discussion and Classlist photos, profile cards, shared open-shadow photos, added components and keyboard focus. Photos have filter none, opacity 1, visible dimensions and original sources in all appearances; only branding gains a contour in Dark/Dim. Reviewed the new profile screenshots. Static/preferences, Chrome rendering and actual MV3 integration suites passed. Original live markup was inspected read-only; the unthemed session did not reproduce the user's missing-photo symptom, so installed live rendering remains a manual check.
 
@@ -18,7 +22,7 @@ Fixed observed `.d2l-le-disc-post` white backgrounds, navigation-trigger shadow 
 
 A startup timing regression was caught during these checks and fixed: unresolved candidates receive a bounded post-render check following each document-ready/load event. The missing-registry and delayed-render tests now pass without polling or repeat full-page scans.
 
-The in-app browser supports read-only DOM evaluation; the extension was not installed into that authenticated session. Real-page inspection and local themed-fixture verification are distinct. The final authenticated appearance must still be checked after installing 1.2.2.
+The in-app browser supports read-only DOM evaluation; the extension was not installed into that authenticated session. Real-page inspection and local themed-fixture verification are distinct. The final authenticated appearance must still be checked after installing 1.2.3.
 
 Version 1.0.2 follow-up: fixed the user-reported null-registry `.get` crash that aborted shadow discovery. Added a real-browser fixture with `window.customElements === null`, an unregistered element before course cards, delayed root attachment and dynamic insertion. It verifies uninterrupted discovery, correct course-card background, no runtime exceptions, Original cleanup and re-enable. The actual-extension test now also places an unregistered element before a fixed-white `d2l-card` and asserts that its open root receives the stylesheet and its computed background is dark. Both browser tests and the static/preference checks passed after the fix.
 
@@ -27,8 +31,8 @@ Version 1.0.1 follow-up: reproduced the reported white-card/navigation problem u
 - `node tests/check.mjs`: MV3 manifest scope/assets, JavaScript syntax, minimal permissions/no background, preference defaults/validation, filtering of storage events, separate-key concurrent writes, initial-read races including partial events, palette text/link/status contrast ≥ 4.5:1 and focus contrast ≥ 3:1.
 - `node tests/browser.mjs`: actual Chrome rendering of the fictional local preview; Dark/Dim/Warm computed colors; real popup files with preview-only storage adapter; same-origin frame updates; dynamic, nested and late-defined open roots including an off/on cycle; focus outline; dialog; image/video filter absence and preserved background-art color; Original/off removal; page-reload persistence; no runtime exceptions. Screenshots saved and visually inspected for all three palettes.
 - `node tests/extension.mjs`: Chrome accepted the actual unpacked extension; real extension storage; popup interactions synchronized two tabs; matching HTML and srcdoc frames; open root; off/on removal and restoration; outside host excluded; full browser shutdown/relaunch preserved preferences and theme. Automation reloads the session-scoped unpacked extension after relaunch. All page requests were intercepted and fulfilled with fictional local HTML; no SNHU requests or credentials were used.
-- `powershell -NoProfile -File tools/package.ps1`: ZIP has ten expected root files including `manifest.json`, the widget embedding guard, README and page-audit record; excludes preview adapters, tests, browser profiles, and screenshots.
+- `powershell -NoProfile -File tools/package.ps1`: ZIP has fourteen expected files including `manifest.json`, the widget embedding guard, README and page-audit record; excludes preview adapters, tests, browser profiles, and screenshots.
 
-Current artifacts: `dist/brightspace-after-hours-1.2.2.zip`, `dist/popup.png`, `dist/preview-{dark,dim,warm}.png`, `dist/dashboard-{dark,dim,warm}.png`, `dist/course-{dark,dim,warm}.png`, and `dist/menus-{dark,dim,warm}.png`. Selected fictional screenshots are copied to `docs/screenshots/` for the repository. Older ZIPs are retained locally; use 1.2.2. ZIPs and temporary browser profiles are excluded from Git.
+Current artifacts: `dist/brightspace-after-hours-1.2.3.zip`, `dist/popup.png`, `dist/preview-{dark,dim,warm}.png`, `dist/dashboard-{dark,dim,warm}.png`, `dist/course-{dark,dim,warm}.png`, and `dist/menus-{dark,dim,warm}.png`. Selected fictional screenshots are copied to `docs/screenshots/` for the repository. Older ZIPs are retained locally; use 1.2.3. ZIPs and temporary browser profiles are excluded from Git.
 
 Not verified: Opera runtime, final extension rendering on authenticated pages, every Brightspace component/template, real PDF/Office/LTI integrations, screen-reader behavior, or comprehensive accessibility. The README lists the manual checks and technical coverage limits. No public store submission or publication was performed.

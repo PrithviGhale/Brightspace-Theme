@@ -168,11 +168,19 @@ try {
   console.log('PASS: three-theme submission/attachment panels; mixed th/td rows; nested light/shadow HTML block surfaces; preserved similarity-meter color; Original restoration. Screenshots: dist/submissions-{dark,dim,warm}.png');
   await cdp('Page.navigate',{url:`http://127.0.0.1:${server.address().port}/preview/profiles.html`});
   await until(`document.readyState==='complete' && document.querySelector('d2l-profile-image-base')?.shadowRoot`);
+  await cdp('Emulation.setDeviceMetricsOverride',{width:1440,height:1500,deviceScaleFactor:1,mobile:false});
+  await set('original');
+  await evaluate(`document.body.classList.add('test-collision')`);
+  assert.equal(await evaluate(`document.querySelector('.reply-row img').getBoundingClientRect().width`),0,'defensive fixture reproduces a collapsed photo before protection');
   for(const theme of ['dark','dim','warm','original']) {
     await set(theme);
     await until(`!!document.querySelector('style[data-brightspace-theme]') === ${theme!=='original'}`);
+    // Defensive collision case, distinct from the still-unconfirmed live cause.
+    await evaluate(`document.body.classList.toggle('test-collision',${theme!=='original'})`);
     const photos=await evaluate(`(()=>{const imgs=[...document.querySelectorAll('img'),...document.querySelector('d2l-profile-image-base').shadowRoot.querySelectorAll('img')];return imgs.map(e=>{const s=getComputedStyle(e),r=e.getBoundingClientRect(),root=e.getRootNode();return {loaded:e.complete&&e.naturalWidth>0,filter:s.filter,opacity:s.opacity,visibility:s.visibility,width:r.width,height:r.height,uncovered:root.elementFromPoint(r.x+r.width/2,r.y+r.height/2)===e}})})()`);
     for(const photo of photos){assert(photo.loaded&&photo.uncovered,`${theme}: loaded photo is the painted hit target`);assert(photo.width>0&&photo.height>0);assert.equal(photo.filter,'none');assert.equal(photo.opacity,'1');assert.equal(photo.visibility,'visible');}
+    const replies=await evaluate(`[...document.querySelectorAll('.reply-row img')].map(e=>({width:e.getBoundingClientRect().width,height:e.getBoundingClientRect().height,bg:getComputedStyle(e).backgroundColor}))`);
+    for(const reply of replies){assert.equal(reply.width,36);assert.equal(reply.height,36);if(theme!=='original')assert.equal(reply.bg,'rgb(231, 237, 245)');}
     assert.equal(await evaluate(`getComputedStyle(document.querySelector('.d2l-imagelink')).backgroundColor`),'rgba(0, 0, 0, 0)',`${theme}: image control must not receive an action-button fill`);
     assert.equal(await evaluate(`getComputedStyle(document.querySelector('.d2l-navigation-s-logo')).backgroundColor`),'rgba(0, 0, 0, 0)');
     const filter=await evaluate(`getComputedStyle(document.querySelector('.d2l-navigation-s-logo').shadowRoot.querySelector('img')).filter`);
@@ -186,6 +194,7 @@ try {
   await until(`!!document.querySelector('#profiles d2l-profile-image-base')?.shadowRoot?.querySelector('style[data-brightspace-theme]')`);
   assert.equal(await evaluate(`getComputedStyle(document.querySelector('#profiles d2l-profile-image-base').shadowRoot.querySelector('img')).filter`),'none');
   console.log('PASS: discussion image controls, classlist photos, profile cards, open-shadow and added profile images; loaded/uncovered photos and no filtering; transparent branding with logo-only contour; all themes/Original. Screenshots dist/profiles-{dark,dim,warm,original}.png');
+  await cdp('Emulation.setDeviceMetricsOverride',{width:1440,height:1100,deviceScaleFactor:1,mobile:false});
   await cdp('Page.navigate',{url:`http://127.0.0.1:${server.address().port}/preview/registry-null.html`});
   await until(`document.readyState==='complete' && !!document.querySelector('#existing')?.shadowRoot`);
   assert.equal(await evaluate(`customElements`),null);

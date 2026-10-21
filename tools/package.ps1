@@ -10,11 +10,12 @@ Compress-Archive -Path $sources -DestinationPath $zipPath -Force
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $archive = [IO.Compression.ZipFile]::OpenRead($zipPath)
 try {
-    $entries = @($archive.Entries | ForEach-Object { $_.FullName })
+    $entries = @($archive.Entries | Where-Object { $_.Name } | ForEach-Object { $_.FullName.Replace('\','/') })
     if ($entries -notcontains 'manifest.json') { throw 'ZIP must contain manifest.json at its root.' }
-    if ($entries.Count -ne 10) { throw "Unexpected package entry count: $($entries.Count)" }
+    $expected = @('content.js','manifest.json','popup.css','popup.html','popup.js','preferences.js','theme-engine.js','widget-context.js','README.md','PAGE_AUDIT.md','icons/icon-16.png','icons/icon-32.png','icons/icon-48.png','icons/icon-128.png')
+    if (@(Compare-Object ($entries | Sort-Object) ($expected | Sort-Object)).Count) { throw 'Package file list differs from the expected extension assets.' }
     foreach ($entry in $entries) {
-        if ($entry -match '[/\\]' -or $entry -match 'preview|test|storage-adapter') { throw "Unexpected package entry: $entry" }
+        if ($entry -match 'preview|test|storage-adapter|\.\.') { throw "Unexpected package entry: $entry" }
     }
     Write-Output ("Verified {0} files: {1}" -f $entries.Count, ($entries -join ', '))
 } finally { $archive.Dispose() }

@@ -10,6 +10,13 @@ assert.equal(manifest.homepage_url,'https://github.com/PrithviGhale/Brightspace-
 const popupHtml = await read('popup.html');
 assert.match(popupHtml, /id="check-updates" href="https:\/\/github\.com\/PrithviGhale\/Brightspace-Theme\/releases\/latest" target="_blank" rel="noopener noreferrer"/);
 assert.equal(manifest.manifest_version, 3);
+assert.deepEqual(manifest.action.default_icon,manifest.icons);
+for(const size of [16,32,48,128]) {
+  const icon=await readFile(path.join(dir,manifest.icons[size]));
+  assert.equal(icon.subarray(1,4).toString(),'PNG');
+  assert.equal(icon.readUInt32BE(16),size);assert.equal(icon.readUInt32BE(20),size);
+}
+assert.match(popupHtml,/class="mark" src="icons\/icon-128.png"/);
 assert.deepEqual(manifest.permissions, ['storage']);
 assert.equal(manifest.background, undefined);
 assert.equal(manifest.host_permissions, undefined);

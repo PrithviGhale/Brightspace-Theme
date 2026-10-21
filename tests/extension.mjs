@@ -13,7 +13,7 @@ const deadline=setTimeout(()=>{browser?.kill();process.exit(1);},60000);
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 async function connect(url) {
   const socket=new WebSocket(url); sockets.push(socket);
-  await new Promise((resolve,reject)=>{socket.onopen=resolve;socket.onerror=reject;});
+  await new Promise((resolve,reject)=>{socket.onopen=resolve;socket.onerror=()=>reject(new Error(`Unable to connect to isolated Chrome debugger: ${url}`));});
   const waiting=new Map(); let id=0; const handlers=new Map();
   socket.onmessage=event=>{const msg=JSON.parse(event.data); if(msg.id){const task=waiting.get(msg.id); if(!task)return;waiting.delete(msg.id);clearTimeout(task.timer);msg.error?task.reject(new Error(JSON.stringify(msg.error))):task.resolve(msg.result);}else handlers.get(msg.method)?.(msg.params);};
   socket.onclose=()=>{for(const task of waiting.values()){clearTimeout(task.timer);task.reject(new Error('Browser connection closed'));}waiting.clear();};
@@ -25,10 +25,13 @@ async function connect(url) {
 async function launch() {
   closingBrowser=false;
   browser=spawn(process.env.CHROME_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',['--headless=new','--disable-gpu','--no-first-run','--no-default-browser-check','--enable-unsafe-extension-debugging','--remote-debugging-port=0',`--user-data-dir=${profile}`,'about:blank'],{windowsHide:true,stdio:'ignore'});
-  let data;
-  for(let i=0;i<100;i++){try{data=(await readFile(path.join(profile,'DevToolsActivePort'),'utf8')).trim().split('\n');const response=await fetch(`http://127.0.0.1:${data[0]}/json/version`);if(response.ok)break;}catch{}await pause(100);}
+  let data,version;
+  for(let i=0;i<100;i++){try{data=(await readFile(path.join(profile,'DevToolsActivePort'),'utf8')).trim().split(/\r?\n/);const response=await fetch(`http://127.0.0.1:${data[0]}/json/version`);if(response.ok){version=await response.json();if(version.webSocketDebuggerUrl)break;}}catch{}await pause(100);}
+  assert(version?.webSocketDebuggerUrl,'isolated Chrome debugger started');
   const base=`http://127.0.0.1:${data[0]}`;
-  const control=await connect(`ws://127.0.0.1:${data[0]}${data[1]}`);
+  // Restart can leave an old browser GUID in DevToolsActivePort briefly. Use
+  // the live server's advertised endpoint rather than that stale second line.
+  const control=await connect(version.webSocketDebuggerUrl);
   async function page(url='about:blank') {
     const {targetId}=await control.send('Target.createTarget',{url});
     const targets=await(await fetch(`${base}/json`)).json();
@@ -60,6 +63,7 @@ try {
   assert(id,'Chrome accepted the manifest and unpacked extension');
   const popup=await page(`chrome-extension://${id}/popup.html`);
   await popup.until(`!!document.querySelector('#enabled:not(:disabled)')`);
+  await popup.until(`document.querySelector('img.mark')?.complete && document.querySelector('img.mark').naturalWidth===128`);
   const manifest=JSON.parse(await readFile(path.join(root,'extension','manifest.json'),'utf8'));
   const updateInfo=await popup.evaluate(`(()=>{const a=document.querySelector('#check-updates');return {version:document.querySelector('#version').textContent,href:a.href,target:a.target,rel:a.rel}})()`);
   assert.deepEqual(updateInfo,{version:`v${manifest.version}`,href:'https://github.com/PrithviGhale/Brightspace-Theme/releases/latest',target:'_blank',rel:'noopener noreferrer'});

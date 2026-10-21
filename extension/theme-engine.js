@@ -96,6 +96,35 @@
     :where(.d2l-user-profile-handle-image, .d2l-imagelink[role="button"]) {
       background-color: transparent !important;
     }
+    /* Small discussion avatars must paint above recolored post surfaces. Limit
+       sizing/visibility protection to profile controls and the profile endpoint. */
+    .d2l-user-profile-handle-image {
+      display: inline-block !important;
+      position: relative !important;
+      z-index: 1;
+      isolation: isolate;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+    .d2l-user-profile-handle-image .d2l-imagelink {
+      display: inline-flex !important;
+      flex: 0 0 auto !important;
+      align-items: center;
+      justify-content: center;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+    .d2l-user-profile-handle-image .d2l-imagelink > img,
+    img.d2l-badge-userprofile,
+    img[src*="/d2l/common/viewprofileimage.d2l"] {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      flex-shrink: 0 !important;
+      max-width: none !important;
+      /* Transparent default silhouettes need a contrasting image canvas. */
+      background-color: #e7edf5 !important;
+    }
     :where(:disabled,[aria-disabled="true"]) { opacity: .65; }
     :where(table,thead,tbody,tfoot,tr,td,th) { background-color: var(--bs-surface) !important; color: var(--bs-text) !important; border-color: var(--bs-border) !important; }
     /* Brightspace uses <th> for both column headings and body row labels.

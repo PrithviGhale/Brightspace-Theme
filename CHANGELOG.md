@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.3 — 2026-10-21
+
+- Added the user-supplied blue gradient logo to the browser toolbar, extension manager and popup, with local PNG sizes 16/32/48/128.
+- Added explicit visibility, non-shrinking size and stacking protection for discussion profile controls and profile images. A light image canvas keeps transparent default silhouettes readable.
+- Added 36px reply-photo and default-icon fixtures plus a defensive collapsed/covered-image regression for all themed appearances, with Original restoration. The exact live disappearance cause remains unconfirmed.
+- Preserved original logo source in `assets/`; `tools/build-icons.ps1` reproduces the square PNG assets without changing the source. No new website permissions or background work.
+
 ## 1.2.2 — 2026-10-21
 
 - Excluded Brightspace's legacy profile image controls from filled-button styling; control backgrounds stay transparent.

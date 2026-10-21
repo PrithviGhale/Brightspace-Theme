@@ -1,4 +1,4 @@
-<p align="center"><strong>BRIGHTSPACE AFTER HOURS</strong></p>
+<p align="center"><img src="extension/icons/icon-128.png" width="72" height="72" alt="After Hours logo"><br><strong>BRIGHTSPACE AFTER HOURS</strong></p>
 
 # A calmer Brightspace, day or night.
 
@@ -21,6 +21,8 @@ Version **1.2.1** also fixes white submission/attachment panels and patchy table
 
 Version **1.2.2** protects profile photo controls and removes the added logo plate. Fictional profile previews: [Dark](docs/screenshots/profiles-dark.png), [Dim](docs/screenshots/profiles-dim.png), [Warm](docs/screenshots/profiles-warm.png).
 
+Version **1.2.3** adds the supplied app logo and stronger protection for small reply photos and default-avatar silhouettes. The original logo source is kept in `assets/logo-original.png`; Windows developers can regenerate icon sizes with `powershell -NoProfile -File tools/build-icons.ps1`.
+
 ## What it does
 
 - Changes the colors of Brightspace pages, menus, discussions, tables, forms, and supported widgets.
@@ -36,7 +38,7 @@ Version **1.2.2** protects profile photo controls and removes the added logo pla
 ## Install
 
 1. Open the **[latest release](https://github.com/PrithviGhale/Brightspace-Theme/releases/latest)**.
-2. Download **`brightspace-after-hours-1.2.2.zip`** from **Assets**. Use the extension ZIP, rather than GitHub's automatically generated “Source code” download.
+2. Download **`brightspace-after-hours-1.2.3.zip`** from **Assets**. Use the extension ZIP, rather than GitHub's automatically generated “Source code” download.
 3. Extract the ZIP into a permanent folder. Don't load the ZIP itself.
 4. Follow the steps for your browser:
 
