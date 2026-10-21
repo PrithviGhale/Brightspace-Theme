@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.5 — 2026-10-21
+
+- Fixed white dashboard course cards by targeting the actual nested `d2l-my-courses-enrollment-card` and `d2l-card` shadow surfaces and slotted titles.
+- Expanded the local dashboard fixture to reproduce Brightspace's nested course-card component path, with Dark, Dim, Warm and Original regression checks.
+- No new permissions, network calls, course-data access or background process.
+
 ## 1.2.4 — 2026-10-21
 
 - Apply the default appearance at document start while browser-local preferences load, then switch immediately to the saved appearance. This avoids an unthemed flash on first navigation.

@@ -80,6 +80,7 @@ try {
   assert.equal(await bg(),'rgba(0, 0, 0, 0)');
   await cdp('Page.navigate',{url:`http://127.0.0.1:${server.address().port}/preview/dashboard.html`});
   await until(`document.readyState==='complete' && !!document.querySelector('d2l-card')?.shadowRoot`);
+  await until(`!!document.querySelector('d2l-my-courses-v2')?.shadowRoot?.querySelector('d2l-my-courses-container-v2')?.shadowRoot?.querySelector('d2l-my-courses-content-v2')?.shadowRoot?.querySelector('d2l-my-courses-card-grid-v2')?.shadowRoot?.querySelector('d2l-my-courses-enrollment-card')?.shadowRoot?.querySelector('d2l-card')?.shadowRoot`);
   for (const [theme,surface,text] of [['dark','rgb(28, 37, 48)','rgb(231, 237, 245)'],['dim','rgb(48, 57, 69)','rgb(240, 242, 246)'],['warm','rgb(255, 247, 232)','rgb(56, 45, 35)']]) {
     await set(theme);
     await until(`!!document.querySelector('d2l-card').shadowRoot.querySelector('style[data-brightspace-theme]')`);
@@ -97,12 +98,19 @@ try {
     assert.equal(result.button,'rgba(0, 0, 0, 0)',`${theme}: nav dropdown should blend into the strip`);
     assert.equal(result.footer,surface);assert.equal(result.innerFooter,surface);
     assert.equal(result.logo,'rgba(0, 0, 0, 0)');assert.equal(result.image,'none');
+    const nested=await evaluate(`(()=>{let host=document.querySelector('d2l-my-courses-v2');for(const name of ['d2l-my-courses-container-v2','d2l-my-courses-content-v2','d2l-my-courses-card-grid-v2','d2l-my-courses-enrollment-card'])host=host.shadowRoot.querySelector(name);const enrollment=host;const card=enrollment.shadowRoot.querySelector('d2l-card');return {card:getComputedStyle(card).backgroundColor,container:getComputedStyle(card.shadowRoot.querySelector('.d2l-card-container')).backgroundColor,content:getComputedStyle(card.shadowRoot.querySelector('.d2l-card-content')).backgroundColor,title:getComputedStyle(card.querySelector('[slot="content"]')).color,roots:[document.querySelector('d2l-my-courses-v2'),document.querySelector('d2l-my-courses-v2').shadowRoot.querySelector('d2l-my-courses-container-v2'),document.querySelector('d2l-my-courses-v2').shadowRoot.querySelector('d2l-my-courses-container-v2').shadowRoot.querySelector('d2l-my-courses-content-v2'),document.querySelector('d2l-my-courses-v2').shadowRoot.querySelector('d2l-my-courses-container-v2').shadowRoot.querySelector('d2l-my-courses-content-v2').shadowRoot.querySelector('d2l-my-courses-card-grid-v2'),enrollment,card].map(e=>!!e.shadowRoot.querySelector('style[data-brightspace-theme]'))}})()`);
+    assert.equal(nested.card,surface,`${theme}: nested course card host`);
+    assert.equal(nested.container,surface,`${theme}: nested course card container`);
+    assert.equal(nested.content,surface,`${theme}: nested course card content`);
+    assert.equal(nested.title,text,`${theme}: nested slotted course title`);
+    assert(nested.roots.every(Boolean),`${theme}: every nested course component root is themed`);
     assert.equal(await evaluate(`getComputedStyle(document.documentElement).backgroundColor`), await bg(),`${theme}: viewport must not retain a light background`);
     await cdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false}).then(r=>writeFile(path.join(root,'dist',`dashboard-${theme}.png`),Buffer.from(r.data,'base64')));
   }
   await set('original');
   await until(`!document.querySelector('d2l-card').shadowRoot.querySelector('style[data-brightspace-theme]')`);
   assert.equal(await evaluate(`getComputedStyle(document.querySelector('d2l-card')).backgroundColor`),'rgb(255, 255, 255)');
+  assert.equal(await evaluate(`(()=>{let h=document.querySelector('d2l-my-courses-v2');for(const n of ['d2l-my-courses-container-v2','d2l-my-courses-content-v2','d2l-my-courses-card-grid-v2','d2l-my-courses-enrollment-card'])h=h.shadowRoot.querySelector(n);return getComputedStyle(h.shadowRoot.querySelector('d2l-card')).backgroundColor})()`),'rgb(255, 255, 255)');
   await cdp('Page.navigate',{url:`http://127.0.0.1:${server.address().port}/preview/course-surfaces.html`});
   await until(`document.readyState==='complete' && !!document.querySelector('iframe[title="Sample grade widget"]').contentDocument.querySelector('d2l-custom-grade-widget')?.shadowRoot`);
   for(const [theme,surface,text] of [['dark','rgb(28, 37, 48)','rgb(231, 237, 245)'],['dim','rgb(48, 57, 69)','rgb(240, 242, 246)'],['warm','rgb(255, 247, 232)','rgb(56, 45, 35)']]) {

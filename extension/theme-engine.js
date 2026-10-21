@@ -205,6 +205,7 @@
     const tokens = `--bs-panel:${p.surface};--bs-logo-contour:${theme === 'warm' ? 'none' : 'drop-shadow(0 0 .5px #f4f6f9) drop-shadow(0 0 1px #f4f6f9)'};` + Object.entries(p).filter(([key]) => key !== 'scheme').map(([key,value]) => `--bs-${key}:${value};`).join('');
     const hostSurfaces = shadow ? `
       :host(d2l-card), :host(d2l-enrollment-card),
+      :host(d2l-my-courses-enrollment-card) d2l-card,
       :host(d2l-navigation-main-header), :host(d2l-navigation-main-footer),
       :host(d2l-labs-navigation-main-header), :host(d2l-labs-navigation-main-footer) {
         background-color: var(--bs-surface) !important;
@@ -212,6 +213,19 @@
         border-color: var(--bs-border) !important;
       }
       :host(d2l-card) ::slotted([slot="content"]) { color: var(--bs-text) !important; }
+      /* Brightspace's dashboard nests each white d2l-card inside an
+         enrollment-card shadow root. Paint its actual card container as well
+         as the host so the surface does not depend on inherited D2L tokens. */
+      :host(d2l-card) .d2l-card-container,
+      :host(d2l-card) .d2l-card-content {
+        background-color: var(--bs-surface) !important;
+        color: var(--bs-text) !important;
+        border-color: var(--bs-border) !important;
+      }
+      :host(d2l-my-courses-enrollment-card) .d2l-enrollment-card-content-flex,
+      :host(d2l-my-courses-enrollment-card) .d2l-organization-name {
+        color: var(--bs-text) !important;
+      }
       :host(d2l-menu-item), :host(d2l-menu-item-link) {
         background-color: var(--bs-surface) !important;
         color: var(--bs-link) !important;

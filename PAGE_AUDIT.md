@@ -1,5 +1,9 @@
 # Page and menu styling audit
 
+### Nested dashboard course cards (1.2.5)
+
+Read-only inspection found dashboard cards nested through `d2l-my-courses-v2`, `d2l-my-courses-container-v2`, `d2l-my-courses-content-v2`, `d2l-my-courses-card-grid-v2`, `d2l-my-courses-enrollment-card`, and an inner `d2l-card`. Added scoped surface/text rules at the enrollment and card shadow boundaries plus a fictional local fixture for the same nesting. This identifies and targets the real components; live behavior still needs confirmation after installing the build in Chrome and Opera.
+
 ### First-navigation theme timing (1.2.4)
 
 The content script now applies the default Dark appearance at `document_start` before reading browser-local preferences. The saved theme is applied when that read completes. This targets the unthemed flash on first navigation; it is not a claim that every authenticated page has been visually verified.
