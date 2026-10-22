@@ -9,6 +9,7 @@ const profile=await mkdtemp(path.join(root,'dist','chrome-test-'));
 let browser;
 let closingBrowser=false;
 const sockets=[];
+const liveUpdate=process.env.AFTER_HOURS_LIVE_UPDATE_SMOKE==='1';
 const deadline=setTimeout(()=>{browser?.kill();process.exit(1);},60000);
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 async function connect(url) {
@@ -24,7 +25,7 @@ async function connect(url) {
 }
 async function launch() {
   closingBrowser=false;
-  browser=spawn(process.env.CHROME_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',['--headless=new','--disable-gpu','--no-first-run','--no-default-browser-check','--enable-unsafe-extension-debugging','--remote-debugging-port=0',`--user-data-dir=${profile}`,'about:blank'],{windowsHide:true,stdio:'ignore'});
+  browser=spawn(process.env.CHROME_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',['--headless=new','--disable-gpu','--no-first-run','--no-default-browser-check',...(liveUpdate?[]:['--host-resolver-rules=MAP api.github.com ~NOTFOUND']),'--enable-unsafe-extension-debugging','--remote-debugging-port=0',`--user-data-dir=${profile}`,'about:blank'],{windowsHide:true,stdio:'ignore'});
   let data,version;
   for(let i=0;i<100;i++){try{data=(await readFile(path.join(profile,'DevToolsActivePort'),'utf8')).trim().split(/\r?\n/);const response=await fetch(`http://127.0.0.1:${data[0]}/json/version`);if(response.ok){version=await response.json();if(version.webSocketDebuggerUrl)break;}}catch{}await pause(100);}
   assert(version?.webSocketDebuggerUrl,'isolated Chrome debugger started');
@@ -37,20 +38,31 @@ async function launch() {
     const targets=await(await fetch(`${base}/json`)).json();
     return connect(targets.find(t=>t.id===targetId).webSocketDebuggerUrl);
   }
-  return {control,page};
+  async function worker() {
+    for(let i=0;i<100;i++){
+      const targets=await(await fetch(`${base}/json`)).json();
+      const target=targets.find(t=>t.type==='service_worker'&&t.url.endsWith('/background.js'));
+      if(target)return connect(target.webSocketDebuggerUrl);
+      await pause(30);
+    }
+    throw new Error('Extension worker not found');
+  }
+  return {control,page,worker};
 }
 const widgetHosts=['d1i6rhttasws5m.cloudfront.net','d1zg7b99iisfa6.cloudfront.net'];
 const widgetFrames=widgetHosts.map(host=>`<iframe class="external-widget" src="https://${host}/production/index.html"></iframe>`).join('');
+const lateSource=await readFile(path.join(root,'preview','late-shadow.js'),'utf8');
+const lateHtml='<!doctype html><html><head><title>Late card fixture</title></head><body><d2l-my-courses-v2></d2l-my-courses-v2><script>window.fixtureRegistry=customElements;'+lateSource+'</script></body></html>';
 const html=`<!doctype html><html><head><title>Local intercepted fixture</title><style>body{background:white;color:black}</style></head><body><main><h1>Fictional course</h1><a href="#">Course link</a><input placeholder="Sample"><unregistered-first></unregistered-first><demo-card></demo-card><d2l-card>Course title</d2l-card><iframe src="https://learn.snhu.edu/local-frame"></iframe><iframe srcdoc="<p>Inherited-origin frame</p>"></iframe>${widgetFrames}</main><script>window.widgetReports={};addEventListener('message',e=>{if(e.data?.fixtureReport)window.widgetReports[e.data.host]=e.data.fixtureReport;});customElements.define('demo-card',class extends HTMLElement{connectedCallback(){if(!this.shadowRoot)this.attachShadow({mode:'open'}).innerHTML='<section>Open root</section>'}});customElements.define('d2l-card',class extends HTMLElement{connectedCallback(){if(!this.shadowRoot)this.attachShadow({mode:'open'}).innerHTML='<style>:host{display:block;background:white}</style><slot></slot>'}})</script></body></html>`;
 const widgetHtml=`<!doctype html><html><head><title>Fictional widget</title><style>body{background:white;color:black}</style></head><body><d2l-custom-grade-widget-main></d2l-custom-grade-widget-main><script>customElements.define('d2l-custom-grade-widget-main',class extends HTMLElement{connectedCallback(){if(!this.shadowRoot)this.attachShadow({mode:'open'}).innerHTML='<style>.main-container{background:white;color:black}</style><div class="main-container">Fictional widget</div>'}});addEventListener('message',e=>{if(e.data!=='fixture-report')return;const root=document.querySelector('d2l-custom-grade-widget-main').shadowRoot;e.source.postMessage({host:location.hostname,fixtureReport:{styled:!!document.querySelector('style[data-brightspace-theme]'),shadowStyled:!!root.querySelector('style[data-brightspace-theme]'),bg:getComputedStyle(document.body).backgroundColor,surface:getComputedStyle(root.querySelector('div')).backgroundColor}},e.origin);});</script></body></html>`;
 async function fixture(page,url) {
   page.on('Fetch.requestPaused', ({requestId,request})=>{
-    const body=widgetHosts.includes(new URL(request.url).hostname)?widgetHtml:request.url.includes('local-frame')?'<!doctype html><html><body><p>Sample frame</p></body></html>':html;
+    const body=widgetHosts.includes(new URL(request.url).hostname)?widgetHtml:request.url.includes('late-cards')?lateHtml:request.url.includes('local-frame')?'<!doctype html><html><body><p>Sample frame</p></body></html>':html;
     page.send('Fetch.fulfillRequest',{requestId,responseCode:200,responseHeaders:[{name:'Content-Type',value:'text/html'}],body:Buffer.from(body).toString('base64')}).catch(error=>{if(!closingBrowser)console.error(error);});
   });
   await page.send('Fetch.enable',{patterns:[{urlPattern:'*'}]});
   await page.send('Page.navigate',{url});
-  await page.until(`document.readyState==='complete' && !!document.querySelector(${JSON.stringify(widgetHosts.includes(new URL(url).hostname)?'d2l-custom-grade-widget-main':'demo-card')})?.shadowRoot`);
+  await page.until(url.includes('late-cards')?'window.lateFixture?.ready':`document.readyState==='complete' && !!document.querySelector(${JSON.stringify(widgetHosts.includes(new URL(url).hostname)?'d2l-custom-grade-widget-main':'demo-card')})?.shadowRoot`);
 }
 async function reportWidgets(p) {
   await p.evaluate(`window.widgetReports={};for(const frame of document.querySelectorAll('iframe.external-widget'))frame.contentWindow.postMessage('fixture-report',new URL(frame.src).origin);`);
@@ -58,13 +70,34 @@ async function reportWidgets(p) {
   return p.evaluate('window.widgetReports');
 }
 try {
-  let {control,page}=await launch();
+  let {control,page,worker}=await launch();
   const {id}=await control.send('Extensions.loadUnpacked',{path:path.join(root,'extension')});
   assert(id,'Chrome accepted the manifest and unpacked extension');
+  const background=await worker();
+  await background.until(`!!globalThis.BrightUpdates`);
+  if(liveUpdate) {
+    const info=await background.evaluate(`updater.check(true)`);
+    assert(!info.failed&&info.latestVersion,'Real public release endpoint must succeed from the extension worker');
+    console.log(`PASS: actual extension worker fetched the public GitHub latest release: v${info.latestVersion}; installed v${info.installed}; update available=${info.available}. No SNHU page opened.`);
+  } else {
+  await background.evaluate(`globalThis.fixtureRelease={tag_name:'v1.6.0'};globalThis.fetch=async url=>{if(url!==BrightUpdates.ENDPOINT)throw new Error('Unexpected request');return {ok:true,json:async()=>globalThis.fixtureRelease}}`);
   const popup=await page(`chrome-extension://${id}/popup.html`);
   await popup.until(`!!document.querySelector('#enabled:not(:disabled)')`);
+  await popup.send('Emulation.setDeviceMetricsOverride',{width:360,height:600,deviceScaleFactor:1,mobile:false});
   await popup.until(`document.querySelector('img.mark')?.complete && document.querySelector('img.mark').naturalWidth===128`);
   const manifest=JSON.parse(await readFile(path.join(root,'extension','manifest.json'),'utf8'));
+  await popup.until(`!document.querySelector('#refresh-updates').disabled`);
+  await popup.evaluate(`document.querySelector('#refresh-updates').click()`);
+  await popup.until(`!document.querySelector('#update-dot').hidden`);
+  assert.equal(await background.evaluate(`chrome.action.getBadgeText({})`),'•');
+  assert.match(await popup.evaluate(`document.querySelector('#update-status').textContent`),/1.6.0/);
+  const updateImage=await popup.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
+  await writeFile(path.join(root,'dist','popup-update.png'),Buffer.from(updateImage.data,'base64'));
+  await background.evaluate(`globalThis.fixtureRelease={tag_name:'v${manifest.version}'}`);
+  await popup.until(`!document.querySelector('#refresh-updates').disabled`);
+  await popup.evaluate(`document.querySelector('#refresh-updates').click()`);
+  await popup.until(`document.querySelector('#update-dot').hidden&&document.querySelector('#update-status').textContent.includes('up to date')`);
+  assert.equal(await background.evaluate(`chrome.action.getBadgeText({})`),'');
   const updateInfo=await popup.evaluate(`(()=>{const a=document.querySelector('#check-updates');return {version:document.querySelector('#version').textContent,href:a.href,target:a.target,rel:a.rel}})()`);
   assert.deepEqual(updateInfo,{version:`v${manifest.version}`,href:'https://github.com/PrithviGhale/Brightspace-Theme/releases/latest',target:'_blank',rel:'noopener noreferrer'});
   await popup.send('Emulation.setDeviceMetricsOverride',{width:360,height:600,deviceScaleFactor:1,mobile:false});
@@ -82,9 +115,24 @@ try {
   for(const value of Object.values(await reportWidgets(first))) {
     assert(value.styled && value.shadowStyled);assert.equal(value.bg,'rgb(28, 37, 48)');assert.equal(value.surface,'rgb(28, 37, 48)');
   }
+  for(const [mode,bg] of [['liquid','rgb(232, 239, 251)'],['liquid-clear','rgb(226, 238, 250)'],['liquid-dark','rgb(12, 22, 37)']]) {
+    await popup.evaluate(`(()=>{const mode=document.querySelector('#liquid-mode');mode.value='${mode}';mode.dispatchEvent(new Event('change'))})()`);
+    for(const p of [first,second])await p.until(`getComputedStyle(document.documentElement).backgroundColor==='${bg}'`);
+    assert(await popup.evaluate(`document.querySelector('[value="liquid"]').checked`));
+    for(const value of Object.values(await reportWidgets(first)))assert(value.styled&&value.shadowStyled);
+  }
   await popup.evaluate(`document.querySelector('#more-themes').click();document.querySelector('[value="ocean"]').click()`);
   for(const p of [first,second]) await p.until(`getComputedStyle(document.body).backgroundColor==='rgb(16, 33, 43)'`);
   assert(await popup.evaluate(`document.querySelector('#more-themes').getAttribute('aria-expanded')==='true'`));
+  await popup.evaluate(`document.querySelector('[value="modern"]').click()`);
+  for(const p of [first,second]) {
+    await p.until(`getComputedStyle(document.body).backgroundColor==='rgb(12, 16, 33)'`);
+    assert.equal(await p.evaluate(`getComputedStyle(document.querySelector('d2l-card')).borderRadius`),'28px');
+  }
+  for(const value of Object.values(await reportWidgets(first))) {
+    assert.equal(value.bg,'rgb(24, 31, 57)');
+    assert(value.styled && value.shadowStyled);
+  }
   await popup.evaluate(`document.querySelector('[value="midnight-city"]').click()`);
   for(const p of [first,second]) await p.until(`getComputedStyle(document.body,'::before').animationName==='brightspace-ambience'`);
   await popup.evaluate(`const color=document.querySelector('[data-color="bg"]');color.value='#101820';color.dispatchEvent(new Event('input',{bubbles:true}))`);
@@ -103,6 +151,26 @@ try {
   for(const value of Object.values(await reportWidgets(outside))) assert(!value.styled && !value.shadowStyled,'approved host must stay unthemed below an unrelated top-level site');
   const direct=await page();await fixture(direct,`https://${widgetHosts[0]}/production/index.html`);
   assert.equal(await direct.evaluate(`!!document.querySelector('style[data-brightspace-theme]')`),false,'direct widget visits must stay unthemed');
+  assert(await direct.evaluate(`Element.prototype.attachShadow.toString().includes('[native code]')`),'direct widget visit must not install the MAIN-world lifecycle hook');
+  const cold=await page();
+  for(const theme of ['dark','dim','warm','ocean','forest','rose','midnight-city','sunset','aurora','custom','modern','liquid','liquid-clear','liquid-dark']) {
+    await popup.evaluate(theme.startsWith('liquid')?`(()=>{const mode=document.querySelector('#liquid-mode');mode.value='${theme}';mode.dispatchEvent(new Event('change'))})()`:`document.querySelector('[value="${theme}"]').click()`);
+    await fixture(cold,`https://learn.snhu.edu/late-cards-${theme}`);
+    await cold.until(`window.lateFixture.card.shadowRoot.querySelector('style[data-brightspace-theme]')!==null`);
+    const layers=await cold.evaluate(`(()=>{let host=document.querySelector('d2l-my-courses-v2');const counts=[];for(const next of ['d2l-my-courses-container-v2','d2l-my-courses-content-v2','d2l-my-courses-card-grid-v2','d2l-my-courses-enrollment-card','d2l-card',null]){counts.push(host.shadowRoot.querySelectorAll('style[data-brightspace-theme]').length);if(next)host=host.shadowRoot.querySelector(next);}return counts})()`);
+    assert.deepEqual(layers,[1,1,1,1,1,1],`${theme}: every late nested component is themed on the first navigation`);
+    await cold.evaluate(`window.lateFixture.replace()`);
+    await cold.until(`window.lateFixture.card.shadowRoot.querySelector('style[data-brightspace-theme]')!==null`);
+    assert.notEqual(await cold.evaluate(`getComputedStyle(window.lateFixture.card).backgroundColor`),'rgb(255, 255, 255)',`${theme}: template replacement cannot leave the course card white`);
+  }
+  await popup.evaluate(`document.querySelector('[value="original"]').click()`);
+  await cold.until(`!window.lateFixture.card.shadowRoot.querySelector('style[data-brightspace-theme]')`);
+  assert(await cold.evaluate(`Element.prototype.attachShadow.toString().includes('[native code]')`),'Original restores the native MAIN-world method');
+  await cold.evaluate(`window.lateFixture.replace()`);
+  assert.equal(await cold.evaluate(`!!window.lateFixture.card.shadowRoot.querySelector('style[data-brightspace-theme]')`),false);
+  await popup.evaluate(`document.querySelector('[value="warm"]').click()`);
+  await cold.until(`window.lateFixture.card.shadowRoot.querySelector('style[data-brightspace-theme]')!==null`);
+  console.log('PASS: fourteen cold navigations, all six delayed nested roots, rerender style repair, Original teardown and re-enable; actual MV3 MAIN/isolated bridge. No refresh used.');
   const exited=new Promise(resolve=>browser.once('exit',resolve));
   closingBrowser=true;
   await control.send('Browser.close').catch(()=>{}); await exited;
@@ -120,6 +188,8 @@ try {
   console.log('PASS: Chrome loaded actual MV3 extension; real chrome.storage.local; popup and two-tab synchronization; matching and srcdoc frames; open shadow root; off/on cleanup; outside host excluded; saved preferences and content theme survived full browser restart. All site responses were local fixtures.');
   console.log('PASS: both approved widget origins theme only below the SNHU top-level origin; nested root and frame surface colors synchronize; off removes styles; direct visits and unrelated embeddings remain unchanged.');
   console.log('PASS: installed version and safe latest-release link; popup fits 360×600; no GitHub request made by the test. Screenshot: dist/popup.png.');
+  console.log('PASS: three Liquid Glass modes synchronize across tabs/widgets; real worker popup messages, mocked public-release metadata, red update dot/toolbar badge and clearing when current. Screenshot dist/popup-update.png.');
+  }
 } finally {
   closingBrowser=true;
   clearTimeout(deadline);for(const s of sockets)s.close();browser?.kill();

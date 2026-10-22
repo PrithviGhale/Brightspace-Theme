@@ -1,5 +1,21 @@
 # Page and menu styling audit
 
+### Liquid Glass, navigation and updates (1.5.0)
+
+Default, Transparent and Dark use the same audited legacy/open-shadow selectors across supported page families. Each mode passed local dashboard/course/calendar, discussion, submission, feedback, drop-zone, data-table, menu/settings/progress and photo fixtures. Desktop/narrow layouts, focus, reduced motion, stationary reading surfaces and Original cleanup were checked. Navigation now has pill hover targets, native-height centering, consistent icon sizing and dark-theme white branding. Existing Prism and older-palette regression suites passed. Real extension tests cover three-mode tab/widget synchronization and fourteen fresh navigations with delayed components. Update notices are separate from course notifications: a worker checks only a fixed public GitHub endpoint and controls the extension's own popup/badge. Simulated release metadata verifies available/current states. This is fictional Chrome coverage, not a claim of perfect compatibility with every authenticated course, external viewer or Opera version.
+
+### Header position and title backplate (1.4.3)
+
+Read-only inspection of the authenticated dashboard confirmed native full-height navigation hosts inside fixed-height notification/profile wrappers. Prism's `height:auto` shrank the hosts and moved the controls to the row's top; retaining `height:100%` centers compact 44px buttons. The welcome title's nested `.d2l-box` / `.d2l-box-layout` wrappers inherited solid panel fills. Scoped transparency within `.d2l-page-header` removes that rectangle without clearing other course panels. A local fixture matching those structures reproduced both failures before correction and passed desktop/narrow geometry, hit-target, title transparency and Original restoration checks afterward. Existing theme and actual-MV3 suites passed. Only structural selectors/styles informed the fixture; no private course content was saved. Final installed appearance on Brightspace/Opera remains a manual check.
+
+### White cards on first visit (1.4.2)
+
+The old bounded startup checks miss a root attached to an existing host after those checks finish: attaching a shadow root does not emit a light-DOM child mutation. A six-level delayed fixture reproduced this without refresh. A bundled MAIN-world helper now emits host-only lifecycle notifications for new open roots, while isolated scripts inspect/style just those roots. A root observer also restores the owned style after template replacement. Eleven cold navigations across every theme passed with the actual extension and no refresh. Compact 44px header controls were verified against an 88px native-height fixture. The installed fix still needs confirmation on the user's authenticated Brightspace/Opera session.
+
+### Prism glass redesign (1.4.1 local build)
+
+Added a selectable CSS-only redesign using the existing audited Brightspace surface and component selectors. It rounds dashboard cards, nav/menu controls, discussion rows, assignment/grade panels, and supported calendar/notification surfaces, with CSS hover lift and scroll-entry motion where Chromium supports scroll-driven animations. `prefers-reduced-motion` disables the added motion. Images and video are not filtered. The redesign preserves Brightspace's existing navigation and actions; calendar/reminder behavior is unchanged. This pass has not been checked against authenticated Brightspace pages, and generated content in closed shadow roots or embedded PDF/Office viewers can remain unchanged.
+
 ### Nested dashboard course cards (1.2.5)
 
 Read-only inspection found dashboard cards nested through `d2l-my-courses-v2`, `d2l-my-courses-container-v2`, `d2l-my-courses-content-v2`, `d2l-my-courses-card-grid-v2`, `d2l-my-courses-enrollment-card`, and an inner `d2l-card`. Added scoped surface/text rules at the enrollment and card shadow boundaries plus a fictional local fixture for the same nesting. This identifies and targets the real components; live behavior still needs confirmation after installing the build in Chrome and Opera.

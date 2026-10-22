@@ -48,10 +48,19 @@ try {
     assert.equal(colors[2],colors[3]);
     await cdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false}).then(r=>writeFile(path.join(root,'dist',`preview-${theme}.png`),Buffer.from(r.data,'base64')));
   }
+  await set('modern');
+  await until(`getComputedStyle(document.body).backgroundColor==='rgb(12, 16, 33)'`);
+  const modernSurface=await evaluate(`(()=>{const card=document.querySelector('.cards .d2l-widget');const reveal=getComputedStyle(card);return {radius:reveal.borderRadius,timeline:reveal.animationTimeline,frame:getComputedStyle(document.querySelector('.content').contentDocument.body).backgroundColor,media:getComputedStyle(document.querySelector('img')).filter}})()`);
+  assert.equal(modernSurface.radius,'24px','Prism rounds outer dashboard panels');
+  assert.equal(modernSurface.frame,'rgb(24, 31, 57)','Prism carries into supported HTML frames');
+  assert.equal(modernSurface.media,'none','Prism preserves original course media');
+  assert.equal(await evaluate(`getComputedStyle(document.querySelector('#grades table')).borderCollapse`),'collapse','Authored/layout tables keep their existing geometry');
+  if(await evaluate(`CSS.supports('animation-timeline: view()')`)) assert.notEqual(modernSurface.timeline,'auto','Prism adds native scroll-entry motion where supported');
+  await cdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false}).then(r=>writeFile(path.join(root,'dist','preview-modern.png'),Buffer.from(r.data,'base64')));
   for (const [theme,surface,text] of [['ocean','rgb(24, 49, 61)','rgb(229, 247, 250)'],['forest','rgb(34, 52, 42)','rgb(237, 245, 233)'],['rose','rgb(57, 39, 56)','rgb(255, 240, 245)']]) {
     await set(theme);
-    await until(`getComputedStyle(document.querySelector('d2l-card')).backgroundColor === ${JSON.stringify(surface)}`);
-    assert.equal(await evaluate(`getComputedStyle(document.querySelector('d2l-card [slot="content"]')).color`),text,`${theme}: course-card title contrast`);
+    await until(`getComputedStyle(document.querySelector('.d2l-widget')).backgroundColor === ${JSON.stringify(surface)}`);
+    assert.equal(await evaluate(`getComputedStyle(document.querySelector('.d2l-widget h2')).color`),text,`${theme}: card title contrast`);
   }
   for (const theme of ['midnight-city','sunset','aurora']) {
     await set(theme);
@@ -65,7 +74,7 @@ try {
   const previewCustom={bg:'#101820',surface:'#202a30',raised:'#30414a',text:'#f0f6f8',muted:'#bfd0d6',link:'#8ee2ff',border:'#68828c',focus:'#ffd27a',danger:'#ffb6b6',success:'#a5e7c2',scheme:'dark'};
   await evaluate(`chrome.storage.local.set({theme:'custom',customPalette:${JSON.stringify(previewCustom)},enabled:true})`);
   await until(`getComputedStyle(document.documentElement).backgroundColor === 'rgb(16, 24, 32)'`);
-  assert.equal(await evaluate(`getComputedStyle(document.querySelector('d2l-card')).backgroundColor`),'rgb(32, 42, 48)');
+  assert.equal(await evaluate(`getComputedStyle(document.querySelector('.d2l-widget')).backgroundColor`),'rgb(32, 42, 48)');
   await cdp('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
   await set('midnight-city');
   await until(`getComputedStyle(document.body,'::before').animationName === 'none'`);
@@ -225,6 +234,60 @@ try {
   assert.equal(await evaluate(`getComputedStyle(document.querySelector('#profiles d2l-profile-image-base').shadowRoot.querySelector('img')).filter`),'none');
   console.log('PASS: discussion image controls, classlist photos, profile cards, open-shadow and added profile images; loaded/uncovered photos and no filtering; transparent branding with logo-only contour; all themes/Original. Screenshots dist/profiles-{dark,dim,warm,original}.png');
   await cdp('Emulation.setDeviceMetricsOverride',{width:1440,height:1100,deviceScaleFactor:1,mobile:false});
+  await cdp('Page.navigate',{url:`http://127.0.0.1:${server.address().port}/preview/redesign.html`});
+  await until(`document.readyState==='complete' && document.querySelector('.course-grid d2l-card')?.shadowRoot?.querySelector('style[data-brightspace-theme]') && getComputedStyle(document.body).backgroundColor==='rgb(12, 16, 33)'`);
+  const prism=await evaluate(`(()=>{const card=document.querySelector('.course-grid d2l-card'),root=card.shadowRoot;return {cards:document.querySelectorAll('.course-grid d2l-card').length,radius:getComputedStyle(card).borderRadius,imageInset:getComputedStyle(root.querySelector('.d2l-card-header')).marginTop,innerShadow:getComputedStyle(root.querySelector('.d2l-card-container')).boxShadow,photo:getComputedStyle(card.querySelector('img')).filter,opacity:getComputedStyle(document.querySelector('.d2l-widget')).opacity,overflow:document.documentElement.scrollWidth>innerWidth}})()`);
+  assert.deepEqual(prism,{cards:6,radius:'28px',imageInset:'11px',innerShadow:'none',photo:'none',opacity:'1',overflow:false});
+  async function checkPrismHeader() {
+    const geometry=await evaluate(`(()=>{const row=document.querySelector('.header-inner').getBoundingClientRect();return [...document.querySelectorAll('d2l-labs-navigation-dropdown-button-icon,d2l-labs-navigation-dropdown-button-custom')].map(e=>{const b=e.shadowRoot.querySelector('button'),r=b.getBoundingClientRect();return {offset:Math.abs(r.y+r.height/2-row.y-row.height/2),contained:r.y>=row.y&&r.bottom<=row.bottom,hit:e.shadowRoot.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.closest('button')===b}})})()`);
+    for(const control of geometry){assert(control.offset<1,'Header controls stay vertically centered within the native fixed-height row');assert(control.contained&&control.hit,'Header controls are unclipped and clickable');}
+    assert(await evaluate(`[...document.querySelectorAll('.d2l-page-header,.d2l-page-header .d2l-box,.d2l-page-header .d2l-box-layout')].every(e=>getComputedStyle(e).backgroundColor==='rgba(0, 0, 0, 0)')`),'Page-title layout wrappers must not paint opaque rectangles over the glow');
+  }
+  await checkPrismHeader();
+  for(const tag of ['d2l-labs-navigation-dropdown-button-icon','d2l-labs-navigation-dropdown-button-custom']) {
+    assert.equal(await evaluate(`getComputedStyle(document.querySelector('${tag}').shadowRoot.querySelector('button')).height`),'44px','Header controls cannot stretch to native 88px navigation height');
+    assert.equal(await evaluate(`getComputedStyle(document.querySelector('${tag}').shadowRoot.querySelector('button')).backgroundColor`),'rgba(0, 0, 0, 0)','Header controls have no permanent tall filled box');
+  }
+  await until(`getComputedStyle(document.querySelector('nav [aria-current="page"]')).backgroundColor==='rgb(48, 64, 104)'`);
+  const cardBox=await evaluate(`(()=>{const r=document.querySelector('.course-grid d2l-card').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()`);
+  await cdp('Input.dispatchMouseEvent',{type:'mouseMoved',...cardBox});
+  await until(`getComputedStyle(document.querySelector('.course-grid d2l-card')).transform!=='none'`);
+  await cdp('Input.dispatchMouseEvent',{type:'mouseMoved',x:4,y:4});
+  await cdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false}).then(r=>writeFile(path.join(root,'dist','prism-desktop.png'),Buffer.from(r.data,'base64')));
+  await evaluate(`document.querySelector('nav [data-view="course"]').click()`);
+  await until(`!document.querySelector('[data-page="course"]').hidden`);
+  assert.equal(await evaluate(`getComputedStyle(document.querySelector('.d2l-le-disc-post')).transform`),'none','Reading surfaces stay stationary');
+  const rowTones=await evaluate(`(()=>{const cell=document.querySelector('.d2l-table tbody th'),inner=cell.querySelector('.d2l-htmlblock');return [getComputedStyle(cell).backgroundColor,getComputedStyle(inner).backgroundColor]})()`);
+  assert.equal(rowTones[0],rowTones[1],'Nested feedback backgrounds blend with data-table cells');
+  await evaluate(`document.querySelector('#sample-comment').focus()`);
+  assert.equal(await evaluate(`getComputedStyle(document.querySelector('#sample-comment')).outlineWidth`),'3px');
+  await cdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false}).then(r=>writeFile(path.join(root,'dist','prism-course.png'),Buffer.from(r.data,'base64')));
+  await evaluate(`document.querySelector('nav [data-view="calendar"]').click()`);
+  await cdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false}).then(r=>writeFile(path.join(root,'dist','prism-calendar.png'),Buffer.from(r.data,'base64')));
+  await evaluate(`document.querySelector('nav [data-view="dashboard"]').click()`);
+  await cdp('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
+  await cdp('Input.dispatchMouseEvent',{type:'mouseMoved',...cardBox});
+  assert.equal(await evaluate(`getComputedStyle(document.querySelector('.course-grid d2l-card')).transform`),'none','Reduced motion removes card lift');
+  assert.equal(await evaluate(`getComputedStyle(document.querySelector('.d2l-widget')).animationName`),'none','Reduced motion removes scroll entry');
+  await cdp('Emulation.setDeviceMetricsOverride',{width:390,height:1000,deviceScaleFactor:1,mobile:false});
+  assert.equal(await evaluate(`document.documentElement.scrollWidth>innerWidth`),false,'Phone layout has no horizontal overflow');
+  await checkPrismHeader();
+  await cdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false}).then(r=>writeFile(path.join(root,'dist','prism-mobile.png'),Buffer.from(r.data,'base64')));
+  await evaluate(`const picker=document.querySelector('#appearance');picker.value='original';picker.dispatchEvent(new Event('change'))`);
+  await until(`!document.querySelector('style[data-brightspace-theme]')`);
+  assert.equal(await evaluate(`getComputedStyle(document.querySelector('.course-grid d2l-card')).borderRadius`),'6px','Original restores native card styling');
+  assert.equal(await evaluate(`getComputedStyle(document.querySelector('d2l-labs-navigation-dropdown-button-icon').shadowRoot.querySelector('button')).height`),'72px','Original restores native full-height header controls');
+  await cdp('Emulation.setEmulatedMedia',{features:[]});
+  console.log('PASS: Prism glass centered/unclipped 44px header controls and transparent title wrappers at 1440px/390px; card geometry, hover lift, stationary discussions, nested table colors, focus, media, reduced motion and Original restoration. Screenshots: dist/prism-{desktop,course,calendar,mobile}.png');
+  await cdp('Emulation.setDeviceMetricsOverride',{width:1440,height:1100,deviceScaleFactor:1,mobile:false});
+  await set('modern');
+  await cdp('Page.navigate',{url:`http://127.0.0.1:${server.address().port}/preview/late-shadow.html`});
+  await until(`window.lateFixture?.ready`);
+  await until(`window.lateFixture.card.shadowRoot.querySelector('style[data-brightspace-theme]')!==null`);
+  await evaluate(`window.lateFixture.replace()`);
+  await until(`window.lateFixture.card.shadowRoot.querySelector('style[data-brightspace-theme]')!==null`);
+  assert.notEqual(await evaluate(`getComputedStyle(window.lateFixture.card).backgroundColor`),'rgb(255, 255, 255)');
+  console.log('PASS: six delayed nested roots after window load with no registry; first-visit styling and recovery from template replacement.');
   await cdp('Page.navigate',{url:`http://127.0.0.1:${server.address().port}/preview/registry-null.html`});
   await until(`document.readyState==='complete' && !!document.querySelector('#existing')?.shadowRoot`);
   assert.equal(await evaluate(`customElements`),null);

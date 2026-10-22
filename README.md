@@ -1,113 +1,86 @@
 <p align="center"><img src="extension/icons/icon-128.png" width="72" height="72" alt="After Hours logo"><br><strong>BRIGHTSPACE AFTER HOURS</strong></p>
 
-# A calmer Brightspace, day or night.
+# Make Brightspace feel like your space.
 
-Dark, Dim, Warm / sepia, several color palettes, animated scenes, and custom colors for **SNHU Brightspace**, with an Original option whenever you want it. Built for Chrome and Opera.
+A theme extension for **SNHU Brightspace**, built for Chrome and Opera. Choose a comfortable color palette or give the whole interface a fresh glass design.
 
-I made this because I'm used to having dark mode, and Brightspace felt too bright. I wanted a simple way to make it more comfortable to use without changing how my courses work.
+I made this because I'm used to having dark mode, and Brightspace felt too bright. I wanted it to look better and feel easier to use without changing how my courses work.
 
-**[Download the latest release](https://github.com/PrithviGhale/Brightspace-Theme/releases/latest)** · [Report a problem](https://github.com/PrithviGhale/Brightspace-Theme/issues) · [Development guide](docs/DEVELOPMENT.md)
+**[Download v1.5.0](https://github.com/PrithviGhale/Brightspace-Theme/releases/tag/v1.5.0)** · [Report a problem](https://github.com/PrithviGhale/Brightspace-Theme/issues) · [Changelog](CHANGELOG.md)
 
-## Pick your atmosphere
+## New: Liquid Glass
 
-Choose **More themes** in the popup to open Ocean, Forest, Rose, Midnight City, Sunset City, Aurora, and Custom colors. Custom colors let you choose page, panel, text, muted text, link, button, and focus-ring colors; the popup checks contrast before saving. Animated scenes use a slow CSS background effect behind page content and follow your system's reduced-motion setting. Themes use the same saved setting on supported Brightspace pages, tabs, and frames.
+Open **More themes → Liquid Glass**, then choose a glass appearance:
 
-| Dark | Dim | Warm / sepia |
+| Default | Transparent | Dark |
 | :---: | :---: | :---: |
-| ![Dark theme preview with fictional course widgets](docs/screenshots/dark.png) | ![Dim theme preview with fictional course widgets](docs/screenshots/dim.png) | ![Warm theme preview with fictional course widgets](docs/screenshots/warm.png) |
-| Deep blue surfaces | Softer evening contrast | Warm paper tones |
+| ![Default frosted glass preview](docs/screenshots/liquid-default.png) | ![Transparent glass preview](docs/screenshots/liquid-transparent.png) | ![Dark glass preview](docs/screenshots/liquid-dark.png) |
+| Soft frosted panels | More of the background shines through | Deep midnight glass |
 
-Screenshots show a local preview with fictional data. **Original** removes the theme styles and restores Brightspace's own appearance.
+Rounded course cards, bright glass edges, pill controls, an animated pastel or midnight background, and a gentle jelly effect on hover. Reading areas stay steady. System reduced-motion settings turn off the added movement; reduced-transparency settings use solid panels where supported. This is a web interpretation inspired by liquid glass, not Apple's native rendering system.
 
-Version **1.2.1** also fixes white submission/attachment panels and patchy table cells. See the fictional [Dark](docs/screenshots/submissions-dark.png), [Dim](docs/screenshots/submissions-dim.png), and [Warm](docs/screenshots/submissions-warm.png) submission/table previews.
+Screenshots use **fictional local courses**, not account data. Your real course artwork, links, layout and actions stay in place. Sample calendar events and widgets in the preview are not added to your account.
 
-Version **1.2.2** protects profile photo controls and removes the added logo plate. Fictional profile previews: [Dark](docs/screenshots/profiles-dark.png), [Dim](docs/screenshots/profiles-dim.png), [Warm](docs/screenshots/profiles-warm.png).
+## More ways to make it yours
 
-Version **1.3.0** adds seven more themes, a custom color picker with contrast checks, and three optional animated scenes. The original logo source is kept in `assets/logo-original.png`; Windows developers can regenerate icon sizes with `powershell -NoProfile -File tools/build-icons.ps1`.
+- **Prism glass:** blue and violet glow, rounded panels, inset course images and hover lift.
+- **Dark, Dim and Warm / sepia:** simple, comfortable everyday choices.
+- **Ocean, Forest and Rose:** extra color palettes.
+- **Midnight City, Sunset City and Aurora:** gently animated scenes.
+- **Custom colors:** choose your own palette with text and focus contrast checks.
+- **Original / Off:** restore Brightspace's own appearance.
 
-## What it does
-
-- Changes the colors of Brightspace pages, menus, discussions, tables, forms, and supported widgets.
-- Keeps images and videos in their original colors.
-- Keeps profile photo controls transparent. The navigation logo has no added white box; Dark and Dim add a small outline around its artwork for readability. Photos stay unfiltered.
-- Remembers your chosen theme and custom palette on your device and updates your open Brightspace tabs.
-- Includes an on/off switch and visible keyboard focus indicators.
-- Adds **Check for updates**, which opens the latest GitHub release.
-- Uses no analytics, tracking, runtime dependencies, or background worker.
-
-<p align="center"><img src="docs/screenshots/popup.png" width="300" alt="After Hours popup with theme choices, an on/off switch, installed version, and Check for updates link"></p>
+The themes cover supported dashboard, discussion, announcement, assignment, feedback, grade, classlist, calendar, menu and settings surfaces. Navigation controls are compact and centered, and page titles have no solid backplate. Course photos and profile pictures stay unfiltered. Dark glass/Prism navigation branding uses a clean single-color logo instead of the old outline effect.
 
 ## Install
 
-1. Open the **[latest release](https://github.com/PrithviGhale/Brightspace-Theme/releases/latest)**.
-2. Download **`brightspace-after-hours-1.3.0.zip`** from **Assets**. Use the extension ZIP, rather than GitHub's automatically generated “Source code” download.
-3. Extract the ZIP into a permanent folder. Don't load the ZIP itself.
-4. Follow the steps for your browser:
+1. Open the **[latest release](https://github.com/PrithviGhale/Brightspace-Theme/releases/latest)** and download the versioned ZIP in **Assets**. Use the attached extension ZIP, not GitHub's “Source code” download.
+2. Extract it into a permanent folder.
+3. Open `chrome://extensions` or `opera://extensions` and turn on **Developer mode**.
+4. Click **Load unpacked** and select the extracted folder containing `manifest.json`.
+5. Pin **Brightspace After Hours**, refresh Brightspace, and choose a theme from the extension icon.
 
-| Chrome | Opera |
+If you cloned the repository, load its **extension/** folder instead. Keep only one copy enabled. Managed school/work browsers may restrict unpacked extensions.
+
+## Update notices
+
+The extension checks this repository's **public GitHub releases every six hours** while your browser is running, on browser startup when the cached check is old, and when you open the popup. **Check now** forces a fresh check.
+
+When a newer stable version is available, a **red toolbar badge/dot** and popup notice show the version. **Get v…** opens the release page. Offline or rate-limited checks keep a previously known update notice and wait before retrying.
+
+To install a ZIP update:
+
+1. Download and extract the new version.
+2. Replace the files in the **same folder** you originally loaded; this keeps preferences.
+3. Click **Reload** on the extension's card and refresh Brightspace tabs.
+
+ZIP installs cannot replace their own files automatically. This project has not been submitted to the Chrome Web Store or Opera Add-ons. A browser may ask you to acknowledge the new GitHub API access after upgrading from an older build.
+
+## Privacy and access
+
+Preferences stay in your browser profile. There are no analytics, ads, tracking, remote scripts, remote fonts, or runtime dependencies. The theme inspects element/shadow-root structure to place styles; it does **not read or save grades, assignment text, passwords, form values or discussion content**.
+
+| Access | Purpose |
 | --- | --- |
-| Open `chrome://extensions` | Open `opera://extensions` |
-| Enable **Developer mode** | Enable **Developer mode** |
-| Click **Load unpacked** | Click **Load unpacked** / **Load unpacked extension** |
-| Select the extracted folder containing `manifest.json` | Select the extracted folder containing `manifest.json` |
+| `storage` | Save appearance and public-release check results locally |
+| `alarms` | Schedule a release check every six hours |
+| `https://learn.snhu.edu/*` | Theme Brightspace pages and eligible HTML frames |
+| `https://d1i6rhttasws5m.cloudfront.net/production/*` | Theme SNHU's embedded grade widget |
+| `https://d1zg7b99iisfa6.cloudfront.net/production/*` | Theme SNHU's embedded discussion widget |
+| `https://api.github.com/*` | Request only this repository's public latest-release endpoint |
 
-5. Pin **Brightspace After Hours** from your browser's Extensions menu.
-6. Open or refresh **https://learn.snhu.edu/**, then click the extension icon to choose a theme.
+The update worker sleeps between checks. Its fixed request sends no cookies, credentials, page content or referrer. GitHub receives the normal network request metadata. Only a validated stable version is saved; remote code and remote-provided links are never executed or trusted. Theme scripts make no network requests. The widget scripts run only under SNHU's top-level origin; direct visits and other embeddings are excluded.
 
-If you downloaded the whole repository, load its **`extension/`** folder instead. A school-managed browser may restrict developer-mode extensions. Opera uses the same extension files; its runtime has not yet been independently tested here.
+Late-loading open components are styled through a small local lifecycle helper and observers. Original/Off disconnects theme observers and stops that helper's notifications. There is no continuous page polling.
 
-## Update
+## Coverage
 
-Click **Check for updates** in the popup. It opens the latest release page only when you click it. It does not check in the background, compare versions, or install anything automatically.
+Checked in isolated Chrome using the real extension and fictional page layouts: all three Liquid Glass modes, the existing themes, desktop/narrow screens, forms, supported frames, nested components, photos, reduced motion, update badges and browser restart persistence. See [verification](VERIFICATION.md) and the [page audit](PAGE_AUDIT.md).
 
-For an unpacked install:
+Opera and the final installed theme on authenticated courses still need confirmation. PDFs, Office viewers, external tools, closed shadow roots and custom course templates may retain their own appearance. No assignment or quiz was submitted or attempted during testing. Calendar and notification designs restyle Brightspace's existing controls; they do not add reminder features.
 
-1. Download and extract the new extension ZIP.
-2. Replace the files in the same folder you originally loaded. Keeping the same folder keeps your installed extension and its preferences.
-3. Open `chrome://extensions` or `opera://extensions` and click **Reload** on the extension's card.
-4. Refresh all Brightspace tabs and reopen the popup to check the installed version.
+## Development
 
-GitHub releases cannot automatically replace an unpacked extension's files. Browser-managed automatic updates would require distribution through a supported browser store/update channel. **This project has not been submitted to the Chrome Web Store or Opera Add-ons.**
+No package installation is needed. See the [development guide](docs/DEVELOPMENT.md) for preview, test and package commands.
 
-## Privacy
-
-The only extension API permission is **storage**. It saves whether the theme is enabled, the selected theme, and your custom color palette. Preferences stay in your browser profile and do not sync to an account.
-
-The extension does **not read or save grades, assignment text, passwords, input values, discussion content, or other course data**. It looks at element/shadow-root structure to place styles. It does not transmit course data, run remote code, or make background network requests. The update link opens GitHub with no page data or referrer attached.
-
-Website access is limited to:
-
-| Website | Why |
-| --- | --- |
-| `https://learn.snhu.edu/*` | Brightspace pages and matching HTML frames |
-| `https://d1i6rhttasws5m.cloudfront.net/production/*` | SNHU's embedded current-grade widget |
-| `https://d1zg7b99iisfa6.cloudfront.net/production/*` | SNHU's embedded discussion-activity widget |
-
-The two widget hosts are explicitly allowed because those widgets live outside the SNHU domain. Their theme code runs only when they are embedded under a top-level `https://learn.snhu.edu` page. Direct visits and embeddings under other websites remain unchanged. No general CloudFront access is requested. Existing widgets keep their own network behavior.
-
-## What may still look different
-
-- PDFs, Office viewers, other external tools, canvas graphics, and closed shadow roots may keep their original colors.
-- Logos, photos, videos, and artwork may contain bright areas. They are preserved instead of inverted.
-- Custom course templates, delayed components, strict page policies, and future Brightspace changes can need additional fixes.
-- A brief flash of the original page can occur while preferences load. Choose Original/off before printing if you want original print colors.
-
-Authenticated Brightspace pages were inspected for their structure and colors. Updated themes were tested on local fictional previews and in isolated Chrome extension tests. **That does not establish complete compatibility with every course or tool.** See the [page audit](PAGE_AUDIT.md) and [verification record](VERIFICATION.md) for what was checked and what remains unverified. No coursework, quizzes, or account settings were submitted or changed during inspection.
-
-## Help improve it
-
-If something is hard to read, switch to **Original** or turn the extension off. [Open an issue](https://github.com/PrithviGhale/Brightspace-Theme/issues) with your browser/version, theme, page type, and a cropped screenshot with personal information removed. Don't include login details, private coursework, grades, or classmates' information.
-
-For local development, no package install is needed:
-
-```powershell
-node tools/preview-server.mjs
-node tests/check.mjs
-node tests/browser.mjs
-node tests/extension.mjs
-powershell -NoProfile -File tools/package.ps1
-```
-
-The preview opens at `http://127.0.0.1:4173/`. Browser checks use a separate test profile. See [the development guide](docs/DEVELOPMENT.md) for details.
-
-Made by **[Prithvi Ghale](https://github.com/PrithviGhale)**. This is an independent project, not an official SNHU or D2L product.
+Unofficial project. Not affiliated with SNHU, D2L or Apple.

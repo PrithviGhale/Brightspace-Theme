@@ -12,6 +12,10 @@
 <label class="choice"><input type="radio" name="theme" value="original"><span class="swatch original" aria-hidden="true"><i></i><i></i></span><span><strong>Original</strong><small>Brightspace as designed</small></span><span class="selected" aria-hidden="true">✓</span></label>
 <button type="button" id="more-themes" aria-expanded="false" aria-controls="more-panel"><span>More themes</span><span class="arrow" aria-hidden="true">⌄</span></button>
 <div id="more-panel" hidden>
+<p class="group-title">New design</p>
+<label class="choice design-choice"><input type="radio" name="theme" value="liquid"><span class="swatch liquid" aria-hidden="true"><i></i><i></i></span><span><strong>Liquid Glass</strong><small>Frosted light, soft depth, jelly hover</small></span><span class="selected" aria-hidden="true">✓</span></label>
+<div class="liquid-options"><label for="liquid-mode">Glass appearance</label><select id="liquid-mode"><option value="liquid">Default · frosted</option><option value="liquid-clear">Transparent · clear</option><option value="liquid-dark">Dark · midnight glass</option></select><small>Motion follows your system’s reduced-motion setting.</small></div>
+<label class="choice design-choice"><input type="radio" name="theme" value="modern"><span class="swatch modern" aria-hidden="true"><i></i><i></i></span><span><strong>Prism glass</strong><small>Blue + violet glow. A fresh learning space.</small></span><span class="selected" aria-hidden="true">✓</span></label>
 <p class="group-title">Color palettes</p>
 <label class="choice"><input type="radio" name="theme" value="ocean"><span class="swatch ocean" aria-hidden="true"><i></i><i></i></span><span><strong>Ocean</strong><small>Cool blue-green</small></span><span class="selected" aria-hidden="true">✓</span></label>
 <label class="choice"><input type="radio" name="theme" value="forest"><span class="swatch forest" aria-hidden="true"><i></i><i></i></span><span><strong>Forest</strong><small>Quiet green tones</small></span><span class="selected" aria-hidden="true">✓</span></label>
@@ -33,5 +37,5 @@
 </div></div></fieldset>
 <p id="status" role="status" aria-live="polite">Loading preferences…</p>
 </main>
-<footer><div class="update-row"><span id="version" aria-label="Installed version">After Hours</span><a id="check-updates" href="https://github.com/PrithviGhale/Brightspace-Theme/releases/latest" target="_blank" rel="noopener noreferrer">Check for updates <span aria-hidden="true">↗</span></a></div><p class="update-note">Opens GitHub. Install updates by replacing files and reloading.</p><p><span aria-hidden="true">◇</span> Stored on this device. No tracking.</p><p>SNHU + two embedded widget hosts · Unofficial extension</p></footer>
+<footer><div class="update-row"><span id="version" aria-label="Installed version">After Hours</span><button id="refresh-updates" type="button">Check now</button><a id="check-updates" href="https://github.com/PrithviGhale/Brightspace-Theme/releases/latest" target="_blank" rel="noopener noreferrer"><span id="update-dot" hidden aria-hidden="true"></span><span id="release-label">Releases ↗</span></a></div><p id="update-status" role="status" aria-live="polite">Checking for updates…</p><p class="update-note">Checks public GitHub releases every 6 hours. ZIP installs update by replacing files and reloading.</p><p>Preferences stay on this device · No tracking · Unofficial</p></footer>
 </body></html>

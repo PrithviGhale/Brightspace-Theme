@@ -1,5 +1,40 @@
 # Changelog
 
+## 1.5.0 — 2026-10-22
+
+- Added **Liquid Glass** under More themes, with Default, Transparent and Dark appearances. Frosted panels, inset highlights, rounded cards, animated backgrounds and gentle jelly hover motion use local CSS only.
+- Applied the design to supported dashboard, course, discussion, announcement, assignment, feedback, grade, classlist, calendar, menu and settings surfaces. Reading areas stay still; reduced-motion and reduced-transparency preferences are respected, with opaque fallbacks where blur is unavailable.
+- Polished navigation for Prism and Liquid Glass: centered 44px pill controls, consistent 22px header icons, cleaner hover states and subtle dividers. Dark designs use a clean white navigation logo silhouette instead of the old contour. Photos remain unfiltered.
+- Added automatic public GitHub release checks every six hours, cached startup/popup checks, **Check now**, a red toolbar badge/dot, and a popup notice with the new version. Numeric stable-version comparison ignores drafts/prereleases; offline checks retain known updates. ZIP installation still requires replacing files and reloading.
+- Added an event-driven update worker, `alarms` permission and access to `api.github.com` solely for the fixed public latest-release endpoint. Requests omit credentials/referrer, reject redirects, and never include Brightspace content. No remote code or remote-provided link is executed.
+- Includes the previously local Prism redesign, late-loading white-card lifecycle/rerender fixes, and transparent page-title wrappers from 1.4.x.
+- Passed static/preferences/contrast checks, updater unit checks, existing Chrome regressions, all Liquid Glass modes across fictional page families, and actual MV3 storage/widget/restart tests with fourteen cold navigations. Real worker/popup update badges were tested with simulated release metadata. Installed authenticated Brightspace and Opera still need confirmation.
+
+## 1.4.3 — Included in 1.5.0
+
+- Fixed Prism header icons and the profile control sitting at the top of the navigation row. Their containers retain Brightspace's native full height while the visible buttons remain compact and centered.
+- Removed the opaque rectangle behind the welcome/page heading by making only the page-title layout wrappers transparent. Course panels, menus, and form surfaces keep their backgrounds.
+- Matched the local regression fixture to the authenticated dashboard's notification wrappers, full-height component hosts, and nested title boxes, inspected read-only.
+- Verified centered, unclipped, clickable controls and transparent title wrappers at desktop and narrow widths, plus Original restoration. Existing browser and actual-extension regression suites passed, including late-loading cards, submissions, tables, profile images, preferences and widget scope.
+- No new permissions or network calls. This is a local build; installed Chrome/Opera appearance on Brightspace still needs confirmation.
+
+## 1.4.2 — Included in 1.5.0
+
+- Fixed a reproducible white-card startup race: components that attach open shadow roots after the old startup checks now notify the theme immediately. No polling or extra full-document scans.
+- Repair the extension's own style when a Brightspace template rerender removes it, using the existing observer only on the affected root.
+- Added a small bundled MAIN-world lifecycle helper within the existing approved website scope. It passes no course data or preferences and disables/restores its native-method wrapper when appearance is off or Original is selected.
+- Fixed stretched Prism header icon/profile backgrounds: controls stay compact with transparent normal-state backgrounds.
+- Passed eleven fresh-navigation cases across every theme in the actual MV3 extension, including six delayed nested roots and rerenders, plus the existing browser/preference/scope tests.
+
+## 1.4.1 — Included in 1.5.0
+
+- Rebuilt the local redesign as **Prism glass**: blue and violet ambient glow, translucent panels, frosted navigation, inset course artwork, softly rounded tiles and a clear selected-navigation state.
+- Course tiles lift as one piece on hover. Scroll motion keeps text fully opaque; discussion reading surfaces remain stationary. Reduced-motion preferences disable the movement.
+- Removed nested panel shadows and restricted table geometry changes to data tables so layout/authored tables keep their existing structure.
+- Restyled existing calendar, discussion, announcement, notification, grade, assignment and classlist surfaces while preserving Brightspace's links, forms and actions.
+- Added a fictional dashboard/course/calendar preview, desktop and 390px screenshots, and passing browser/installed-extension regression checks. No new permissions, data access, external assets or background service.
+- The theme changes existing page presentation; it does not add calendar/reminder functionality or replace Brightspace's underlying notification behavior.
+
 ## 1.3.0 — 2026-10-21
 
 - Added Ocean, Forest, Rose, Midnight City, Sunset City and Aurora themes behind an accessible “More themes” disclosure.

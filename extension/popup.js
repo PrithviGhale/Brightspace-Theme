@@ -9,8 +9,9 @@
   const moreButton = document.querySelector('#more-themes');
   const morePanel = document.querySelector('#more-panel');
   const radios = [...document.querySelectorAll('[name="theme"]')];
-  const extraThemes = new Set(['ocean','forest','rose','midnight-city','sunset','aurora','custom']);
-  const names = { dark:'Dark', dim:'Dim', warm:'Warm / sepia', original:'Original', ocean:'Ocean', forest:'Forest', rose:'Rose', 'midnight-city':'Midnight City', sunset:'Sunset City', aurora:'Aurora', custom:'Custom colors' };
+  const liquidMode=document.querySelector('#liquid-mode');
+  const extraThemes = new Set(['ocean','forest','rose','midnight-city','sunset','aurora','custom','modern','liquid','liquid-clear','liquid-dark']);
+  const names = { dark:'Dark', dim:'Dim', warm:'Warm / sepia', original:'Original', ocean:'Ocean', forest:'Forest', rose:'Rose', 'midnight-city':'Midnight City', sunset:'Sunset City', aurora:'Aurora', custom:'Custom colors', modern:'Prism glass', liquid:'Liquid Glass · Default', 'liquid-clear':'Liquid Glass · Transparent', 'liquid-dark':'Liquid Glass · Dark' };
   let state = prefs.normalize({});
   const initialPatch = {};
   let writes = Promise.resolve();
@@ -21,7 +22,8 @@
   }
   function render() {
     enabled.checked = state.enabled;
-    for (const radio of radios) radio.checked = radio.value === state.theme;
+    for (const radio of radios) radio.checked = radio.value==='liquid' ? state.theme.startsWith('liquid') : radio.value === state.theme;
+    if(state.theme.startsWith('liquid'))liquidMode.value=state.theme;
     for (const input of document.querySelectorAll('[data-color]')) input.value = state.customPalette[input.dataset.color];
     if (extraThemes.has(state.theme)) setMore(true);
     status.textContent = !state.enabled ? 'Off · Your chosen theme is remembered.' : state.theme === 'original' ? 'Original appearance · No theme overrides.' : `${names[state.theme]} · Applied to open Brightspace tabs.`;
@@ -43,7 +45,8 @@
     render(); enabled.disabled = false; fieldset.disabled = false;
   }).catch(() => { status.textContent = 'Could not load preferences. Reopen the popup to retry.'; });
   enabled.addEventListener('change', () => save({ enabled: enabled.checked }));
-  for (const radio of radios) radio.addEventListener('change', () => { if (radio.checked) save({ theme: radio.value }); });
+  for (const radio of radios) radio.addEventListener('change', () => { if (radio.checked) save({ theme: radio.value==='liquid'?liquidMode.value:radio.value }); });
+  liquidMode.addEventListener('change',()=>save({theme:liquidMode.value}));
   for (const input of document.querySelectorAll('[data-color]')) input.addEventListener('input', () => {
     const candidate = { ...state.customPalette, [input.dataset.color]: input.value };
     const readable = ['bg','surface','raised'].every(bg => contrast(candidate.text,candidate[bg]) >= 4.5 && contrast(candidate.muted,candidate[bg]) >= 4.5 && contrast(candidate.link,candidate[bg]) >= 4.5)
@@ -56,4 +59,24 @@
     save({ customPalette: candidate, theme: 'custom' });
   });
   setMore(false);
+  const updateStatus=document.querySelector('#update-status');
+  const refresh=document.querySelector('#refresh-updates');
+  let updateSequence=0;
+  function showUpdate(info) {
+    document.querySelector('#update-dot').hidden=!info?.available;
+    document.querySelector('#release-label').textContent=info?.available?`Get v${info.latestVersion} ↗`:'Releases ↗';
+    updateStatus.textContent=info?.available?`New update: v${info.latestVersion}${info.failed?' · Last check offline.':''}`
+      :info?.failed?'Could not check. Try again later.':info?.checkedAt?'You’re up to date.':'Checking for updates…';
+    updateStatus.classList.toggle('available',info?.available===true);
+  }
+  async function checkUpdates(force=false) {
+    if(!chrome.runtime?.sendMessage){updateStatus.textContent='Update checks are available in the installed extension.';refresh.disabled=true;return;}
+    const sequence=++updateSequence;
+    refresh.disabled=true;
+    try { const info=await chrome.runtime.sendMessage({type:'check-updates',force});if(sequence===updateSequence)showUpdate(info); }
+    catch { if(sequence===updateSequence)showUpdate({failed:true}); }
+    finally { if(sequence===updateSequence)refresh.disabled=false; }
+  }
+  refresh.addEventListener('click',()=>checkUpdates(true));
+  checkUpdates();
 })();

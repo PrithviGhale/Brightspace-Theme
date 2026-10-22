@@ -19,11 +19,12 @@ for(const size of [16,32,48,128]) {
   assert.equal(icon.readUInt32BE(16),size);assert.equal(icon.readUInt32BE(20),size);
 }
 assert.match(popupHtml,/class="mark" src="icons\/icon-128.png"/);
-assert.deepEqual(manifest.permissions, ['storage']);
-assert.equal(manifest.background, undefined);
-assert.equal(manifest.host_permissions, undefined);
+assert.deepEqual(manifest.permissions, ['storage','alarms']);
+assert.equal(manifest.background.service_worker, 'background.js');
+assert.deepEqual(manifest.host_permissions, ['https://api.github.com/*']);
+assert.equal(manifest.content_security_policy.extension_pages,"script-src 'self'; object-src 'none'; connect-src https://api.github.com/repos/PrithviGhale/Brightspace-Theme/releases/latest");
 assert.equal(manifest.web_accessible_resources, undefined);
-assert.equal(manifest.content_scripts.length, 2);
+assert.equal(manifest.content_scripts.length, 4);
 assert.match(themeEngine, /:host\(d2l-my-courses-enrollment-card\) d2l-card/);
 assert.match(themeEngine, /:host\(d2l-card\) \.d2l-card-container/);
 assert.match(dashboardFixture, /d2l-my-courses-card-grid-v2/);
@@ -38,6 +39,15 @@ assert.deepEqual(widgets.matches, ['https://d1i6rhttasws5m.cloudfront.net/produc
 assert.equal(widgets.all_frames,true);
 assert.equal(widgets.js[0],'widget-context.js');
 for(const file of widgets.js) await stat(path.join(dir,file));
+for(const [bridge,target] of [[manifest.content_scripts[2],content],[manifest.content_scripts[3],widgets]]) {
+  assert.equal(bridge.world,'MAIN');
+  assert.deepEqual(bridge.matches,target.matches);
+  assert.deepEqual(bridge.js,['shadow-lifecycle.js']);
+  assert.equal(bridge.run_at,'document_start');
+  assert.equal(bridge.all_frames,true);
+  assert.equal(bridge.match_origin_as_fallback,target.match_origin_as_fallback);
+}
+await stat(path.join(dir,'shadow-lifecycle.js'));
 for(const [nested,ancestors,allowed] of [
   [false,[],false], [true,['https://outside.invalid'],false],
   [true,['https://learn.snhu.edu'],true],
@@ -54,7 +64,9 @@ vm.runInContext(await read('content.js'),blocked); // Must exit before any engin
 for (const file of await readdir(dir)) if (file.endsWith('.js')) {
   const source = await read(file);
   new vm.Script(source, { filename: file });
-  assert(!/\b(fetch|XMLHttpRequest|WebSocket|eval|setInterval)\s*\(/.test(source), `${file}: unexpected network, eval or polling API`);
+  assert(!/\b(XMLHttpRequest|WebSocket|eval|setInterval)\s*\(/.test(source), `${file}: unexpected network, eval or polling API`);
+  if(file!=='updates.js')assert(!/\bfetch\s*\(/.test(source),`${file}: only the update module can make requests`);
+  if(['background.js','updates.js'].includes(file))assert(!/\b(document|tabs|scripting|cookies|history)\b/.test(source.replace(/\/\*[^]*?\*\//g,'')),`${file}: updater cannot inspect page data`);
 }
 const listeners = new Set();
 let stored = {};
@@ -115,7 +127,7 @@ for (const [name, palette] of [...Object.entries(context.BrightTheme.palettes),[
   // Only navigation branding may gain a contour; photos/course media stay untouched.
   for (const shadow of [false,true]) {
     const css=context.BrightTheme.css(name,shadow);
-    const filterRules=[...css.matchAll(/([^{}]+)\{[^{}]*\bfilter\s*:[^{}]*\}/g)];
+    const filterRules=[...css.matchAll(/([^{}]+)\{[^{}]*(?<![-\w])filter\s*:[^{}]*\}/g)];
     assert.equal(filterRules.length,shadow?2:1);
     for(const rule of filterRules){assert(rule[1].includes('d2l-navigation-s-logo'));assert(rule[0].includes('filter: var(--bs-logo-contour)'));}
   }
@@ -131,4 +143,15 @@ assert.match(context.BrightTheme.css('custom',false,false,customPalette),/--bs-b
 assert.equal(context.BrightTheme.css('midnight-city',true).includes('brightspace-ambience'),false);
 assert.match(popupHtml,/id="more-themes" aria-expanded="false" aria-controls="more-panel"/);
 assert.match(popupHtml,/type="color" data-color="bg"/);
+assert.match(popupHtml,/value="modern"/);
+assert.match(popupHtml,/Prism glass/);
+assert.equal(p.normalize({theme:'modern'}).theme,'modern');
+const modernCss=context.BrightTheme.css('modern');
+assert.match(modernCss,/bs-prism-arrive/);
+assert.match(modernCss,/animation-timeline:\s*view\(\)/);
+assert.match(modernCss,/prefers-reduced-motion:\s*reduce/);
+assert.match(modernCss,/border-radius:\s*24px/);
+const modernShadow=context.BrightTheme.css('modern',true);
+assert.match(modernShadow,/:host\(d2l-card:hover\)/);
+assert.match(modernShadow,/animation-timeline:\s*view\(\)/);
 console.log('PASS: manifest scope/assets; JavaScript syntax/privacy checks; preference defaults, palette persistence, validation, writes and cross-tab events; all theme palettes contrast >=4.5:1, focus >=3:1; animated-scene reduced-motion support and accessible More/custom controls.');
