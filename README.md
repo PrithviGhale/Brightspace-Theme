@@ -8,6 +8,17 @@ I made this because I'm used to having dark mode, and Brightspace felt too brigh
 
 **[Download v1.5.2](https://github.com/PrithviGhale/Brightspace-Theme/releases/tag/v1.5.2)** · [Report a problem](https://github.com/PrithviGhale/Brightspace-Theme/issues) · [Changelog](CHANGELOG.md)
 
+## Hello Kitty and Kuromi (1.6.0 source preview)
+
+Two separate character themes are available under **More themes > Character worlds**:
+
+- **Hello Kitty:** pink and cream panels, a bow-pattern background, rounded cards and character stickers.
+- **Kuromi:** midnight purple panels, lilac highlights, a star-pattern background and character stickers.
+
+Both carry through supported course pages, discussions, assignments, grades, classlist, calendar, menus and embedded readings. Hover motion respects reduced-motion preferences; reading areas stay steady. Character images are bundled locally, with no remote image requests. [Artwork sources and attribution](extension/art/SOURCES.md).
+
+Local previews use fictional data: [Hello Kitty](docs/screenshots/hello-kitty.png) | [Kuromi](docs/screenshots/kuromi.png). This test build includes the wider popup and copy helper below and is available in source; no 1.6.0 release has been published.
+
 ## New: Liquid Glass
 
 Open **More themes → Liquid Glass**, then choose a glass appearance:
@@ -44,9 +55,11 @@ If you cloned the repository, load its **extension/** folder instead. Keep only 
 
 ## Copy into documents
 
-With appearance enabled, copying selected text writes clean rich text with normal black ink and an inherited font family, so theme colors do not follow it into documents. Headings, lists, bold, italics, tables and safe links remain. The receiving app chooses how to apply its font and paste settings. Inputs keep native plain-text copy; image-only copy and Cut are unchanged. Off restores native copying.
+The **1.6.0 source preview (not released)** has a wider 440px popup, a two-column theme picker, and **Copy selection cleanly**. Highlight text in Brightspace, open the toolbar popup, click that button, then paste normally. The focused popup writes fresh black-on-white HTML and plain text directly to the clipboard, bypassing the page's normal Copy serializers. Source text is not stored or sent to any external service.
 
-This handles only text you select and copy, locally and transiently. It never reads your existing clipboard, saves copied text, or sends it anywhere. No clipboard permission is requested.
+Ctrl+C / Command+C remains supported with per-run normal colors and shadow-selection handling. A Copy helper status shows whether this version actually handled the most recent copy or could not read a selection. It records only a result, time and version locally, never copied text, source URL or names. This helps distinguish an inactive copy handler from destination formatting. Word/Opera confirmation is still pending; browser tests alone do not establish their behavior.
+
+No clipboard-read permission or existing clipboard read is used. Password fields are excluded. Source formatting such as bold/italics is omitted; text and paragraph breaks remain. Cut, empty/image-only selections and Off retain native behavior. Destination paste options can still override incoming formatting.
 
 ## Update notices
 

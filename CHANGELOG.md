@@ -1,5 +1,37 @@
 # Changelog
 
+## 1.6.0 - Source preview, not released
+
+- Add separate Hello Kitty and Kuromi themes under More themes > Character worlds. Pink/cream bows and midnight/lilac stars each have locally bundled character background art, heading accents and card stickers.
+- Adapt supported dashboard, course, discussion, reading, assignment, feedback, grade, classlist, calendar, menu and settings surfaces. Preserve course/profile images and native actions, with mobile layouts, keyboard focus and reduced-motion support.
+- Package two local PNG assets restricted to the existing supported site/widget origins; no new permissions or runtime remote image requests. Record Sanrio artwork sources locally.
+- Verify contrast, desktop/mobile page fixtures, late-loading roots, real MV3 theme selection and packaged artwork loading. Includes earlier unpublished popup/copy improvements; Word/Opera confirmation remains pending.
+- Source preview pushed for user testing; no release publication.
+
+## 1.5.5 — Local test build, not published
+
+- Give the popup a fixed 440 by 600 intrinsic size instead of a viewport-dependent width, with roomier header, two-column primary themes, and scrolling for extra themes.
+- Add Copy selection cleanly: a focused popup requests the explicitly selected text from the active Brightspace tab/frame and writes a fresh normal HTML/plain clipboard item directly, bypassing page/native copy serializers. Text is transient, never saved or transmitted externally. No new permissions.
+- Add shadow-selection handling and a visible local Copy helper diagnostic containing only status, version and timestamp. No copied text or source URL is retained.
+- Installed Chrome tests verify direct clipboard write and actual paste into an already-dark receiving editor; page tabs/frames, preferences, update worker and existing copy tests pass. Popup screenshot reviewed. Final Word testing remains pending; not published.
+
+
+## 1.5.4 — Local test build, not published
+
+- Supply explicit black text and white shading on each rich-paste run, rather than relying only on a wrapper or destination-inherited plain text. A faithful plain-text alternative is also supplied.
+- Protect Ctrl+C/Command+C before later editor key handlers while allowing the native copy action. Normalize selected text in input/textarea controls too, excluding passwords.
+- Tests paste into a destination already using pale text and a dark background, and simulate a later keyboard serializer that prevents native copying. Browser and actual MV3 keyboard copy/paste checks pass, alongside all-theme and embedded-reading cases. Word validation remains pending.
+- No push or publication; awaiting user testing.
+
+
+## 1.5.3 — Local test build, not published
+
+- Replace rich HTML copy with plain text only. Source colors, highlights, font overrides and emphasis cannot be carried in clipboard HTML because no HTML is supplied.
+- Handle Copy in window capture phase, then stop later copy serializers from overwriting the normalized selection. No page mutation or new permissions.
+- Tested all fourteen themes and Original, embedded readings, a conflicting page copy handler and Off restoration. Trusted keyboard Ctrl+C/Ctrl+V into a separate unthemed rich editor produced black, unhighlighted text; repeated in the actual MV3 extension.
+- Word was not directly automated. Destination paragraph styles still govern plain-text paste. Awaiting user validation; do not publish.
+
+
 ## 1.5.2 — 2026-10-22
 
 - Copy selected text into documents without carrying theme foreground/background colors or font overrides. Clean rich HTML uses neutral black ink and inherited font family, retaining semantic headings, lists, emphasis, tables and safe links; plain text stays faithful to the selection.

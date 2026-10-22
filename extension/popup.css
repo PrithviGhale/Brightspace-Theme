@@ -1,6 +1,7 @@
 :root { color-scheme: dark; font: 14px/1.45 system-ui, sans-serif; color: #e7edf5; background: #121820; }
 * { box-sizing: border-box; }
-body { margin: 0; width: 376px; max-width:100vw; max-height: 620px; overflow-y: auto; scrollbar-color: #52657d #121820; }
+html { width:440px; min-width:440px; height:600px; overflow:hidden; }
+body { margin: 0; width: 440px; min-width:440px; height:600px; max-height: 600px; overflow-y: auto; scrollbar-color: #52657d #121820; }
 header { display: flex; align-items: center; gap: 14px; padding: 14px 22px 12px; border-bottom: 1px solid #344458; }
 .mark { display: block; flex: 0 0 46px; width: 46px; height: 46px; object-fit: contain; }
 h1 { font-size: 25px; letter-spacing: -.7px; margin: 2px 0; line-height: 1.2; }
@@ -68,3 +69,23 @@ footer>span { color:#a4dfb4;padding-right:4px } footer p { color:#aab9c9;font-si
 #update-status.available { color:#ffc1cc;font-weight:600 }
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none!important;scroll-behavior:auto!important } }
 @media (forced-colors:active) { .choice:has(input:checked),#more-themes,.switch { border:2px solid Highlight }.selected { color:Highlight } }
+/* Give the real toolbar popup an intrinsic width; viewport-relative max-width
+   can make Chromium calculate a narrow popup before its first layout. */
+header { padding:18px 24px;gap:16px;background:linear-gradient(125deg,#19293d,#182234);position:sticky;top:0;z-index:3 }
+header h1 { white-space:nowrap;font-size:29px;letter-spacing:-.8px }
+.eyebrow { font-size:9px;letter-spacing:1.15px }
+main { padding:16px 24px 6px }
+.primary-themes { display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px }
+.primary-themes .choice { margin:0;min-height:78px;padding:10px 9px;gap:8px;border-radius:14px }
+.primary-themes .choice>span:nth-last-child(2) { min-width:0;flex:1 }
+.primary-themes .swatch { width:32px;height:32px;padding:7px 4px }
+.primary-themes .swatch i { width:22px }
+.primary-themes strong { font-size:13px }
+.primary-themes small { font-size:10px;line-height:1.45 }
+.choice { border-radius:12px;padding:10px 12px }
+#more-themes { padding:11px;border-radius:12px }
+#copy-status { border:1px solid #425a73;border-radius:9px;padding:8px 10px;color:#bfd0e3;font-size:11px;line-height:1.4;margin-top:12px }
+#copy-status[data-result="normalized"] { border-color:#4b917d;color:#b7ead9 }
+#copy-status[data-result="no-selection"] { border-color:#aa8854;color:#f4d2a4 }
+footer { padding:12px 24px 16px }#copy-clean { width:100%;padding:10px 12px;margin-top:10px;border:1px solid #6c91b5;border-radius:11px;background:#20394e;color:#e6f4ff;font:600 12px system-ui;cursor:pointer } #copy-clean:focus-visible { outline:3px solid #ffd580;outline-offset:2px }
+.character-thumb { width:66px;height:66px;object-fit:contain;flex-shrink:0 } .character-choice { gap:14px;border-radius:18px;padding:10px 14px } .kitty-choice { background:linear-gradient(120deg,#55354855,#27364c33);border-color:#b9829b } .kuromi-choice { background:linear-gradient(120deg,#4b326966,#25314b44);border-color:#9271b9 } .character-choice strong { font-size:16px } .character-choice small { font-size:11px }

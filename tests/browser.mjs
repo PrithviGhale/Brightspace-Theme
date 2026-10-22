@@ -40,18 +40,40 @@ try {
   const set=theme=>evaluate(`chrome.storage.local.set({theme:${JSON.stringify(theme)},enabled:true})`);
   const bg=()=>evaluate(`getComputedStyle(document.body).backgroundColor`);
   await evaluate(`(()=>{const box=document.createElement('div');box.id='copy-fixture';box.innerHTML='<h2 style="color:white;background:black">Sample heading</h2><p style="color:#ff0000;font-family:fantasy"><strong>Bold</strong> and <em>italic</em> — Unicode ✓</p><ul><li>List item</li></ul><a href="https://example.com/reading">Reading link</a>';document.body.append(box)})()`);
-  for(const theme of ['dark','dim','warm','ocean','forest','rose','midnight-city','sunset','aurora','custom','modern','liquid','liquid-clear','liquid-dark','original']) {
+  for(const theme of ['dark','dim','warm','ocean','forest','rose','midnight-city','sunset','aurora','custom','modern','liquid','liquid-clear','liquid-dark','hello-kitty','kuromi','original']) {
     await set(theme);
     const copied=await evaluate(`(()=>{const box=document.querySelector('#copy-fixture'),sel=document.getSelection(),r=document.createRange();r.selectNodeContents(box);sel.removeAllRanges();sel.addRange(r);const expected=sel.toString(),data=new DataTransfer(),event=new ClipboardEvent('copy',{clipboardData:data,bubbles:true,cancelable:true});box.dispatchEvent(event);return {html:data.getData('text/html'),plain:data.getData('text/plain'),expected,prevented:event.defaultPrevented,source:box.querySelector('p').getAttribute('style')}})()`);
     assert(copied.prevented,theme+': handles selected text copy');
     assert.equal(copied.plain,copied.expected);
-    assert.match(copied.html,/color: #000000/);assert.match(copied.html,/<strong>Bold<\/strong>/);assert.match(copied.html,/<ul><li>List item/);assert.match(copied.html,/href="https:\/\/example.com\/reading"/);
+    assert.match(copied.html,/color:#000000!important/);assert.match(copied.html,/background-color:#ffffff!important/);
     assert(!/fantasy|#ff0000|background:black/.test(copied.html));assert.match(copied.source,/fantasy/,'Copy must not change the page');
-    assert(await evaluate(`(()=>{const d=document.querySelector('.content').contentDocument,s=d.getSelection(),r=d.createRange();r.selectNodeContents(d.querySelector('h3'));s.removeAllRanges();s.addRange(r);const data=new d.defaultView.DataTransfer(),e=new d.defaultView.ClipboardEvent('copy',{clipboardData:data,bubbles:true,cancelable:true});d.querySelector('h3').dispatchEvent(e);s.removeAllRanges();return e.defaultPrevented&&data.getData('text/html').includes('color: #000000')})()`),theme+': embedded reading copy is neutral');
+    assert(await evaluate(`(()=>{const d=document.querySelector('.content').contentDocument,s=d.getSelection(),r=d.createRange();r.selectNodeContents(d.querySelector('h3'));s.removeAllRanges();s.addRange(r);const data=new d.defaultView.DataTransfer(),e=new d.defaultView.ClipboardEvent('copy',{clipboardData:data,bubbles:true,cancelable:true});d.querySelector('h3').dispatchEvent(e);s.removeAllRanges();return e.defaultPrevented&&data.getData('text/html').includes('color:#000000!important')&&data.getData('text/plain').length>0})()`),theme+': embedded reading copy is plain text');
   }
+  await evaluate(`(()=>{const t=document.createElement('textarea');t.id='copy-textarea';t.value='before Selected text after';document.body.append(t);t.focus();t.setSelectionRange(7,20)})()`);
+  const textField=await evaluate(`(()=>{const data=new DataTransfer(),e=new ClipboardEvent('copy',{clipboardData:data,bubbles:true,cancelable:true});document.querySelector('#copy-textarea').dispatchEvent(e);return {text:data.getData('text/plain'),html:data.getData('text/html')}})()`);
+  assert.equal(textField.text,'Selected text');assert.match(textField.html,/color:#000000!important/);
+  await evaluate(`document.querySelector('#copy-textarea').remove()`);
+  // Exercise trusted keyboard copy/paste, not only synthetic clipboard events.
+  await evaluate(`window.keyCopyOverride=e=>{if(e.ctrlKey&&e.key==='c'){window.keyCopyRan=true;e.preventDefault()}};document.addEventListener('keydown',window.keyCopyOverride,true)`);
+  // The only clipboard content involved is fictional text we just selected.
+  await set('ocean');
+  await cdp('Page.bringToFront');
+  await evaluate(`(()=>{const box=document.querySelector('#copy-fixture');box.tabIndex=0;box.focus();const r=document.createRange();r.selectNodeContents(box);const s=document.getSelection();s.removeAllRanges();s.addRange(r);window.expectedCopy=s.toString();window.pageCopyOverride=e=>{window.pageCopyRan=true;e.clipboardData.setData('text/html','<span style="color:#e0f7ff;background:yellow">bad override</span>');e.preventDefault();e.stopPropagation();};document.addEventListener('copy',window.pageCopyOverride,{capture:true,once:true});const f=document.createElement('iframe');f.id='paste-fixture';f.srcdoc='<html><body contenteditable="true" style="color:rgb(224,247,255);background:rgb(28,37,48);font-family:Arial"></body></html>';document.body.append(f)})()`);
+  await cdp('Input.dispatchKeyEvent',{type:'keyDown',key:'c',code:'KeyC',windowsVirtualKeyCode:67,modifiers:2});
+  await cdp('Input.dispatchKeyEvent',{type:'keyUp',key:'c',code:'KeyC',windowsVirtualKeyCode:67,modifiers:2});
+  assert.equal(await evaluate(`window.pageCopyRan===true`),false,'Capture wins over later page copy serializers');
+  assert.equal(await evaluate(`window.keyCopyRan===true`),false,'Capture protects Ctrl+C before editor keyboard serializers');
+  await until(`document.querySelector('#paste-fixture').contentDocument?.body?.isContentEditable`);
+  await evaluate(`document.querySelector('#paste-fixture').contentWindow.focus();document.querySelector('#paste-fixture').contentDocument.body.focus()`);
+  await cdp('Input.dispatchKeyEvent',{type:'keyDown',key:'v',code:'KeyV',windowsVirtualKeyCode:86,modifiers:2});
+  await cdp('Input.dispatchKeyEvent',{type:'keyUp',key:'v',code:'KeyV',windowsVirtualKeyCode:86,modifiers:2});
+  await until(`document.querySelector('#paste-fixture').contentDocument.body.innerText.includes('Unicode')`);
+  assert(await evaluate(`(()=>{const d=document.querySelector('#paste-fixture').contentDocument;return [...d.body.querySelectorAll('*')].every(e=>{const s=d.defaultView.getComputedStyle(e);return s.color==='rgb(0, 0, 0)'&&(s.backgroundColor==='rgba(0, 0, 0, 0)'||s.backgroundColor==='rgb(255, 255, 255)')})})()`),'Actual pasted text overrides destination pale ink/dark background with black ink and white shading');
+  await evaluate(`document.removeEventListener('keydown',window.keyCopyOverride,true);document.removeEventListener('copy',window.pageCopyOverride,true);document.querySelector('#paste-fixture').remove();document.querySelector('#copy-fixture').focus()`);
+  console.log('PASS: trusted Ctrl+C / Ctrl+V into a separate unthemed rich editor yields black, unhighlighted text; later page copy override cannot replace it.');
   await evaluate(`chrome.storage.local.set({enabled:false})`);
   assert.equal(await evaluate(`(()=>{const e=new ClipboardEvent('copy',{clipboardData:new DataTransfer(),bubbles:true,cancelable:true});document.querySelector('#copy-fixture').dispatchEvent(e);document.getSelection().removeAllRanges();document.querySelector('#copy-fixture').remove();return e.defaultPrevented})()`),false,'Off restores native copy');
-  console.log('PASS: neutral rich-text copy across fourteen themes and Original; plain-text fidelity, headings/lists/emphasis/links, unchanged source and Off restoration. No system clipboard read.');
+  console.log('PASS: explicit black/white copy across sixteen themes and Original, embedded readings, unchanged source and Off restoration.');
   for (const [theme,expected,frameColor] of [['dark','rgb(18, 24, 32)','rgb(28, 37, 48)'],['dim','rgb(37, 43, 52)','rgb(48, 57, 69)'],['warm','rgb(243, 234, 216)','rgb(255, 247, 232)']]) {
     await set(theme);
     await until(`getComputedStyle(document.querySelector('.content').contentDocument.body).backgroundColor === ${JSON.stringify(frameColor)}`);
@@ -61,11 +83,11 @@ try {
     assert.equal(colors[2],colors[3]);
     await cdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false}).then(r=>writeFile(path.join(root,'dist',`preview-${theme}.png`),Buffer.from(r.data,'base64')));
   }
-  for(const theme of ['dark','dim','warm','ocean','forest','rose','midnight-city','sunset','aurora','custom','modern','liquid','liquid-clear','liquid-dark']) {
+  for(const theme of ['dark','dim','warm','ocean','forest','rose','midnight-city','sunset','aurora','custom','modern','liquid','liquid-clear','liquid-dark','hello-kitty','kuromi']) {
     await set(theme);
     await until(`(()=>{const d=document.querySelector('.content').contentDocument;const panel=d.querySelector('.intersect-content');const hex=getComputedStyle(d.documentElement).getPropertyValue('--bs-surface').trim();const parts=hex.slice(1).match(/../g)?.map(v=>parseInt(v,16));return parts&&getComputedStyle(panel).backgroundColor==='rgb('+parts.join(', ')+')'})()`);
   }
-  console.log('PASS: embedded SNHU intersect-content reading panel follows all fourteen themed appearances.');
+  console.log('PASS: embedded SNHU intersect-content reading panel follows all sixteen themed appearances.');
   await set('modern');
   await until(`getComputedStyle(document.body).backgroundColor==='rgb(12, 16, 33)'`);
   const modernSurface=await evaluate(`(()=>{const card=document.querySelector('.cards .d2l-widget');const reveal=getComputedStyle(card);return {radius:reveal.borderRadius,timeline:reveal.animationTimeline,frame:getComputedStyle(document.querySelector('.content').contentDocument.body).backgroundColor,media:getComputedStyle(document.querySelector('img')).filter}})()`);

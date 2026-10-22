@@ -1,6 +1,6 @@
 # Development guide
 
-Current version: **1.5.2**. Manifest V3, local JavaScript/CSS, no runtime dependencies. Read the [README](../README.md) for installation, appearances, update notices and permissions.
+Source preview version: **1.6.0** (not released). Manifest V3, local JavaScript/CSS, no runtime dependencies. Read the [README](../README.md) for installation, appearances, update notices and permissions.
 
 ## Architecture
 
@@ -40,13 +40,14 @@ Use recent Node.js (24 tested) and Chrome. No npm install is needed.
 node tools/preview-server.mjs
 ```
 
-Open `http://127.0.0.1:4173/preview/redesign.html`. Select Liquid Default, Transparent, Dark or Prism, and switch My Home / Course pages / Calendar. This is fictional sample layout/content using the real theme engine; it is not a replacement dashboard injected into accounts. `/popup-preview` uses the actual popup with a storage adapter; automatic checks run only in the installed extension.
+Open `http://127.0.0.1:4173/preview/redesign.html`. Select Hello Kitty, Kuromi, Liquid Default, Transparent, Dark or Prism, and switch My Home / Course pages / Calendar. This is fictional sample layout/content using the real theme engine; it is not a replacement dashboard injected into accounts. `/popup-preview` uses the actual popup with a storage adapter; automatic checks run only in the installed extension.
 
 ```powershell
 node tests/check.mjs
 node tests/updates.mjs
 node tests/browser.mjs
 node tests/liquid.mjs
+node tests/characters.mjs
 node tests/extension.mjs
 ./tools/package.ps1
 ```
@@ -55,9 +56,9 @@ node tests/extension.mjs
 - Update units: stable numeric versions, dedup/cache, credential/referrer policy, invalid releases, offline retention, fixed links and badge clearing.
 - Browser: existing theme, card, frame, table, menu, profile and late-root regressions.
 - Liquid: every mode on dashboard/course/calendar plus discussions, submissions, feedback, attachments, tables, menus/settings/progress and photos. Desktop/mobile, focus, hover, reduced motion, no horizontal overflow and Original cleanup.
-- Actual MV3: Chrome validates/loads the extension. Real storage, two tabs, widget/frame scope, restart persistence, fourteen cold navigations with six delayed roots, rerender repair, glass-mode sync, real popup/worker messages and red badges. Release responses are stubbed in that isolated worker and external GitHub DNS is blocked. SNHU responses are locally intercepted fictional documents. No live account/network data enters artifacts.
+- Actual MV3: Chrome validates/loads the extension. Real storage, two tabs, widget/frame scope, restart persistence, sixteen cold navigations with six delayed roots, rerender repair, glass-mode sync, real popup/worker messages and red badges. Release responses are stubbed in that isolated worker and external GitHub DNS is blocked. SNHU responses are locally intercepted fictional documents. No live account/network data enters artifacts.
 
-Browser suites create independent disposable profiles inside ignored `dist/`. They may need permission to launch Chrome outside a restricted process sandbox. Screenshots in `dist/liquid-*.png` and `dist/prism-*.png` contain fictional data. Package verification requires exactly 17 assets, including both updater files and the lifecycle helper, with root-level manifest and no preview/test adapter.
+Browser suites create independent disposable profiles inside ignored `dist/`. They may need permission to launch Chrome outside a restricted process sandbox. Screenshots in `dist/liquid-*.png` and `dist/prism-*.png` contain fictional data. Package verification requires exactly 20 assets, including both updater files and the lifecycle helper, with root-level manifest and no preview/test adapter.
 
 For an explicit real-network smoke check, set `AFTER_HOURS_LIVE_UPDATE_SMOKE=1` and run `node tests/extension.mjs`, then unset it. That mode loads only the worker and reads the real public release endpoint; it does not open SNHU or run the fictional page suite. Normal tests do not need network access. This live check passed after the connection policy was updated.
 
@@ -71,4 +72,12 @@ References: [Chrome content scripts](https://developer.chrome.com/docs/extension
 
 ## Selection copy
 
-The content script handles copy events while enabled, including Original, in each approved document/frame. It clones only the selected ranges, strips source styles/attributes and unsafe nodes, retains an allowlist of semantic tags and safe links, then supplies neutral rich HTML and faithful plain text through the event clipboardData. No clipboard permission or existing clipboard read. Selection processing is transient and never stored/transmitted. Off, native input/textarea selections, image-only copy and already-handled events retain browser/page behavior. Destination apps can apply their own paste rules.
+Local 1.5.4 protects Ctrl+C/Command+C at window capture phase without preventing the native copy default. The copy handler rebuilds only selected text into simple escaped block/run/font elements with explicit black ink, white shading, no highlight and inherited font family. A faithful text/plain alternative is supplied. This avoids source theme styles and can reset an already-colored rich-paste destination. Input/textarea selected ranges are supported; password fields are excluded. No existing clipboard reads, storage, remote calls or permissions. Cut, image-only selections and Off remain native. Browser tests use a pale/dark destination and keyboard interceptor, plus actual MV3 trusted keyboard paste. Word testing remains the user's final validation.
+
+## Local 1.5.5 diagnostics and direct copy
+
+Popup uses an intrinsic 440 by 600 canvas with scrolling to avoid initial viewport max-width shrink. Copy helper metadata is restricted to status, timestamp and version. The direct-copy button queries only the active tab ID (no tabs permission or URL read), sends an extension-only message, and accepts a transient selection response from the content script/frame. Receivers validate exact popup URL and sender extension ID. Plain/HTML data is written through ClipboardItem from the focused popup on explicit click. No clipboard-read permission, copied text persistence or network call. Tests simulate the underlying active tab because their popup is a full tab, then exercise real messaging and clipboard write/paste. User Word confirmation remains required before publication.
+
+## Character themes (local 1.6.0)
+
+Hello Kitty and Kuromi share the theme lifecycle and glass geometry, with independent contrast-checked palettes and local decoration. characterCss applies to document/open-root surfaces while embedded readings remain uncluttered. Only two art PNGs are web-accessible, scoped to existing supported SNHU/widget origins; no additional permissions or remote runtime assets. Attribution is in extension/art/SOURCES.md. tests/characters.mjs covers both across the page fixture families, desktop/mobile, focus, photos, motion and Original cleanup. Actual MV3 tests decode both packaged PNGs from the SNHU fixture and select both popup radios.

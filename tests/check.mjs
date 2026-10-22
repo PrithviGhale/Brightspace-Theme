@@ -23,7 +23,7 @@ assert.deepEqual(manifest.permissions, ['storage','alarms']);
 assert.equal(manifest.background.service_worker, 'background.js');
 assert.deepEqual(manifest.host_permissions, ['https://api.github.com/*']);
 assert.equal(manifest.content_security_policy.extension_pages,"script-src 'self'; object-src 'none'; connect-src https://api.github.com/repos/PrithviGhale/Brightspace-Theme/releases/latest");
-assert.equal(manifest.web_accessible_resources, undefined);
+assert.deepEqual(manifest.web_accessible_resources,[{resources:["art/hello-kitty.png","art/kuromi.png"],matches:["https://learn.snhu.edu/*","https://d1i6rhttasws5m.cloudfront.net/*","https://d1zg7b99iisfa6.cloudfront.net/*"]}]);
 assert.equal(manifest.content_scripts.length, 4);
 assert.match(themeEngine, /:host\(d2l-my-courses-enrollment-card\) d2l-card/);
 assert.match(themeEngine, /:host\(d2l-card\) \.d2l-card-container/);

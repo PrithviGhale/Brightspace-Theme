@@ -10,9 +10,31 @@
   const morePanel = document.querySelector('#more-panel');
   const radios = [...document.querySelectorAll('[name="theme"]')];
   const liquidMode=document.querySelector('#liquid-mode');
-  const extraThemes = new Set(['ocean','forest','rose','midnight-city','sunset','aurora','custom','modern','liquid','liquid-clear','liquid-dark']);
-  const names = { dark:'Dark', dim:'Dim', warm:'Warm / sepia', original:'Original', ocean:'Ocean', forest:'Forest', rose:'Rose', 'midnight-city':'Midnight City', sunset:'Sunset City', aurora:'Aurora', custom:'Custom colors', modern:'Prism glass', liquid:'Liquid Glass · Default', 'liquid-clear':'Liquid Glass · Transparent', 'liquid-dark':'Liquid Glass · Dark' };
+  const extraThemes = new Set(['ocean','forest','rose','midnight-city','sunset','aurora','custom','modern','liquid','liquid-clear','liquid-dark','hello-kitty','kuromi']);
+  const names = { dark:'Dark', dim:'Dim', warm:'Warm / sepia', original:'Original', ocean:'Ocean', forest:'Forest', rose:'Rose', 'midnight-city':'Midnight City', sunset:'Sunset City', aurora:'Aurora', custom:'Custom colors', modern:'Prism glass', liquid:'Liquid Glass · Default', 'liquid-clear':'Liquid Glass · Transparent', 'liquid-dark':'Liquid Glass · Dark', 'hello-kitty':'Hello Kitty', kuromi:'Kuromi' };
   let state = prefs.normalize({});
+  const copyStatus=document.querySelector('#copy-status');
+  function renderCopy(value) {
+    if(!value||!Number.isFinite(value.at))return;
+    copyStatus.dataset.result=value.status;
+    const time=new Date(value.at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    copyStatus.textContent=value.status==='normalized'?`Copy helper ran · v${value.version} · ${time}. Sent black text on white.`:`Copy reached v${value.version} at ${time}, but no selection was readable.`;
+  }
+  chrome.storage.local.get({copyStatus:null}).then(value=>renderCopy(value.copyStatus)).catch(()=>{});
+  chrome.storage.onChanged.addListener((changes,area)=>{if(area==='local'&&changes.copyStatus)renderCopy(changes.copyStatus.newValue);});
+  document.querySelector('#copy-clean').addEventListener('click',async()=>{
+    const button=document.querySelector('#copy-clean');button.disabled=true;
+    try {
+      const [tab]=await chrome.tabs.query({active:true,currentWindow:true});
+      const payload=await chrome.tabs.sendMessage(tab.id,{type:'copy-clean-selection'});
+      if(!payload?.text||!payload?.html)throw new Error('Select text in Brightspace first.');
+      await navigator.clipboard.write([new ClipboardItem({'text/plain':new Blob([payload.text],{type:'text/plain'}),'text/html':new Blob([payload.html],{type:'text/html'})})]);
+      await chrome.storage.local.set({copyStatus:{version,status:'normalized',at:Date.now()}});
+      copyStatus.textContent='Copied directly: black text on white. Now paste normally.';
+      copyStatus.dataset.result='normalized';
+    } catch { copyStatus.textContent='Select text in Brightspace, open this popup, then try Copy selection cleanly. If blocked, use Ctrl+C and check this status.'; }
+    finally {button.disabled=false;}
+  });
   const initialPatch = {};
   let writes = Promise.resolve();
   function setMore(open) {

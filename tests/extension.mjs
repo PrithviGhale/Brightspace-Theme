@@ -57,6 +57,7 @@ const html=`<!doctype html><html><head><title>Local intercepted fixture</title><
 const widgetHtml=`<!doctype html><html><head><title>Fictional widget</title><style>body{background:white;color:black}</style></head><body><d2l-custom-grade-widget-main></d2l-custom-grade-widget-main><script>customElements.define('d2l-custom-grade-widget-main',class extends HTMLElement{connectedCallback(){if(!this.shadowRoot)this.attachShadow({mode:'open'}).innerHTML='<style>.main-container{background:white;color:black}</style><div class="main-container">Fictional widget</div>'}});addEventListener('message',e=>{if(e.data!=='fixture-report')return;const root=document.querySelector('d2l-custom-grade-widget-main').shadowRoot;e.source.postMessage({host:location.hostname,fixtureReport:{styled:!!document.querySelector('style[data-brightspace-theme]'),shadowStyled:!!root.querySelector('style[data-brightspace-theme]'),bg:getComputedStyle(document.body).backgroundColor,surface:getComputedStyle(root.querySelector('div')).backgroundColor}},e.origin);});</script></body></html>`;
 async function fixture(page,url) {
   page.on('Fetch.requestPaused', ({requestId,request})=>{
+    if(request.url.startsWith('chrome-extension://')){page.send('Fetch.continueRequest',{requestId}).catch(()=>{});return;}
     const body=widgetHosts.includes(new URL(request.url).hostname)?widgetHtml:request.url.includes('late-cards')?lateHtml:request.url.includes('local-frame')?'<!doctype html><html><body><p>Sample frame</p></body></html>':html;
     page.send('Fetch.fulfillRequest',{requestId,responseCode:200,responseHeaders:[{name:'Content-Type',value:'text/html'}],body:Buffer.from(body).toString('base64')}).catch(error=>{if(!closingBrowser)console.error(error);});
   });
@@ -80,17 +81,17 @@ try {
     assert(!info.failed&&info.latestVersion,'Real public release endpoint must succeed from the extension worker');
     console.log(`PASS: actual extension worker fetched the public GitHub latest release: v${info.latestVersion}; installed v${info.installed}; update available=${info.available}. No SNHU page opened.`);
   } else {
-  await background.evaluate(`globalThis.fixtureRelease={tag_name:'v1.6.0'};globalThis.fetch=async url=>{if(url!==BrightUpdates.ENDPOINT)throw new Error('Unexpected request');return {ok:true,json:async()=>globalThis.fixtureRelease}}`);
+  await background.evaluate(`globalThis.fixtureRelease={tag_name:'v2.0.0'};globalThis.fetch=async url=>{if(url!==BrightUpdates.ENDPOINT)throw new Error('Unexpected request');return {ok:true,json:async()=>globalThis.fixtureRelease}}`);
   const popup=await page(`chrome-extension://${id}/popup.html`);
   await popup.until(`!!document.querySelector('#enabled:not(:disabled)')`);
-  await popup.send('Emulation.setDeviceMetricsOverride',{width:360,height:600,deviceScaleFactor:1,mobile:false});
+  await popup.send('Emulation.setDeviceMetricsOverride',{width:440,height:600,deviceScaleFactor:1,mobile:false});
   await popup.until(`document.querySelector('img.mark')?.complete && document.querySelector('img.mark').naturalWidth===128`);
   const manifest=JSON.parse(await readFile(path.join(root,'extension','manifest.json'),'utf8'));
   await popup.until(`!document.querySelector('#refresh-updates').disabled`);
   await popup.evaluate(`document.querySelector('#refresh-updates').click()`);
   await popup.until(`!document.querySelector('#update-dot').hidden`);
   assert.equal(await background.evaluate(`chrome.action.getBadgeText({})`),'•');
-  assert.match(await popup.evaluate(`document.querySelector('#update-status').textContent`),/1.6.0/);
+  assert.match(await popup.evaluate(`document.querySelector('#update-status').textContent`),/2.0.0/);
   const updateImage=await popup.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
   await writeFile(path.join(root,'dist','popup-update.png'),Buffer.from(updateImage.data,'base64'));
   await background.evaluate(`globalThis.fixtureRelease={tag_name:'v${manifest.version}'}`);
@@ -100,14 +101,53 @@ try {
   assert.equal(await background.evaluate(`chrome.action.getBadgeText({})`),'');
   const updateInfo=await popup.evaluate(`(()=>{const a=document.querySelector('#check-updates');return {version:document.querySelector('#version').textContent,href:a.href,target:a.target,rel:a.rel}})()`);
   assert.deepEqual(updateInfo,{version:`v${manifest.version}`,href:'https://github.com/PrithviGhale/Brightspace-Theme/releases/latest',target:'_blank',rel:'noopener noreferrer'});
-  await popup.send('Emulation.setDeviceMetricsOverride',{width:360,height:600,deviceScaleFactor:1,mobile:false});
+  await popup.send('Emulation.setDeviceMetricsOverride',{width:440,height:600,deviceScaleFactor:1,mobile:false});
   assert(await popup.evaluate(`document.documentElement.scrollHeight<=600`),'popup controls and update link fit within 600px');
+  assert.equal(await popup.evaluate(`getComputedStyle(document.documentElement).width`),'440px');
+  assert.equal(await popup.evaluate(`document.documentElement.scrollWidth>innerWidth`),false,'Expanded popup has no horizontal overflow');
   const popupImage=await popup.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
   await writeFile(path.join(root,'dist','popup.png'),Buffer.from(popupImage.data,'base64'));
   const first=await page(), second=await page();
   await fixture(first,'https://learn.snhu.edu/local-test');
   await fixture(second,'https://learn.snhu.edu/another-local-test');
   for(const p of [first,second]) await p.until(`getComputedStyle(document.body).backgroundColor==='rgb(18, 24, 32)'`);
+  for(const name of ['hello-kitty','kuromi']){
+    assert(await first.evaluate(`new Promise(resolve=>{const image=new Image();image.onload=()=>resolve(image.naturalWidth>0);image.onerror=()=>resolve(false);image.src='chrome-extension://${id}/art/${name}.png'})`),'Packaged character artwork loads under SNHU');
+    await popup.evaluate(`document.querySelector('#more-themes').click();document.querySelector('[name="theme"][value="${name}"]').click()`);
+    await first.until(`getComputedStyle(document.documentElement).getPropertyValue('--bs-bg').trim()==='${name==='hello-kitty'?'#fce8ee':'#151020'}'`);
+  }
+  await popup.evaluate(`document.querySelector('[value="dark"]').click()`);
+  await first.until(`getComputedStyle(document.body).backgroundColor==='rgb(18, 24, 32)'`);
+  await first.send('Page.bringToFront');
+  const sourceTab=await popup.evaluate(`chrome.tabs.query({active:true,currentWindow:true}).then(t=>({id:t[0].id}))`);
+  // A real action popup is focused while its underlying page remains the active
+  // tab. Our full-tab popup fixture needs that one API result simulated.
+  await first.evaluate(`(()=>{const r=document.createRange();r.selectNodeContents(document.querySelector('h1'));const s=document.getSelection();s.removeAllRanges();s.addRange(r)})()`);
+  await first.send('Input.dispatchKeyEvent',{type:'keyDown',key:'c',code:'KeyC',windowsVirtualKeyCode:67,modifiers:2});
+  await first.send('Input.dispatchKeyEvent',{type:'keyUp',key:'c',code:'KeyC',windowsVirtualKeyCode:67,modifiers:2});
+  const pasteTarget=await page('data:text/html,<body contenteditable="true" style="color:rgb(224,247,255);background:rgb(28,37,48);font-family:Arial"></body>');
+  await pasteTarget.until(`document.body?.isContentEditable`);
+  await pasteTarget.send('Page.bringToFront');await pasteTarget.evaluate(`document.body.focus()`);
+  await pasteTarget.send('Input.dispatchKeyEvent',{type:'keyDown',key:'v',code:'KeyV',windowsVirtualKeyCode:86,modifiers:2});
+  await pasteTarget.send('Input.dispatchKeyEvent',{type:'keyUp',key:'v',code:'KeyV',windowsVirtualKeyCode:86,modifiers:2});
+  await pasteTarget.until(`document.body.innerText.includes('Fictional course')`);
+  assert(await pasteTarget.evaluate(`[...document.body.querySelectorAll('*')].every(e=>getComputedStyle(e).color==='rgb(0, 0, 0)'&&(getComputedStyle(e).backgroundColor==='rgba(0, 0, 0, 0)'||getComputedStyle(e).backgroundColor==='rgb(255, 255, 255)'))`));
+  console.log('PASS: actual MV3 isolated content script trusted keyboard copy/paste into an unthemed editor has black text and no highlight.');
+  await first.send('Page.bringToFront');
+  await first.evaluate(`(()=>{const r=document.createRange();r.selectNodeContents(document.querySelector('h1'));const s=document.getSelection();s.removeAllRanges();s.addRange(r)})()`);
+  await popup.evaluate(`window.fixtureNativeQuery=chrome.tabs.query;chrome.tabs.query=async()=>[{id:${sourceTab.id}}]`);
+  await popup.send('Page.bringToFront');
+  const cleanClick=await popup.send('Runtime.evaluate',{expression:`document.querySelector('#copy-clean').click()`,userGesture:true});
+  assert(!cleanClick.exceptionDetails);
+  await popup.until(`document.querySelector('#copy-status').textContent.startsWith('Copied directly:')`);
+  await popup.evaluate(`chrome.tabs.query=window.fixtureNativeQuery`);
+  await pasteTarget.evaluate(`document.body.innerHTML='';document.body.focus()`);
+  await pasteTarget.send('Page.bringToFront');
+  await pasteTarget.send('Input.dispatchKeyEvent',{type:'keyDown',key:'v',code:'KeyV',windowsVirtualKeyCode:86,modifiers:2});
+  await pasteTarget.send('Input.dispatchKeyEvent',{type:'keyUp',key:'v',code:'KeyV',windowsVirtualKeyCode:86,modifiers:2});
+  await pasteTarget.until(`document.body.innerText.includes('Fictional course')`);
+  assert(await pasteTarget.evaluate(`[...document.body.querySelectorAll('*')].every(e=>getComputedStyle(e).color==='rgb(0, 0, 0)')`));
+  console.log('PASS: popup direct Copy selection cleanly writes normal HTML/plain clipboard data and pastes black text; no clipboard-read permission.');
   await first.until(`!!document.querySelector('demo-card').shadowRoot.querySelector('style[data-brightspace-theme]')`);
   await first.until(`!!document.querySelector('d2l-card').shadowRoot.querySelector('style[data-brightspace-theme]')`);
   assert.equal(await first.evaluate(`getComputedStyle(document.querySelector('d2l-card')).backgroundColor`),'rgb(28, 37, 48)');
@@ -153,7 +193,7 @@ try {
   assert.equal(await direct.evaluate(`!!document.querySelector('style[data-brightspace-theme]')`),false,'direct widget visits must stay unthemed');
   assert(await direct.evaluate(`Element.prototype.attachShadow.toString().includes('[native code]')`),'direct widget visit must not install the MAIN-world lifecycle hook');
   const cold=await page();
-  for(const theme of ['dark','dim','warm','ocean','forest','rose','midnight-city','sunset','aurora','custom','modern','liquid','liquid-clear','liquid-dark']) {
+  for(const theme of ['dark','dim','warm','ocean','forest','rose','midnight-city','sunset','aurora','custom','modern','liquid','liquid-clear','liquid-dark','hello-kitty','kuromi']) {
     await popup.evaluate(theme.startsWith('liquid')?`(()=>{const mode=document.querySelector('#liquid-mode');mode.value='${theme}';mode.dispatchEvent(new Event('change'))})()`:`document.querySelector('[value="${theme}"]').click()`);
     await fixture(cold,`https://learn.snhu.edu/late-cards-${theme}`);
     await cold.until(`window.lateFixture.card.shadowRoot.querySelector('style[data-brightspace-theme]')!==null`);
@@ -170,7 +210,7 @@ try {
   assert.equal(await cold.evaluate(`!!window.lateFixture.card.shadowRoot.querySelector('style[data-brightspace-theme]')`),false);
   await popup.evaluate(`document.querySelector('[value="warm"]').click()`);
   await cold.until(`window.lateFixture.card.shadowRoot.querySelector('style[data-brightspace-theme]')!==null`);
-  console.log('PASS: fourteen cold navigations, all six delayed nested roots, rerender style repair, Original teardown and re-enable; actual MV3 MAIN/isolated bridge. No refresh used.');
+  console.log('PASS: sixteen cold navigations, all six delayed nested roots, rerender style repair, Original teardown and re-enable; actual MV3 MAIN/isolated bridge. No refresh used.');
   const exited=new Promise(resolve=>browser.once('exit',resolve));
   closingBrowser=true;
   await control.send('Browser.close').catch(()=>{}); await exited;
