@@ -1,6 +1,6 @@
 # Development guide
 
-Current version: **1.5.1**. Manifest V3, local JavaScript/CSS, no runtime dependencies. Read the [README](../README.md) for installation, appearances, update notices and permissions.
+Current version: **1.5.2**. Manifest V3, local JavaScript/CSS, no runtime dependencies. Read the [README](../README.md) for installation, appearances, update notices and permissions.
 
 ## Architecture
 
@@ -68,3 +68,7 @@ Reload the extension, refresh Brightspace, then check each mode on course pages.
 Authenticated originals were inspected read-only in earlier passes to establish structural selectors; the final 1.5.0 theme has not been installed into that account or independently tested in Opera. External viewers, closed roots, authored templates and future Brightspace changes can require further work. Coverage is detailed in [PAGE_AUDIT.md](../PAGE_AUDIT.md) and [VERIFICATION.md](../VERIFICATION.md).
 
 References: [Chrome content scripts](https://developer.chrome.com/docs/extensions/develop/concepts/content-scripts), [cross-origin requests](https://developer.chrome.com/docs/extensions/develop/concepts/network-requests), [action badges](https://developer.chrome.com/docs/extensions/reference/api/action), [alarms](https://developer.chrome.com/docs/extensions/reference/api/alarms), [GitHub releases API](https://docs.github.com/en/rest/releases/releases).
+
+## Selection copy
+
+The content script handles copy events while enabled, including Original, in each approved document/frame. It clones only the selected ranges, strips source styles/attributes and unsafe nodes, retains an allowlist of semantic tags and safe links, then supplies neutral rich HTML and faithful plain text through the event clipboardData. No clipboard permission or existing clipboard read. Selection processing is transient and never stored/transmitted. Off, native input/textarea selections, image-only copy and already-handled events retain browser/page behavior. Destination apps can apply their own paste rules.

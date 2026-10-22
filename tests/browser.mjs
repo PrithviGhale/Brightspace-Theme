@@ -39,6 +39,19 @@ try {
   }
   const set=theme=>evaluate(`chrome.storage.local.set({theme:${JSON.stringify(theme)},enabled:true})`);
   const bg=()=>evaluate(`getComputedStyle(document.body).backgroundColor`);
+  await evaluate(`(()=>{const box=document.createElement('div');box.id='copy-fixture';box.innerHTML='<h2 style="color:white;background:black">Sample heading</h2><p style="color:#ff0000;font-family:fantasy"><strong>Bold</strong> and <em>italic</em> — Unicode ✓</p><ul><li>List item</li></ul><a href="https://example.com/reading">Reading link</a>';document.body.append(box)})()`);
+  for(const theme of ['dark','dim','warm','ocean','forest','rose','midnight-city','sunset','aurora','custom','modern','liquid','liquid-clear','liquid-dark','original']) {
+    await set(theme);
+    const copied=await evaluate(`(()=>{const box=document.querySelector('#copy-fixture'),sel=document.getSelection(),r=document.createRange();r.selectNodeContents(box);sel.removeAllRanges();sel.addRange(r);const expected=sel.toString(),data=new DataTransfer(),event=new ClipboardEvent('copy',{clipboardData:data,bubbles:true,cancelable:true});box.dispatchEvent(event);return {html:data.getData('text/html'),plain:data.getData('text/plain'),expected,prevented:event.defaultPrevented,source:box.querySelector('p').getAttribute('style')}})()`);
+    assert(copied.prevented,theme+': handles selected text copy');
+    assert.equal(copied.plain,copied.expected);
+    assert.match(copied.html,/color: #000000/);assert.match(copied.html,/<strong>Bold<\/strong>/);assert.match(copied.html,/<ul><li>List item/);assert.match(copied.html,/href="https:\/\/example.com\/reading"/);
+    assert(!/fantasy|#ff0000|background:black/.test(copied.html));assert.match(copied.source,/fantasy/,'Copy must not change the page');
+    assert(await evaluate(`(()=>{const d=document.querySelector('.content').contentDocument,s=d.getSelection(),r=d.createRange();r.selectNodeContents(d.querySelector('h3'));s.removeAllRanges();s.addRange(r);const data=new d.defaultView.DataTransfer(),e=new d.defaultView.ClipboardEvent('copy',{clipboardData:data,bubbles:true,cancelable:true});d.querySelector('h3').dispatchEvent(e);s.removeAllRanges();return e.defaultPrevented&&data.getData('text/html').includes('color: #000000')})()`),theme+': embedded reading copy is neutral');
+  }
+  await evaluate(`chrome.storage.local.set({enabled:false})`);
+  assert.equal(await evaluate(`(()=>{const e=new ClipboardEvent('copy',{clipboardData:new DataTransfer(),bubbles:true,cancelable:true});document.querySelector('#copy-fixture').dispatchEvent(e);document.getSelection().removeAllRanges();document.querySelector('#copy-fixture').remove();return e.defaultPrevented})()`),false,'Off restores native copy');
+  console.log('PASS: neutral rich-text copy across fourteen themes and Original; plain-text fidelity, headings/lists/emphasis/links, unchanged source and Off restoration. No system clipboard read.');
   for (const [theme,expected,frameColor] of [['dark','rgb(18, 24, 32)','rgb(28, 37, 48)'],['dim','rgb(37, 43, 52)','rgb(48, 57, 69)'],['warm','rgb(243, 234, 216)','rgb(255, 247, 232)']]) {
     await set(theme);
     await until(`getComputedStyle(document.querySelector('.content').contentDocument.body).backgroundColor === ${JSON.stringify(frameColor)}`);

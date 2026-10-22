@@ -6,7 +6,7 @@ A theme extension for **SNHU Brightspace**, built for Chrome and Opera. Choose a
 
 I made this because I'm used to having dark mode, and Brightspace felt too bright. I wanted it to look better and feel easier to use without changing how my courses work.
 
-**[Download v1.5.1](https://github.com/PrithviGhale/Brightspace-Theme/releases/tag/v1.5.1)** · [Report a problem](https://github.com/PrithviGhale/Brightspace-Theme/issues) · [Changelog](CHANGELOG.md)
+**[Download v1.5.2](https://github.com/PrithviGhale/Brightspace-Theme/releases/tag/v1.5.2)** · [Report a problem](https://github.com/PrithviGhale/Brightspace-Theme/issues) · [Changelog](CHANGELOG.md)
 
 ## New: Liquid Glass
 
@@ -42,6 +42,12 @@ The themes cover supported dashboard, discussion, announcement, assignment, feed
 
 If you cloned the repository, load its **extension/** folder instead. Keep only one copy enabled. Managed school/work browsers may restrict unpacked extensions.
 
+## Copy into documents
+
+With appearance enabled, copying selected text writes clean rich text with normal black ink and an inherited font family, so theme colors do not follow it into documents. Headings, lists, bold, italics, tables and safe links remain. The receiving app chooses how to apply its font and paste settings. Inputs keep native plain-text copy; image-only copy and Cut are unchanged. Off restores native copying.
+
+This handles only text you select and copy, locally and transiently. It never reads your existing clipboard, saves copied text, or sends it anywhere. No clipboard permission is requested.
+
 ## Update notices
 
 The extension checks this repository's **public GitHub releases every six hours** while your browser is running, on browser startup when the cached check is old, and when you open the popup. **Check now** forces a fresh check.
@@ -58,7 +64,7 @@ ZIP installs cannot replace their own files automatically. This project has not 
 
 ## Privacy and access
 
-Preferences stay in your browser profile. There are no analytics, ads, tracking, remote scripts, remote fonts, or runtime dependencies. The theme inspects element/shadow-root structure to place styles; it does **not read or save grades, assignment text, passwords, form values or discussion content**.
+Preferences stay in your browser profile. There are no analytics, ads, tracking, remote scripts, remote fonts, or runtime dependencies. The theme inspects element/shadow-root structure to place styles; it does **not automatically collect or save grades, assignment text, passwords, form values or discussion content**. The copy action handles only the selection you explicitly copy, without storing it.
 
 | Access | Purpose |
 | --- | --- |

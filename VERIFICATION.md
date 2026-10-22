@@ -1,5 +1,8 @@
 # Verification record
 
+Version **1.5.2**: isolated Chrome tests dispatch clipboard events with local DataTransfer objects, without reading or replacing the system clipboard. Across fourteen themes and Original, copied HTML has neutral ink, no source colors/fonts/backgrounds, semantic headings/lists/emphasis/safe links, and faithful plain text. Embedded reading handlers and Off restoration are checked. The source page is unchanged. Static and installed-extension suites also passed. Word/Google Docs destination paste behavior was not directly automated; destination paste settings can still override incoming formatting.
+
+
 Version **1.5.1**: inspected the reported reading page read-only. Its embedded body.content template uses container-fluid, intersect-wrapper and intersect-content; the latter's stylesheet retained a white background. A fictional matching frame now verifies the panel surface across all fourteen themed appearances. The real profile opener is a span.d2l-navigation-s-personal-menu-wrapper with slot=opener, which was incorrectly included in menu-panel decoration. Excluded that opener and removed its nested border/shadow/padding while preserving focus-visible. Restored original logo colors. Static, updater unit, existing browser and Liquid Glass suites passed. These are local rendered tests informed by live structure; installed appearance still needs confirmation.
 
 

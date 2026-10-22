@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.5.2 — 2026-10-22
+
+- Copy selected text into documents without carrying theme foreground/background colors or font overrides. Clean rich HTML uses neutral black ink and inherited font family, retaining semantic headings, lists, emphasis, tables and safe links; plain text stays faithful to the selection.
+- Works in all appearances, including Original while enabled, and matching embedded readings. Off restores native copy. Native input/textarea, image-only copy, Cut and copy already handled by a page remain unchanged.
+- Selected text is processed only during Copy, locally and transiently. No existing clipboard reads, storage, network calls or clipboard permissions.
+- Browser regression checks cover all fourteen themes and Original, formatting/plain-text fidelity, unchanged source, embedded readings and Off cleanup. Installed-extension regression checks passed.
+
+
 ## 1.5.1 — 2026-10-22
 
 - Restore original navigation logo colors instead of flattening the shield to white; a light backing keeps dark lettering readable.
