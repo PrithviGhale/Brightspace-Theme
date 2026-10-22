@@ -6,9 +6,9 @@ A theme extension for **SNHU Brightspace**, built for Chrome and Opera. Choose a
 
 I made this because I'm used to having dark mode, and Brightspace felt too bright. I wanted it to look better and feel easier to use without changing how my courses work.
 
-**[Download v1.5.2](https://github.com/PrithviGhale/Brightspace-Theme/releases/tag/v1.5.2)** · [Report a problem](https://github.com/PrithviGhale/Brightspace-Theme/issues) · [Changelog](CHANGELOG.md)
+**[Download v1.6.0](https://github.com/PrithviGhale/Brightspace-Theme/releases/tag/v1.6.0)** · [Report a problem](https://github.com/PrithviGhale/Brightspace-Theme/issues) · [Changelog](CHANGELOG.md)
 
-## Hello Kitty and Kuromi (1.6.0 source preview)
+## Hello Kitty and Kuromi (1.6.0)
 
 Two separate character themes are available under **More themes > Character worlds**:
 
@@ -17,7 +17,7 @@ Two separate character themes are available under **More themes > Character worl
 
 Both carry through supported course pages, discussions, assignments, grades, classlist, calendar, menus and embedded readings. Hover motion respects reduced-motion preferences; reading areas stay steady. Character images are bundled locally, with no remote image requests. [Artwork sources and attribution](extension/art/SOURCES.md).
 
-Local previews use fictional data: [Hello Kitty](docs/screenshots/hello-kitty.png) | [Kuromi](docs/screenshots/kuromi.png). This test build includes the wider popup and copy helper below and is available in source; no 1.6.0 release has been published.
+Local previews use fictional data: [Hello Kitty](docs/screenshots/hello-kitty.png) | [Kuromi](docs/screenshots/kuromi.png). Version 1.6.0 includes the wider popup and copy helper below.
 
 ## New: Liquid Glass
 
@@ -55,7 +55,7 @@ If you cloned the repository, load its **extension/** folder instead. Keep only 
 
 ## Copy into documents
 
-The **1.6.0 source preview (not released)** has a wider 440px popup, a two-column theme picker, and **Copy selection cleanly**. Highlight text in Brightspace, open the toolbar popup, click that button, then paste normally. The focused popup writes fresh black-on-white HTML and plain text directly to the clipboard, bypassing the page's normal Copy serializers. Source text is not stored or sent to any external service.
+Version **1.6.0** has a wider 440px popup, a two-column theme picker, and **Copy selection cleanly**. Highlight text in Brightspace, open the toolbar popup, click that button, then paste normally. The focused popup writes fresh black-on-white HTML and plain text directly to the clipboard, bypassing the page's normal Copy serializers. Source text is not stored or sent to any external service.
 
 Ctrl+C / Command+C remains supported with per-run normal colors and shadow-selection handling. A Copy helper status shows whether this version actually handled the most recent copy or could not read a selection. It records only a result, time and version locally, never copied text, source URL or names. This helps distinguish an inactive copy handler from destination formatting. Word/Opera confirmation is still pending; browser tests alone do not establish their behavior.
 

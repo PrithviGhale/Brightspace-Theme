@@ -1,12 +1,12 @@
 # Changelog
 
-## 1.6.0 - Source preview, not released
+## 1.6.0 - 2026-10-22
 
 - Add separate Hello Kitty and Kuromi themes under More themes > Character worlds. Pink/cream bows and midnight/lilac stars each have locally bundled character background art, heading accents and card stickers.
 - Adapt supported dashboard, course, discussion, reading, assignment, feedback, grade, classlist, calendar, menu and settings surfaces. Preserve course/profile images and native actions, with mobile layouts, keyboard focus and reduced-motion support.
 - Package two local PNG assets restricted to the existing supported site/widget origins; no new permissions or runtime remote image requests. Record Sanrio artwork sources locally.
 - Verify contrast, desktop/mobile page fixtures, late-loading roots, real MV3 theme selection and packaged artwork loading. Includes earlier unpublished popup/copy improvements; Word/Opera confirmation remains pending.
-- Source preview pushed for user testing; no release publication.
+- Release includes the installable extension ZIP and character-theme previews.
 
 ## 1.5.5 — Local test build, not published
 

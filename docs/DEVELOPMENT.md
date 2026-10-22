@@ -1,6 +1,6 @@
 # Development guide
 
-Source preview version: **1.6.0** (not released). Manifest V3, local JavaScript/CSS, no runtime dependencies. Read the [README](../README.md) for installation, appearances, update notices and permissions.
+Current version: **1.6.0**. Manifest V3, local JavaScript/CSS, no runtime dependencies. Read the [README](../README.md) for installation, appearances, update notices and permissions.
 
 ## Architecture
 
