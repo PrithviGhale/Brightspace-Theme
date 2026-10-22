@@ -48,6 +48,11 @@ try {
     assert.equal(colors[2],colors[3]);
     await cdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false}).then(r=>writeFile(path.join(root,'dist',`preview-${theme}.png`),Buffer.from(r.data,'base64')));
   }
+  for(const theme of ['dark','dim','warm','ocean','forest','rose','midnight-city','sunset','aurora','custom','modern','liquid','liquid-clear','liquid-dark']) {
+    await set(theme);
+    await until(`(()=>{const d=document.querySelector('.content').contentDocument;const panel=d.querySelector('.intersect-content');const hex=getComputedStyle(d.documentElement).getPropertyValue('--bs-surface').trim();const parts=hex.slice(1).match(/../g)?.map(v=>parseInt(v,16));return parts&&getComputedStyle(panel).backgroundColor==='rgb('+parts.join(', ')+')'})()`);
+  }
+  console.log('PASS: embedded SNHU intersect-content reading panel follows all fourteen themed appearances.');
   await set('modern');
   await until(`getComputedStyle(document.body).backgroundColor==='rgb(12, 16, 33)'`);
   const modernSurface=await evaluate(`(()=>{const card=document.querySelector('.cards .d2l-widget');const reveal=getComputedStyle(card);return {radius:reveal.borderRadius,timeline:reveal.animationTimeline,frame:getComputedStyle(document.querySelector('.content').contentDocument.body).backgroundColor,media:getComputedStyle(document.querySelector('img')).filter}})()`);

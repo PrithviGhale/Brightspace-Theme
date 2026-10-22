@@ -6,7 +6,7 @@ A theme extension for **SNHU Brightspace**, built for Chrome and Opera. Choose a
 
 I made this because I'm used to having dark mode, and Brightspace felt too bright. I wanted it to look better and feel easier to use without changing how my courses work.
 
-**[Download v1.5.0](https://github.com/PrithviGhale/Brightspace-Theme/releases/tag/v1.5.0)** · [Report a problem](https://github.com/PrithviGhale/Brightspace-Theme/issues) · [Changelog](CHANGELOG.md)
+**[Download v1.5.1](https://github.com/PrithviGhale/Brightspace-Theme/releases/tag/v1.5.1)** · [Report a problem](https://github.com/PrithviGhale/Brightspace-Theme/issues) · [Changelog](CHANGELOG.md)
 
 ## New: Liquid Glass
 
@@ -30,7 +30,7 @@ Screenshots use **fictional local courses**, not account data. Your real course 
 - **Custom colors:** choose your own palette with text and focus contrast checks.
 - **Original / Off:** restore Brightspace's own appearance.
 
-The themes cover supported dashboard, discussion, announcement, assignment, feedback, grade, classlist, calendar, menu and settings surfaces. Navigation controls are compact and centered, and page titles have no solid backplate. Course photos and profile pictures stay unfiltered. Dark glass/Prism navigation branding uses a clean single-color logo instead of the old outline effect.
+The themes cover supported dashboard, discussion, announcement, assignment, feedback, grade, classlist, calendar, menu and settings surfaces. Navigation controls are compact and centered, and page titles have no solid backplate. Course photos and profile pictures stay unfiltered. Navigation branding keeps its original colors, with a light backing in dark glass designs for readability.
 
 ## Install
 

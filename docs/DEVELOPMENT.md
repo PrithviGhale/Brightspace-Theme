@@ -1,6 +1,6 @@
 # Development guide
 
-Current version: **1.5.0**. Manifest V3, local JavaScript/CSS, no runtime dependencies. Read the [README](../README.md) for installation, appearances, update notices and permissions.
+Current version: **1.5.1**. Manifest V3, local JavaScript/CSS, no runtime dependencies. Read the [README](../README.md) for installation, appearances, update notices and permissions.
 
 ## Architecture
 
@@ -16,7 +16,7 @@ Current version: **1.5.0**. Manifest V3, local JavaScript/CSS, no runtime depend
 
 Liquid Glass uses `liquid` (Default), `liquid-clear` (Transparent), and `liquid-dark` (Dark) as validated theme IDs. The popup presents one design with a mode selector. Every mode shares the same supported page coverage and preference synchronization. Gradients, blur, inset highlights, rounded surfaces and hover keyframes use bundled CSS only.
 
-Navigation retains native row heights, order, actions and responsive collapse. Compact 44px controls center in full-height hosts. Page-title layout boxes are transparent. Prism and Dark Liquid Glass use a white silhouette for navigation branding only; photos and authored media are unfiltered. Data-table geometry selectors avoid layout/authored tables. Nested feedback inherits its cell's surface token.
+Navigation retains native row heights, order, actions and responsive collapse. Compact 44px controls center in full-height hosts. Page-title layout boxes are transparent. Prism and Dark Liquid Glass keep original navigation branding colors on a light backing; photos and authored media are unfiltered. Slotted profile openers are excluded from menu-panel decoration. Embedded SNHU module template panels receive the containing surface color. Data-table geometry selectors avoid layout/authored tables. Nested feedback inherits its cell's surface token.
 
 The background drifts slowly; cards/buttons receive one jelly animation on hover. Reading posts stay stationary. Reduced-motion disables added motion; reduced-transparency selects opaque materials where supported; missing backdrop-filter falls back to solid panel colors. Text uses tested palette contrast, keyboard focus remains visible, and Original restores native styling.
 

@@ -122,7 +122,7 @@
       border:1px dashed #8499ce!important; border-radius:18px!important; background-color:#1c2945!important;
     }
     :where(.d2l-menu,.d2l-dropdown-content,.dropdown-content,
-      .d2l-navigation-s-personal-menu-wrapper,[role="menu"],[role="listbox"]) {
+      .d2l-navigation-s-personal-menu-wrapper:not([slot="opener"]),[role="menu"],[role="listbox"]) {
       border:1px solid var(--bs-design-line)!important; border-radius:18px!important;
       box-shadow:0 18px 50px rgba(0,3,18,.42)!important;
     }
@@ -190,6 +190,10 @@
       background-color:transparent!important; border-color:var(--bs-nav-line,var(--bs-border))!important;
     }
     :where(.d2l-navigation-s-separator) { opacity:.35; }
+    /* This span is the profile opener, not the dropdown menu panel. */
+    .d2l-navigation-s-personal-menu-wrapper[slot="opener"] {
+      background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;border-radius:0!important;
+    }
     .d2l-page-header,
     .d2l-page-header :where(.d2l-box,.d2l-box-layout,.d2l-page-title-c,.d2l-page-title) {
       background-color:transparent!important; box-shadow:none!important;
@@ -212,8 +216,12 @@
     :host(d2l-labs-navigation-button-icon) button,:host(d2l-labs-navigation-dropdown-button-icon) button,
     :host(d2l-labs-navigation-dropdown-button-custom) button,:host(d2l-labs-navigation-dropdown-button) button {
       box-sizing:border-box!important; height:44px!important; min-height:44px!important; margin-block:auto!important;
-      border:1px solid transparent!important; border-radius:999px!important; padding:6px 12px!important;
+      border:0!important; border-radius:999px!important; padding:6px 12px!important;
       background-color:transparent!important; box-shadow:none!important;
+    }
+    :host(d2l-labs-navigation-dropdown-button) button { box-shadow:none!important;border:0!important; }
+    :host(d2l-labs-navigation-dropdown-button-custom) ::slotted([slot="opener"]) {
+      background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;
     }
     :host(d2l-labs-navigation-button-icon) button,:host(d2l-labs-navigation-dropdown-button-icon) button {
       width:44px!important; min-width:44px!important; padding:10px!important; justify-content:center!important;
@@ -323,6 +331,7 @@
        This is restricted to navigation branding, never profile photos or course media. */
     :where(.d2l-navigation-s-logo img, img.d2l-navigation-s-logo-image) {
       filter: var(--bs-logo-contour) !important;
+      background-color:var(--bs-logo-canvas,transparent)!important;border-radius:8px;
     }
     :is(.d2l-navigation-s-main, .d2l-navigation-s-main-wrapper, .d2l-navigation-main-footer)
       :where(button, [role="button"]) {
@@ -428,7 +437,7 @@
     /* Menu rows and panels need paired foreground/background overrides. */
     :where(d2l-menu, d2l-menu-item, d2l-menu-item-link, [role="menuitem"],
       .d2l-menu-items, .dropdown-content, .dropdown-content-layout,
-      .d2l-navigation-s-personal-menu-wrapper) {
+      .d2l-navigation-s-personal-menu-wrapper:not([slot="opener"])) {
       background-color: var(--bs-surface) !important;
       color: var(--bs-link) !important;
       border-color: var(--bs-border) !important;
@@ -477,7 +486,7 @@
       }
       :where(input:not([type="checkbox"]):not([type="radio"]),textarea) { border-radius:14px!important; }
       :where(.d2l-filedrop,.d2l-filedrop-default-style) { background-color:var(--bs-surface)!important;border:1px dashed var(--bs-border)!important;border-radius:20px!important; }
-      :where(.d2l-menu,.d2l-dropdown-content,[role="menu"],[role="listbox"],.d2l-navigation-s-personal-menu-wrapper) {
+      :where(.d2l-menu,.d2l-dropdown-content,[role="menu"],[role="listbox"],.d2l-navigation-s-personal-menu-wrapper:not([slot="opener"])) {
         background-color:var(--bs-surface)!important;border:1px solid var(--bs-border)!important;border-radius:20px!important;
         box-shadow:0 14px 40px ${shadowTone}!important;
       }
@@ -526,8 +535,8 @@
     if (!p) return '';
     const liquid=theme.startsWith('liquid');
     const polished=theme==='modern'||liquid;
-    const logo=p.scheme==='light'?'none':polished?'brightness(0) invert(1)':'drop-shadow(0 0 .5px #f4f6f9) drop-shadow(0 0 1px #f4f6f9)';
-    const tokens = `--bs-panel:${p.surface};--bs-logo-contour:${logo};` + Object.entries(p).filter(([key]) => key !== 'scheme').map(([key,value]) => `--bs-${key}:${value};`).join('');
+    const logo=p.scheme==='light'?'none':polished?'none':'drop-shadow(0 0 .5px #f4f6f9) drop-shadow(0 0 1px #f4f6f9)';
+    const tokens = `--bs-panel:${p.surface};--bs-logo-canvas:${polished && p.scheme === 'dark' ? '#f4f7fb' : 'transparent'};--bs-logo-contour:${logo};` + Object.entries(p).filter(([key]) => key !== 'scheme').map(([key,value]) => `--bs-${key}:${value};`).join('');
     const hostSurfaces = shadow ? `
       :host(d2l-card), :host(d2l-enrollment-card),
       :host(d2l-my-courses-enrollment-card) d2l-card,
@@ -572,6 +581,7 @@
       }
       :host(d2l-labs-navigation-link-image.d2l-navigation-s-logo) img {
         filter: var(--bs-logo-contour) !important;
+        background-color:var(--bs-logo-canvas,transparent)!important;border-radius:8px;
       }
       /* Navigation triggers are transparent controls, not filled action buttons. */
       :host(d2l-labs-navigation-button-icon) button,
@@ -613,7 +623,12 @@
     const redesign = (theme === 'modern' ? modernRules + (!shadow && !embedded ? modernCanvas : '') : liquid ? liquidCss(theme,shadow,embedded) : '')
       + (polished ? navigationRules : '');
     const redesignHosts = (shadow && theme === 'modern' ? modernHostRules : '') + (shadow && polished ? navigationHostRules : '');
-    return `${shadow ? ':host' : ':root'} { ${shadow ? '' : tokens} ${frameToken} ${variables} color-scheme:${p.scheme}; color:var(--bs-text); }\n${rules}\n${hostSurfaces}${scene}${redesign}${redesignHosts}`;
+    const reading = embedded && !shadow ? `
+      /* Observed SNHU module template: preserve banner artwork and geometry. */
+      body.content .intersect-content,body.content .intersect-wrapper,
+      body.content .container-fluid { background-color:var(--bs-surface)!important;color:var(--bs-text)!important; }
+    ` : '';
+    return `${shadow ? ':host' : ':root'} { ${shadow ? '' : tokens} ${frameToken} ${variables} color-scheme:${p.scheme}; color:var(--bs-text); }\n${rules}\n${hostSurfaces}${scene}${redesign}${redesignHosts}${reading}`;
   }
   function sceneCss(scene) {
     const city = scene.startsWith('city-');

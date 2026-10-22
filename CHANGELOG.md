@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.5.1 — 2026-10-22
+
+- Restore original navigation logo colors instead of flattening the shield to white; a light backing keeps dark lettering readable.
+- Stop styling the slotted profile opener as a dropdown menu panel, removing nested borders and padding while retaining keyboard focus.
+- Remove extra native borders on navigation dropdown controls.
+- Theme the observed embedded SNHU module template's intersect-content panel across every appearance, preserving banner artwork and reading layout.
+- Read-only inspection identified the real template/profile classes. All fourteen themed reading-panel cases and existing browser/Liquid Glass checks passed; no new permissions.
+
+
 ## 1.5.0 — 2026-10-22
 
 - Added **Liquid Glass** under More themes, with Default, Transparent and Dark appearances. Frosted panels, inset highlights, rounded cards, animated backgrounds and gentle jelly hover motion use local CSS only.
