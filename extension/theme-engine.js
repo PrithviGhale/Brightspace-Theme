@@ -4,8 +4,13 @@
   const palettes = Object.freeze({
     dark: { bg: '#121820', surface: '#1c2530', raised: '#283545', text: '#e7edf5', muted: '#b5c2d2', link: '#92caff', border: '#687e95', focus: '#ffd580', danger: '#ffb2b2', success: '#a4dfb4', scheme: 'dark' },
     dim: { bg: '#252b34', surface: '#303945', raised: '#3b4756', text: '#f0f2f6', muted: '#c4ceda', link: '#a9d6ff', border: '#8291a3', focus: '#ffe19c', danger: '#ffc1c1', success: '#b5ecc3', scheme: 'dark' },
-    warm: { bg: '#f3ead8', surface: '#fff7e8', raised: '#e8dcc4', text: '#382d23', muted: '#665441', link: '#235786', border: '#8b775e', focus: '#833e00', danger: '#9a2020', success: '#285f35', scheme: 'light' }
+    warm: { bg: '#f3ead8', surface: '#fff7e8', raised: '#e8dcc4', text: '#382d23', muted: '#665441', link: '#235786', border: '#8b775e', focus: '#833e00', danger: '#9a2020', success: '#285f35', scheme: 'light' },
+    ocean: { bg:'#10212b', surface:'#18313d', raised:'#244552', text:'#e5f7fa', muted:'#b1d0d6', link:'#77d9f5', border:'#5b929e', focus:'#ffd27a', danger:'#ffb3aa', success:'#a5e7c2', scheme:'dark' },
+    forest: { bg:'#17231d', surface:'#22342a', raised:'#304637', text:'#edf5e9', muted:'#c3d3bd', link:'#a8e0b1', border:'#718e76', focus:'#f5ce73', danger:'#ffb6a9', success:'#b6e6a9', scheme:'dark' },
+    rose: { bg:'#281b27', surface:'#392738', raised:'#4b3548', text:'#fff0f5', muted:'#e1c7d4', link:'#ffb4d2', border:'#9b7890', focus:'#ffe08a', danger:'#ffb0aa', success:'#a8e4c2', scheme:'dark' }
   });
+  const customDefaults = { bg:'#171b2c', surface:'#222943', raised:'#303a5c', text:'#f2f2ff', muted:'#c2c6dc', link:'#9ad9ff', border:'#7382a8', focus:'#ffd27a', danger:'#ffb6b6', success:'#a5e7c2', scheme:'dark' };
+  const themeScenes = Object.freeze({ 'midnight-city':'city-night', sunset:'city-sunset', aurora:'aurora' });
   const variables = `
     --d2l-color-regolith: var(--bs-surface); --d2l-color-sylvite: var(--bs-raised);
     --d2l-color-gypsum: var(--bs-raised); --d2l-color-mica: var(--bs-border);
@@ -199,8 +204,8 @@
     [role="menuitem"]:focus-visible { outline-offset: -4px !important; }
     ::selection { background: var(--bs-link); color: var(--bs-bg); }
   `;
-  function css(theme, shadow = false, embedded = false) {
-    const p = palettes[theme];
+  function css(theme, shadow = false, embedded = false, customPalette) {
+    const p = palettes[theme] || (theme === 'custom' ? { ...customDefaults, ...Object.fromEntries(Object.entries(customPalette || {}).filter(([key,value]) => key !== 'scheme' && /^#[\da-f]{6}$/i.test(value))) } : theme === 'sunset' ? { ...palettes.rose, bg:'#2b1c2b', surface:'#3a2938', raised:'#51394a', link:'#ffd0a1' } : themeScenes[theme] ? palettes.dark : null);
     if (!p) return '';
     const tokens = `--bs-panel:${p.surface};--bs-logo-contour:${theme === 'warm' ? 'none' : 'drop-shadow(0 0 .5px #f4f6f9) drop-shadow(0 0 1px #f4f6f9)'};` + Object.entries(p).filter(([key]) => key !== 'scheme').map(([key,value]) => `--bs-${key}:${value};`).join('');
     const hostSurfaces = shadow ? `
@@ -284,10 +289,26 @@
     ` : '';
     // Nested HTML/widget documents should blend into their containing course widget.
     const frameToken = embedded && !shadow ? `--bs-bg:${p.surface};` : '';
-    return `${shadow ? ':host' : ':root'} { ${shadow ? '' : tokens} ${frameToken} ${variables} color-scheme:${p.scheme}; color:var(--bs-text); }\n${rules}\n${hostSurfaces}`;
+    const scene = !shadow && themeScenes[theme] ? sceneCss(themeScenes[theme]) : '';
+    return `${shadow ? ':host' : ':root'} { ${shadow ? '' : tokens} ${frameToken} ${variables} color-scheme:${p.scheme}; color:var(--bs-text); }\n${rules}\n${hostSurfaces}${scene}`;
+  }
+  function sceneCss(scene) {
+    const city = scene.startsWith('city-');
+    const cityColor = scene === 'city-sunset' ? '#291d36' : '#090f20';
+    const windowColor = scene === 'city-sunset' ? '#ffc36b' : '#83bfff';
+    const skyline = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" preserveAspectRatio="none"><path fill="${cityColor}" d="M0 360V230h70v-48h52v48h36v-88h70v-42h42v130h54v-170h80v52h44v118h69v-74h60v-98h66v-54h72v152h62v-118h74v-39h62v157h58v-76h55v-54h60v130h72v-112h46v-46h72v158h64v-70h64v-46h80v116h70v-94h58v-56h64v150h55v130z"/><path fill="${windowColor}" opacity=".55" d="M92 220h9v15h-9zm62 30h10v16h-10zm91-52h9v13h-9zm59 22h9v14h-9zm111-104h10v15h-10zm22 27h10v15h-10zm25 27h10v15h-10zm112 79h10v14h-10zm155-111h10v14h-10zm34 25h10v14h-10zm92-69h10v13h-10zm57 43h10v14h-10zm108-4h10v14h-10zm59 29h10v14h-10zm81-39h10v14h-10zm93 72h10v14h-10zm72-12h10v14h-10z"/></svg>`;
+    const artwork = `url("data:image/svg+xml,${encodeURIComponent(skyline)}")`;
+    const sky = scene === 'city-sunset'
+      ? 'radial-gradient(ellipse at 78% 68%,rgba(255,157,93,.31),transparent 42%),linear-gradient(180deg,rgba(95,69,109,.14),rgba(233,125,96,.20) 74%,transparent)'
+      : scene === 'aurora'
+        ? 'radial-gradient(ellipse at 18% 12%,rgba(49,220,189,.24),transparent 38%),radial-gradient(ellipse at 74% 24%,rgba(99,111,241,.24),transparent 43%),radial-gradient(ellipse at 48% 58%,rgba(58,190,169,.12),transparent 50%)'
+        : 'radial-gradient(ellipse at 80% 16%,rgba(62,119,207,.22),transparent 38%),radial-gradient(ellipse at 18% 44%,rgba(110,91,200,.12),transparent 42%)';
+    const art = city ? `body::after{content:"";position:fixed;z-index:-1;pointer-events:none;inset:0;background-image:${artwork};background-position:center bottom;background-size:100% min(42vh,420px);background-repeat:repeat-x;opacity:.62}` : '';
+    return `html{isolation:isolate}body{background-color:transparent!important}body::before{content:"";position:fixed;z-index:-1;pointer-events:none;inset:-3%;background:${sky};animation:brightspace-ambience 32s ease-in-out infinite alternate;will-change:transform,opacity}${art}@keyframes brightspace-ambience{from{transform:translate3d(-.7%,0,0) scale(1);opacity:.76}to{transform:translate3d(.7%,.5%,0) scale(1.025);opacity:1}}@media(prefers-reduced-motion:reduce){body::before{animation:none!important;will-change:auto}}`;
   }
   function create(doc, { embedded = false } = {}) {
     let theme = 'original';
+    let customPalette = null;
     let queued = false;
     let readyObserver = null;
     let discoveryFrame = null;
@@ -331,7 +352,7 @@
       if (roots.has(root)) return;
       const style = doc.createElement('style');
       style.dataset.brightspaceTheme = 'after-hours';
-      style.textContent = css(theme, root !== doc, embedded);
+      style.textContent = css(theme, root !== doc, embedded, customPalette);
       const observer = new view.MutationObserver(records => {
         for (const record of records) for (const node of record.addedNodes) {
           if (node.nodeType === 1 && node !== style) pending.add(node);
@@ -394,12 +415,15 @@
         }
       }
     }
-    function apply(next) {
+    function apply(next, custom) {
       if (readyObserver) { readyObserver.disconnect(); readyObserver = null; }
-      next = palettes[next] ? next : 'original';
-      if (next === theme) return;
+      next = palettes[next] || next === 'custom' || next === 'midnight-city' || next === 'sunset' || next === 'aurora' ? next : 'original';
+      const normalizedCustom = next === 'custom' ? { ...customDefaults, ...Object.fromEntries(Object.entries(custom || {}).filter(([key,value]) => key !== 'scheme' && /^#[\da-f]{6}$/i.test(value))) } : null;
+      const customChanged = JSON.stringify(normalizedCustom) !== JSON.stringify(customPalette);
+      if (next === theme && !customChanged) return;
       const wasOriginal = theme === 'original';
       theme = next;
+      customPalette = normalizedCustom;
       if (next === 'original') {
         if (discoveryFrame !== null) view.cancelAnimationFrame(discoveryFrame);
         discoveryFrame = null;
@@ -423,10 +447,10 @@
         if (doc.readyState !== 'complete') view.addEventListener('load', checkStartupHosts, {once:true});
         register(doc); scan(doc);
       } else {
-        for (const [root, {style}] of roots) style.textContent = css(theme, root !== doc, embedded);
+        for (const [root, {style}] of roots) style.textContent = css(theme, root !== doc, embedded, customPalette);
       }
     }
     return Object.freeze({ apply });
   }
-  globalThis.BrightTheme = Object.freeze({ create, css, palettes });
+  globalThis.BrightTheme = Object.freeze({ create, css, palettes, themeScenes });
 })();

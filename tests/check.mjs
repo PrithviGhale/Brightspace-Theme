@@ -66,8 +66,8 @@ const context = vm.createContext({chrome});
 vm.runInContext(await read('preferences.js'), context);
 const p = context.BrightPreferences;
 const plain = x => JSON.parse(JSON.stringify(x));
-assert.deepEqual(plain(await p.read()), {enabled:true, theme:'dark'});
-assert.deepEqual(plain(p.normalize({enabled:'yes',theme:'unknown',grade:'ignored'})), {enabled:true, theme:'dark'});
+assert.deepEqual(plain(await p.read()), {enabled:true, theme:'dark', customPalette:plain(p.DEFAULTS.customPalette)});
+assert.deepEqual(plain(p.normalize({enabled:'yes',theme:'unknown',grade:'ignored'})), {enabled:true, theme:'dark', customPalette:plain(p.DEFAULTS.customPalette)});
 assert.equal(p.effective({enabled:false,theme:'warm'}), 'original');
 assert.equal(p.effective({enabled:true,theme:'original'}), 'original');
 let patch;
@@ -75,8 +75,13 @@ const unsub = p.subscribe(value => patch = value);
 await p.write({theme:'warm', grade:'never persisted'});
 assert.deepEqual(stored, {theme:'warm'});
 assert.deepEqual(plain(patch), {theme:'warm'});
+const customPalette={...plain(p.DEFAULTS.customPalette),bg:'#101820'};
+await p.write({theme:'custom',customPalette,credentials:'never persisted'});
+assert.equal(stored.theme,'custom');
+assert.equal(stored.customPalette.bg,'#101820');
+assert.equal(stored.credentials,undefined);
 await Promise.all([p.write({enabled:false}), p.write({theme:'dim'})]);
-assert.deepEqual(stored, {theme:'dim',enabled:false});
+assert.deepEqual(plain(stored), {theme:'dim',enabled:false,customPalette});
 assert.equal((await p.read()).theme, 'dim');
 for (const fn of listeners) fn({theme:{newValue:'dark'}}, 'sync');
 assert.equal(patch.theme, 'dim');
@@ -104,7 +109,7 @@ assert.equal(applied.at(-1),'dim');
 vm.runInContext(await read('theme-engine.js'), context);
 function luminance(hex) { const c = hex.slice(1).match(/../g).map(x=>parseInt(x,16)/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4); return .2126*c[0]+.7152*c[1]+.0722*c[2]; }
 function contrast(a,b) { const x=luminance(a),y=luminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05); }
-for (const [name, palette] of Object.entries(context.BrightTheme.palettes)) {
+for (const [name, palette] of [...Object.entries(context.BrightTheme.palettes),['custom',plain(p.DEFAULTS.customPalette)],['midnight-city',context.BrightTheme.palettes.dark],['sunset',{...context.BrightTheme.palettes.rose,bg:'#2b1c2b',surface:'#3a2938',raised:'#51394a',link:'#ffd0a1'}],['aurora',context.BrightTheme.palettes.dark]]) {
   for (const bg of ['bg','surface','raised']) for (const fg of ['text','muted','link','danger','success']) assert(contrast(palette[bg],palette[fg])>=4.5, `${name}: ${fg}/${bg} contrast`);
   assert(contrast(palette.focus,palette.surface)>=3, `${name}: focus contrast`);
   // Only navigation branding may gain a contour; photos/course media stay untouched.
@@ -116,4 +121,14 @@ for (const [name, palette] of Object.entries(context.BrightTheme.palettes)) {
   }
 }
 assert.equal(context.BrightTheme.css('original'), '');
-console.log('PASS: manifest scope/assets; JavaScript syntax/privacy checks; preference defaults, validation, writes, events and read race; palette text/link/status contrast ≥4.5:1; focus contrast ≥3:1.');
+for (const scene of ['midnight-city','sunset','aurora']) {
+  const css=context.BrightTheme.css(scene);
+  assert.match(css,/brightspace-ambience/);
+  assert.match(css,/prefers-reduced-motion/);
+  if (scene !== 'aurora') assert.match(css,/data:image\/svg\+xml/);
+}
+assert.match(context.BrightTheme.css('custom',false,false,customPalette),/--bs-bg:#101820/);
+assert.equal(context.BrightTheme.css('midnight-city',true).includes('brightspace-ambience'),false);
+assert.match(popupHtml,/id="more-themes" aria-expanded="false" aria-controls="more-panel"/);
+assert.match(popupHtml,/type="color" data-color="bg"/);
+console.log('PASS: manifest scope/assets; JavaScript syntax/privacy checks; preference defaults, palette persistence, validation, writes and cross-tab events; all theme palettes contrast >=4.5:1, focus >=3:1; animated-scene reduced-motion support and accessible More/custom controls.');

@@ -1,6 +1,8 @@
 # Verification record
 
-Initial checks ran October 20, 2026. Version 1.2.5 checks ran October 21, 2026 with Node.js 24.11.1 on Windows, plus the ChatGPT in-app Chromium browser for local-preview rendering.
+Initial checks ran October 20, 2026. Version 1.3.0 checks ran October 21, 2026 with Node.js 24.11.1 on Windows, plus local Chrome rendering of the fictional preview.
+
+Version 1.3.0 adds Ocean, Forest, Rose, Midnight City, Sunset City, Aurora, and custom colors. Static checks cover built-in and scene palette contrast, custom-palette storage and sync, popup disclosure/color controls, local scene artwork, reduced-motion rules, no remote assets, and no image/video filters. Browser preview checks cover all six new preset palettes, animated scene pseudo-elements, a custom palette applied to page and card surfaces, and simulated reduced-motion behavior. These are local fictional fixtures; authenticated Brightspace pages were not exercised for this feature set.
 
 Version 1.2.5 fixes the dashboard white-card bug reported in both Chrome and Opera. Read-only inspection of the authenticated dashboard identified nested open roots: `d2l-my-courses-v2` → `d2l-my-courses-container-v2` → `d2l-my-courses-content-v2` → `d2l-my-courses-card-grid-v2` → `d2l-my-courses-enrollment-card` → `d2l-card`. The local preview now reproduces that exact component path with fictional content. In-browser computed-style checks passed for Dark, Dim and Warm host/container/content surfaces and title text, and Original restored the white card. This is a local regression fixture, not a live extension test on the authenticated page.
 
@@ -39,6 +41,6 @@ Version 1.0.1 follow-up: reproduced the reported white-card/navigation problem u
 - `node tests/extension.mjs`: Chrome accepted the actual unpacked extension; real extension storage; popup interactions synchronized two tabs; matching HTML and srcdoc frames; open root; off/on removal and restoration; outside host excluded; full browser shutdown/relaunch preserved preferences and theme. Automation reloads the session-scoped unpacked extension after relaunch. All page requests were intercepted and fulfilled with fictional local HTML; no SNHU requests or credentials were used.
 - `powershell -NoProfile -File tools/package.ps1`: ZIP has fourteen expected files including `manifest.json`, the widget embedding guard, README and page-audit record; excludes preview adapters, tests, browser profiles, and screenshots.
 
-Current artifacts: `dist/brightspace-after-hours-1.2.5.zip`, `dist/popup.png`, `dist/preview-{dark,dim,warm}.png`, `dist/dashboard-{dark,dim,warm}.png`, `dist/course-{dark,dim,warm}.png`, and `dist/menus-{dark,dim,warm}.png`. Selected fictional screenshots are copied to `docs/screenshots/` for the repository. Older ZIPs are retained locally; use 1.2.5. ZIPs and temporary browser profiles are excluded from Git.
+Current package: `dist/brightspace-after-hours-1.3.0.zip`. Historical screenshots in `docs/screenshots/` show fictional content. ZIPs and temporary browser profiles are excluded from Git.
 
 Not verified: Opera runtime, final extension rendering on authenticated pages, every Brightspace component/template, real PDF/Office/LTI integrations, screen-reader behavior, or comprehensive accessibility. The README lists the manual checks and technical coverage limits. No public store submission or publication was performed.

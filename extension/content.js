@@ -10,14 +10,14 @@
   prefs.subscribe(patch => {
     Object.assign(initialPatch, patch);
     state = prefs.normalize({ ...state, ...patch });
-    engine.apply(prefs.effective(state));
+    engine.apply(prefs.effective(state), state.customPalette);
   });
   // Paint the default theme at document_start while the saved choice loads.
   // This avoids showing the unthemed dashboard on a fresh navigation. The
   // storage read below immediately replaces it with the user's saved setting.
-  engine.apply(prefs.effective(state));
+  engine.apply(prefs.effective(state), state.customPalette);
   prefs.read().then(value => {
     state = prefs.normalize({ ...value, ...initialPatch });
-    engine.apply(prefs.effective(state));
-  }).catch(() => engine.apply(Object.keys(initialPatch).length ? prefs.effective(state) : 'original'));
+    engine.apply(prefs.effective(state), state.customPalette);
+  }).catch(() => engine.apply(Object.keys(initialPatch).length ? prefs.effective(state) : 'original', state.customPalette));
 })();

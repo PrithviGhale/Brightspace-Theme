@@ -1,12 +1,21 @@
 /* Shared by isolated content scripts and the popup. No page data is accessed. */
 (() => {
   'use strict';
-  const THEMES = Object.freeze(['dark', 'dim', 'warm', 'original']);
-  const DEFAULTS = Object.freeze({ enabled: true, theme: 'dark' });
+  const THEMES = Object.freeze(['dark', 'dim', 'warm', 'original', 'ocean', 'forest', 'rose', 'midnight-city', 'sunset', 'aurora', 'custom']);
+  const DEFAULT_PALETTE = Object.freeze({ bg:'#171b2c', surface:'#222943', raised:'#303a5c', text:'#f2f2ff', muted:'#c2c6dc', link:'#9ad9ff', border:'#7382a8', focus:'#ffd27a', danger:'#ffb6b6', success:'#a5e7c2', scheme:'dark' });
+  const DEFAULTS = Object.freeze({ enabled: true, theme: 'dark', customPalette: DEFAULT_PALETTE });
+  const COLORS = Object.freeze(['bg','surface','raised','text','muted','link','border','focus','danger','success']);
+  function normalizePalette(value) {
+    const result = {};
+    for (const key of COLORS) result[key] = /^#[\da-f]{6}$/i.test(value?.[key] || '') ? value[key].toLowerCase() : DEFAULT_PALETTE[key];
+    result.scheme = 'dark';
+    return result;
+  }
   function normalize(value) {
     return {
       enabled: typeof value?.enabled === 'boolean' ? value.enabled : DEFAULTS.enabled,
-      theme: THEMES.includes(value?.theme) ? value.theme : DEFAULTS.theme
+      theme: THEMES.includes(value?.theme) ? value.theme : DEFAULTS.theme,
+      customPalette: normalizePalette(value?.customPalette)
     };
   }
   globalThis.BrightPreferences = Object.freeze({
@@ -18,13 +27,14 @@
       const safe = {};
       if (typeof patch.enabled === 'boolean') safe.enabled = patch.enabled;
       if (THEMES.includes(patch.theme)) safe.theme = patch.theme;
+      if (patch.customPalette && typeof patch.customPalette === 'object') safe.customPalette = normalizePalette(patch.customPalette);
       await chrome.storage.local.set(safe);
     },
     subscribe(callback) {
       const listener = (changes, area) => {
         if (area !== 'local') return;
         const patch = {};
-        for (const key of ['enabled', 'theme']) {
+        for (const key of ['enabled', 'theme', 'customPalette']) {
           if (Object.hasOwn(changes, key)) patch[key] = changes[key].newValue ?? DEFAULTS[key];
         }
         if (Object.keys(patch).length) callback(patch);

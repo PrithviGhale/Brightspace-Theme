@@ -2,13 +2,15 @@
 
 # A calmer Brightspace, day or night.
 
-Dark, Dim, and Warm / sepia themes for **SNHU Brightspace**, with an Original option whenever you want it. Built for Chrome and Opera.
+Dark, Dim, Warm / sepia, several color palettes, animated scenes, and custom colors for **SNHU Brightspace**, with an Original option whenever you want it. Built for Chrome and Opera.
 
 I made this because I'm used to having dark mode, and Brightspace felt too bright. I wanted a simple way to make it more comfortable to use without changing how my courses work.
 
 **[Download the latest release](https://github.com/PrithviGhale/Brightspace-Theme/releases/latest)** · [Report a problem](https://github.com/PrithviGhale/Brightspace-Theme/issues) · [Development guide](docs/DEVELOPMENT.md)
 
 ## Pick your atmosphere
+
+Choose **More themes** in the popup to open Ocean, Forest, Rose, Midnight City, Sunset City, Aurora, and Custom colors. Custom colors let you choose page, panel, text, muted text, link, button, and focus-ring colors; the popup checks contrast before saving. Animated scenes use a slow CSS background effect behind page content and follow your system's reduced-motion setting. Themes use the same saved setting on supported Brightspace pages, tabs, and frames.
 
 | Dark | Dim | Warm / sepia |
 | :---: | :---: | :---: |
@@ -21,24 +23,24 @@ Version **1.2.1** also fixes white submission/attachment panels and patchy table
 
 Version **1.2.2** protects profile photo controls and removes the added logo plate. Fictional profile previews: [Dark](docs/screenshots/profiles-dark.png), [Dim](docs/screenshots/profiles-dim.png), [Warm](docs/screenshots/profiles-warm.png).
 
-Version **1.2.5** targets the nested Brightspace dashboard course-card components that were still showing white in Chrome and Opera. Version **1.2.4** applies the default appearance immediately at page start while saved preferences load, reducing the unthemed flash on first navigation. Version **1.2.3** added the supplied app logo and stronger protection for small reply photos and default-avatar silhouettes. The original logo source is kept in `assets/logo-original.png`; Windows developers can regenerate icon sizes with `powershell -NoProfile -File tools/build-icons.ps1`.
+Version **1.3.0** adds seven more themes, a custom color picker with contrast checks, and three optional animated scenes. The original logo source is kept in `assets/logo-original.png`; Windows developers can regenerate icon sizes with `powershell -NoProfile -File tools/build-icons.ps1`.
 
 ## What it does
 
 - Changes the colors of Brightspace pages, menus, discussions, tables, forms, and supported widgets.
 - Keeps images and videos in their original colors.
 - Keeps profile photo controls transparent. The navigation logo has no added white box; Dark and Dim add a small outline around its artwork for readability. Photos stay unfiltered.
-- Remembers your chosen theme on your device and updates your open Brightspace tabs.
+- Remembers your chosen theme and custom palette on your device and updates your open Brightspace tabs.
 - Includes an on/off switch and visible keyboard focus indicators.
 - Adds **Check for updates**, which opens the latest GitHub release.
 - Uses no analytics, tracking, runtime dependencies, or background worker.
 
-<p align="center"><img src="docs/screenshots/popup.png" width="300" alt="After Hours popup with four appearance choices, an on/off switch, installed version, and Check for updates link"></p>
+<p align="center"><img src="docs/screenshots/popup.png" width="300" alt="After Hours popup with theme choices, an on/off switch, installed version, and Check for updates link"></p>
 
 ## Install
 
 1. Open the **[latest release](https://github.com/PrithviGhale/Brightspace-Theme/releases/latest)**.
-2. Download **`brightspace-after-hours-1.2.5.zip`** from **Assets**. Use the extension ZIP, rather than GitHub's automatically generated “Source code” download.
+2. Download **`brightspace-after-hours-1.3.0.zip`** from **Assets**. Use the extension ZIP, rather than GitHub's automatically generated “Source code” download.
 3. Extract the ZIP into a permanent folder. Don't load the ZIP itself.
 4. Follow the steps for your browser:
 
@@ -69,7 +71,7 @@ GitHub releases cannot automatically replace an unpacked extension's files. Brow
 
 ## Privacy
 
-The only extension API permission is **storage**. It saves two preferences: whether the theme is enabled and which theme you chose. Preferences stay in your browser profile and do not sync to an account.
+The only extension API permission is **storage**. It saves whether the theme is enabled, the selected theme, and your custom color palette. Preferences stay in your browser profile and do not sync to an account.
 
 The extension does **not read or save grades, assignment text, passwords, input values, discussion content, or other course data**. It looks at element/shadow-root structure to place styles. It does not transmit course data, run remote code, or make background network requests. The update link opens GitHub with no page data or referrer attached.
 

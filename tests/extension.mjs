@@ -82,6 +82,13 @@ try {
   for(const value of Object.values(await reportWidgets(first))) {
     assert(value.styled && value.shadowStyled);assert.equal(value.bg,'rgb(28, 37, 48)');assert.equal(value.surface,'rgb(28, 37, 48)');
   }
+  await popup.evaluate(`document.querySelector('#more-themes').click();document.querySelector('[value="ocean"]').click()`);
+  for(const p of [first,second]) await p.until(`getComputedStyle(document.body).backgroundColor==='rgb(16, 33, 43)'`);
+  assert(await popup.evaluate(`document.querySelector('#more-themes').getAttribute('aria-expanded')==='true'`));
+  await popup.evaluate(`document.querySelector('[value="midnight-city"]').click()`);
+  for(const p of [first,second]) await p.until(`getComputedStyle(document.body,'::before').animationName==='brightspace-ambience'`);
+  await popup.evaluate(`const color=document.querySelector('[data-color="bg"]');color.value='#101820';color.dispatchEvent(new Event('input',{bubbles:true}))`);
+  for(const p of [first,second]) await p.until(`getComputedStyle(document.documentElement).backgroundColor==='rgb(16, 24, 32)'`);
   await popup.evaluate(`document.querySelector('[value="warm"]').click()`);
   for(const p of [first,second]) await p.until(`getComputedStyle(document.body).backgroundColor==='rgb(243, 234, 216)'`);
   await first.until(`[...document.querySelectorAll('iframe:not(.external-widget)')].every(f=>getComputedStyle(f.contentDocument.body).backgroundColor==='rgb(255, 247, 232)')`);

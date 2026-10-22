@@ -48,6 +48,28 @@ try {
     assert.equal(colors[2],colors[3]);
     await cdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false}).then(r=>writeFile(path.join(root,'dist',`preview-${theme}.png`),Buffer.from(r.data,'base64')));
   }
+  for (const [theme,surface,text] of [['ocean','rgb(24, 49, 61)','rgb(229, 247, 250)'],['forest','rgb(34, 52, 42)','rgb(237, 245, 233)'],['rose','rgb(57, 39, 56)','rgb(255, 240, 245)']]) {
+    await set(theme);
+    await until(`getComputedStyle(document.querySelector('d2l-card')).backgroundColor === ${JSON.stringify(surface)}`);
+    assert.equal(await evaluate(`getComputedStyle(document.querySelector('d2l-card [slot="content"]')).color`),text,`${theme}: course-card title contrast`);
+  }
+  for (const theme of ['midnight-city','sunset','aurora']) {
+    await set(theme);
+    await until(`getComputedStyle(document.body,'::before').animationName === 'brightspace-ambience'`);
+    const scene=await evaluate(`({animation:getComputedStyle(document.body,'::before').animationName,skyline:getComputedStyle(document.body,'::after').backgroundImage,body:getComputedStyle(document.body).backgroundColor})`);
+    assert.equal(scene.animation,'brightspace-ambience');
+    assert.equal(scene.body,'rgba(0, 0, 0, 0)');
+    if(theme==='aurora') assert.equal(scene.skyline,'none'); else assert.match(scene.skyline,/data:image\/svg\+xml/);
+    await cdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false}).then(r=>writeFile(path.join(root,'dist',`preview-${theme}.png`),Buffer.from(r.data,'base64')));
+  }
+  const previewCustom={bg:'#101820',surface:'#202a30',raised:'#30414a',text:'#f0f6f8',muted:'#bfd0d6',link:'#8ee2ff',border:'#68828c',focus:'#ffd27a',danger:'#ffb6b6',success:'#a5e7c2',scheme:'dark'};
+  await evaluate(`chrome.storage.local.set({theme:'custom',customPalette:${JSON.stringify(previewCustom)},enabled:true})`);
+  await until(`getComputedStyle(document.documentElement).backgroundColor === 'rgb(16, 24, 32)'`);
+  assert.equal(await evaluate(`getComputedStyle(document.querySelector('d2l-card')).backgroundColor`),'rgb(32, 42, 48)');
+  await cdp('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
+  await set('midnight-city');
+  await until(`getComputedStyle(document.body,'::before').animationName === 'none'`);
+  await cdp('Emulation.setEmulatedMedia',{features:[]});
   await evaluate(`document.querySelector('#add').click()`);
   await until(`document.querySelector('#dynamic demo-card')?.shadowRoot?.querySelector('style[data-brightspace-theme]')`);
   assert(await evaluate(`!!document.querySelector('demo-card').shadowRoot.querySelector('demo-nested').shadowRoot.querySelector('style[data-brightspace-theme]')`));

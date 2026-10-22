@@ -1,8 +1,8 @@
 # Brightspace After Hours
 
-This is the detailed development/coverage guide. For a short introduction, installation steps and downloads, see the [project README](../README.md). The current version is **1.2.5**: the dashboard theme includes targeted rules for nested Brightspace course-card shadow roots. The popup includes its installed version and a user-clicked link to the latest GitHub release. It does not fetch release metadata or update code automatically. Test screenshots contain fictional data only.
+This is the detailed development/coverage guide. For a short introduction, installation steps and downloads, see the [project README](../README.md). The current version is **1.3.0**: it adds extra palettes, custom colors, and CSS-only animated scenes. The popup includes its installed version and a user-clicked link to the latest GitHub release. It does not fetch release metadata or update code automatically. Test screenshots contain fictional data only.
 
-A lightweight, unofficial Manifest V3 extension for **Chrome and Opera**, covering **https://learn.snhu.edu/** on every path and two explicitly approved embedded widget hosts. Dark, Dim, Warm / sepia, and Original appearances; a keyboard-accessible popup; an on/off switch; and preferences saved on your device. No background worker or runtime dependencies.
+A lightweight, unofficial Manifest V3 extension for **Chrome and Opera**, covering **https://learn.snhu.edu/** on every path and two explicitly approved embedded widget hosts. Dark, Dim, Warm / sepia, Original, Ocean, Forest, Rose, Midnight City, Sunset City, Aurora, and editable custom colors; a keyboard-accessible popup; an on/off switch; and preferences saved on your device. Animated scenes use CSS gradients and local SVG artwork behind page content and honor reduced-motion settings. No background worker or runtime dependencies.
 
 Version **1.1.1** added matched menu-row/hover colors, inset keyboard focus rings, Calendar sidebars/filters, ePortfolio editor panels, Progress sections, Account Settings tabs, rich-text editor controls and floating settings toolbars. Version 1.1.0 fixed legacy discussion rows, navigation shadow buttons and embedded HTML panels, and added the two approved widgets below. These changes use selectors and component structure inspected on authenticated Brightspace pages on October 21, 2026. Version 1.2.0 adds the manual latest-release link and a compact popup with its installed version.
 
@@ -119,7 +119,7 @@ Only `enabled` (boolean) and `theme` (`dark`, `dim`, `warm`, `original`) are wri
 - `preview/`: fictional local visual lab, sample frame/media, and preview storage adapter.
 - `tests/`: dependency-free checks and Chrome integration tests.
 - `tools/`: localhost preview server and ZIP packaging script.
-- `dist/brightspace-after-hours-1.2.5.zip`: current sharing package with extension files, the main README and `PAGE_AUDIT.md`; `manifest.json` is at its root. Preview scripts, tests, browser profiles and screenshots are excluded. Older ZIPs are retained locally; install only the current version.
+- `dist/brightspace-after-hours-1.3.0.zip`: current sharing package with extension files, the main README and `PAGE_AUDIT.md`; `manifest.json` is at its root. Preview scripts, tests, browser profiles and screenshots are excluded. Older ZIPs are retained locally; install only the current version.
 
 To share, send the ZIP and have the recipient extract it and follow the Load unpacked instructions. A ZIP is not a store listing or signed installer. **Public Chrome Web Store or Opera Add-ons distribution requires developer registration, submission, and review under each store's policies.** Nothing has been published or submitted by this project.
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0 — 2026-10-21
+
+- Added Ocean, Forest, Rose, Midnight City, Sunset City and Aurora themes behind an accessible “More themes” disclosure.
+- Added a custom palette picker for page, panel, raised-control, text and link colors. The popup checks text/link contrast before saving; custom colors sync across open tabs and supported frames.
+- Added CSS-only, low-motion animated sky and skyline backgrounds for the three scene themes. They remain behind course content, add no image filters, and stop when reduced motion is requested.
+- Updated the local preview and checks for added palettes, custom preference persistence, scene rendering and reduced-motion behavior.
+- No new permissions, external assets/services, background process or course-data access.
+
 ## 1.2.5 — 2026-10-21
 
 - Fixed white dashboard course cards by targeting the actual nested `d2l-my-courses-enrollment-card` and `d2l-card` shadow surfaces and slotted titles.
