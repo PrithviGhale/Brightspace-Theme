@@ -6,11 +6,28 @@ A theme extension for **SNHU Brightspace**, built for Chrome and Opera. Choose a
 
 I made this because I'm used to having dark mode, and Brightspace felt too bright. I wanted it to look better and feel easier to use without changing how my courses work.
 
-**[Download v1.6.0](https://github.com/PrithviGhale/Brightspace-Theme/releases/tag/v1.6.0)** · [Report a problem](https://github.com/PrithviGhale/Brightspace-Theme/issues) · [Changelog](CHANGELOG.md)
+**[Download v1.7.8](https://github.com/PrithviGhale/Brightspace-Theme/releases/tag/v1.7.8)** · [Report a problem](https://github.com/PrithviGhale/Brightspace-Theme/issues) · [Changelog](CHANGELOG.md)
+
+## v1.7.8: character worlds and interface polish
+
+Latest fixes: transparent SNHU logo backing across all themes, with a small lettering contour on dark backgrounds; centered home navigation links across all themes and a smaller, balanced Paimon icon; larger matching navigation icons in all themed modes; softly blended Genshin/Titan/Sugarbunnies/Totoro welcome art; aligned submission panels without form-table striping; and themed Add a File dialog shells/frames without white padding. Animated scenes stay outside embedded dialogs/readers. Hello Kitty and Kuromi now have illustrated welcome cards on My Home. Only character themes hide the native SNHU homepage photo; everyday palettes, animated scenes, Prism and Liquid restore it. Empty course-home headers no longer become banners or blank gaps in any theme. Miffy has bold cartoon outlines and colorful picture-book panels. Titan headings prefer installed Ditty/Cloister Black, with bundled Pirata One as a Gothic fallback. Genshin uses original Paimon, mail, chat and notices icons while preserving native navigation and unread indicators. The removed Spider-Man/Cyberpunk choices and Genshin character strip remain absent. Reload the extension and choose from the two-column **Character worlds** grid at the top of the popup.
+
+| Theme | Design | Local preview |
+| --- | --- | --- |
+| Miffy | Repeating rabbit-face background on blue and picture-book panels | [Preview](docs/screenshots/miffy.png) |
+| My Neighbor Totoro | Nostalgic paper, forest greens and original film stills | [Preview](docs/screenshots/totoro.png) |
+| My Melody | Strawberry art, flowers, garden colors and petal-shaped panels | [Preview](docs/screenshots/my-melody.png) |
+| Sugarbunnies | Twin bunny bakers, cookies, gingham and stitched biscuit-paper panels | [Preview](docs/screenshots/sugarbunnies.png) |
+| Attack on Titan | Wall/Titan and Scout artwork, masonry patterns, olive and brass | [Preview](docs/screenshots/attack-on-titan.png) |
+| Genshin Impact | Different artwork by page, compact tool headings, game navigation icons, Primogems and calendar Paimon | [Preview](docs/screenshots/genshin.png) |
+
+Each has its own palette, heading font, panel shape, borders and artwork composition. Supported course pages and readings share the theme while keeping native links, controls, tables and original course/profile photos. Artwork is bundled locally; no new permissions or remote image requests. [Sources and attribution](extension/art/SOURCES.md).
+
+Desktop/mobile rendering, palette contrast, copying/reading panels across all 22 appearances and installed Chrome extension regressions are covered by local fictional fixtures. Authenticated Brightspace and Opera still need user testing.
 
 ## Hello Kitty and Kuromi (1.6.0)
 
-Two separate character themes are available under **More themes > Character worlds**:
+Two separate character themes are available in the two-column **Character worlds** grid at the top of the popup:
 
 - **Hello Kitty:** pink and cream panels, a bow-pattern background, rounded cards and character stickers.
 - **Kuromi:** midnight purple panels, lilac highlights, a star-pattern background and character stickers.

@@ -23,7 +23,7 @@ assert.deepEqual(manifest.permissions, ['storage','alarms']);
 assert.equal(manifest.background.service_worker, 'background.js');
 assert.deepEqual(manifest.host_permissions, ['https://api.github.com/*']);
 assert.equal(manifest.content_security_policy.extension_pages,"script-src 'self'; object-src 'none'; connect-src https://api.github.com/repos/PrithviGhale/Brightspace-Theme/releases/latest");
-assert.deepEqual(manifest.web_accessible_resources,[{resources:["art/hello-kitty.png","art/kuromi.png"],matches:["https://learn.snhu.edu/*","https://d1i6rhttasws5m.cloudfront.net/*","https://d1zg7b99iisfa6.cloudfront.net/*"]}]);
+assert.deepEqual(manifest.web_accessible_resources,[{resources:["art/genshin-archons.jpg","art/genshin-festival.jpg","art/genshin-fontaine.jpg","art/genshin-furina.png","art/genshin-nahida.png","art/genshin-paimon.png","art/genshin-primogem.png","art/hello-kitty.png","art/kuromi.png","art/miffy-faces.svg","art/miffy-friends.svg","art/my-melody.png","art/sugarbunnies-sweets.jpg","art/sugarbunnies.png","art/titan-scouts.jpg","art/titan-wall.jpg","art/totoro-forest.jpg","art/totoro-rain.jpg","fonts/bitter.ttf","fonts/marcellus.ttf","fonts/nunito.ttf","fonts/pirataone.ttf","art/genshin-home.png","art/genshin-mail.png","art/genshin-notices.png","art/genshin-chat.png"],matches:["https://learn.snhu.edu/*","https://d1i6rhttasws5m.cloudfront.net/*","https://d1zg7b99iisfa6.cloudfront.net/*"]}]);
 assert.equal(manifest.content_scripts.length, 4);
 assert.match(themeEngine, /:host\(d2l-my-courses-enrollment-card\) d2l-card/);
 assert.match(themeEngine, /:host\(d2l-card\) \.d2l-card-container/);
@@ -155,3 +155,6 @@ const modernShadow=context.BrightTheme.css('modern',true);
 assert.match(modernShadow,/:host\(d2l-card:hover\)/);
 assert.match(modernShadow,/animation-timeline:\s*view\(\)/);
 console.log('PASS: manifest scope/assets; JavaScript syntax/privacy checks; preference defaults, palette persistence, validation, writes and cross-tab events; all theme palettes contrast >=4.5:1, focus >=3:1; animated-scene reduced-motion support and accessible More/custom controls.');
+
+assert.equal(context.BrightPreferences.normalize({theme:'spider-man'}).theme,'dark');
+assert.equal(context.BrightPreferences.normalize({theme:'edgerunners'}).theme,'dark');

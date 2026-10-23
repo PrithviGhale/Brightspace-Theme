@@ -16,14 +16,19 @@
     window.scrollTo({top:0,behavior:'instant'});
   }));
   customElements.define('d2l-icon',class extends HTMLElement{
-    connectedCallback(){if(this.shadowRoot)return;this.attachShadow({mode:'open'}).innerHTML='<style>:host{display:inline-flex;width:32px;height:32px}svg{width:100%;height:100%}</style><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>';}
+    static get observedAttributes(){return ['icon'];}
+    connectedCallback(){if(!this.shadowRoot)this.attachShadow({mode:'open'});this.paint();}
+    attributeChangedCallback(){if(this.shadowRoot)this.paint();}
+    paint(){const icon=this.getAttribute('icon')||'',path=icon.includes('home')?'<path d="M3 10L12 3l9 7v11h-6v-7H9v7H3Z"/>':icon.includes('email')?'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M3 6l9 7 9-7"/>':icon.includes('discussions')?'<path d="M3 8h14v10H9l-4 3v-3H3Z"/><path d="M8 5V2h14v11h-2M6 12h8M6 15h5"/>':'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/>';this.shadowRoot.innerHTML='<style>:host{display:inline-flex;width:32px;height:32px}svg{width:100%;height:100%}</style><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">'+path+'</svg>';}
   });
   customElements.define('d2l-labs-navigation-dropdown-button-icon',class extends HTMLElement{
     connectedCallback(){
       if(this.shadowRoot)return;
-      this.attachShadow({mode:'open'}).innerHTML='<style>:host{display:inline-block;height:100%;position:relative}button{width:42px;height:100%;min-height:40px;margin:0;padding:0;border:0;background:transparent;color:#263046;display:inline-flex;align-items:center;justify-content:center;position:relative;vertical-align:middle;cursor:pointer}svg{width:20px;height:20px}</style><button aria-label="Notifications"><span class="icon-container"><d2l-icon></d2l-icon></span></button>';
+      this.attachShadow({mode:'open'}).innerHTML='<style>:host{display:inline-block;height:100%;position:relative}.alert{position:absolute;right:7px;top:5px;width:7px;height:7px;background:#df7555;border-radius:50%;pointer-events:none}button{width:42px;height:100%;min-height:40px;margin:0;padding:0;border:0;background:transparent;color:#263046;display:inline-flex;align-items:center;justify-content:center;position:relative;vertical-align:middle;cursor:pointer}svg{width:20px;height:20px}</style><button aria-expanded="false"><span class="icon-container"><d2l-icon></d2l-icon></span></button>';
+      const b=this.shadowRoot.querySelector('button');b.setAttribute('aria-label',this.getAttribute('text'));this.shadowRoot.querySelector('d2l-icon').setAttribute('icon',this.getAttribute('icon'));if(this.hasAttribute('has-alert'))b.insertAdjacentHTML('beforeend','<span class="alert" aria-hidden="true"></span>');b.onclick=()=>b.setAttribute('aria-expanded',b.getAttribute('aria-expanded')!=='true');
     }
   });
+  customElements.define('d2l-labs-navigation-link-icon',class extends HTMLElement{connectedCallback(){if(this.shadowRoot)return;this.attachShadow({mode:'open'}).innerHTML='<style>:host{display:inline-block;height:100%}a{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%}</style><a href="#dashboard" aria-label="My Home"><d2l-icon icon="tier1:home"></d2l-icon></a>';}});
   customElements.define('d2l-labs-navigation-dropdown-button-custom',class extends HTMLElement{
     connectedCallback(){
       if(this.shadowRoot)return;

@@ -1,7 +1,7 @@
 /* Shared by isolated content scripts and the popup. No page data is accessed. */
 (() => {
   'use strict';
-  const THEMES = Object.freeze(['dark', 'dim', 'warm', 'original', 'ocean', 'forest', 'rose', 'midnight-city', 'sunset', 'aurora', 'custom', 'modern', 'liquid', 'liquid-clear', 'liquid-dark', 'hello-kitty', 'kuromi']);
+  const THEMES = Object.freeze(['dark', 'dim', 'warm', 'original', 'ocean', 'forest', 'rose', 'midnight-city', 'sunset', 'aurora', 'custom', 'modern', 'liquid', 'liquid-clear', 'liquid-dark', 'hello-kitty', 'kuromi', 'my-melody','sugarbunnies','attack-on-titan','genshin','miffy','totoro']);
   const DEFAULT_PALETTE = Object.freeze({ bg:'#171b2c', surface:'#222943', raised:'#303a5c', text:'#f2f2ff', muted:'#c2c6dc', link:'#9ad9ff', border:'#7382a8', focus:'#ffd27a', danger:'#ffb6b6', success:'#a5e7c2', scheme:'dark' });
   const DEFAULTS = Object.freeze({ enabled: true, theme: 'dark', customPalette: DEFAULT_PALETTE });
   const COLORS = Object.freeze(['bg','surface','raised','text','muted','link','border','focus','danger','success']);

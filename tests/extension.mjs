@@ -111,11 +111,18 @@ try {
   await fixture(first,'https://learn.snhu.edu/local-test');
   await fixture(second,'https://learn.snhu.edu/another-local-test');
   for(const p of [first,second]) await p.until(`getComputedStyle(document.body).backgroundColor==='rgb(18, 24, 32)'`);
-  for(const name of ['hello-kitty','kuromi']){
-    assert(await first.evaluate(`new Promise(resolve=>{const image=new Image();image.onload=()=>resolve(image.naturalWidth>0);image.onerror=()=>resolve(false);image.src='chrome-extension://${id}/art/${name}.png'})`),'Packaged character artwork loads under SNHU');
+  assert(await first.evaluate(`Promise.all(['marcellus','nunito','bitter','pirataone'].map(name=>new FontFace('Fixture-'+name,'url(chrome-extension://${id}/fonts/'+name+'.ttf)').load())).then(fonts=>fonts.every(f=>f.status==='loaded'))`),'Bundled fonts load from the real extension');
+  const grid=await popup.evaluate(`(()=>{const cards=[...document.querySelectorAll('.character-grid .choice')];return {count:cards.length,columns:getComputedStyle(document.querySelector('.character-grid')).gridTemplateColumns.split(' ').length,removed:!!document.querySelector('[value="spider-man"],[value="edgerunners"]')}})()`);
+  assert.deepEqual(grid,{count:8,columns:2,removed:false});
+  const packagedArtwork=await popup.evaluate(`chrome.runtime.getManifest().web_accessible_resources[0].resources.filter(f=>/\.(png|jpg|svg)$/.test(f))`);
+  assert.equal(packagedArtwork.length,22);
+  assert(await first.evaluate(`Promise.all(${JSON.stringify(packagedArtwork)}.map(file=>new Promise(resolve=>{const image=new Image();image.onload=()=>resolve(image.naturalWidth>0);image.onerror=()=>resolve(false);image.src='chrome-extension://${id}/'+file}))).then(results=>results.every(Boolean))`),'Every bundled image decodes through the actual extension resource boundary');
+  for(const [name,file,bg] of [["hello-kitty","hello-kitty.png","#fce8ee"],["kuromi","kuromi.png","#151020"],["my-melody","my-melody.png","#f8eaf0"],["sugarbunnies","sugarbunnies.png","#f5eddf"],["attack-on-titan","titan-wall.jpg","#171d19"],["genshin","genshin-festival.jpg","#20182f"],["miffy","miffy-friends.svg","#f4ead8"],["totoro","totoro-forest.jpg","#dfe4d3"]]){
+    assert(await first.evaluate(`new Promise(resolve=>{const image=new Image();image.onload=()=>resolve(image.naturalWidth>0);image.onerror=()=>resolve(false);image.src='chrome-extension://${id}/art/${file}'})`),'Packaged character artwork loads under SNHU');
     await popup.evaluate(`document.querySelector('#more-themes').click();document.querySelector('[name="theme"][value="${name}"]').click()`);
-    await first.until(`getComputedStyle(document.documentElement).getPropertyValue('--bs-bg').trim()==='${name==='hello-kitty'?'#fce8ee':'#151020'}'`);
+    await first.until(`getComputedStyle(document.documentElement).getPropertyValue('--bs-bg').trim()==='${bg}'`);
   }
+  assert.equal(await popup.evaluate(`document.documentElement.scrollWidth>innerWidth`),false,'Expanded character picker fits without horizontal scrolling');
   await popup.evaluate(`document.querySelector('[value="dark"]').click()`);
   await first.until(`getComputedStyle(document.body).backgroundColor==='rgb(18, 24, 32)'`);
   await first.send('Page.bringToFront');
@@ -193,7 +200,7 @@ try {
   assert.equal(await direct.evaluate(`!!document.querySelector('style[data-brightspace-theme]')`),false,'direct widget visits must stay unthemed');
   assert(await direct.evaluate(`Element.prototype.attachShadow.toString().includes('[native code]')`),'direct widget visit must not install the MAIN-world lifecycle hook');
   const cold=await page();
-  for(const theme of ['dark','dim','warm','ocean','forest','rose','midnight-city','sunset','aurora','custom','modern','liquid','liquid-clear','liquid-dark','hello-kitty','kuromi']) {
+  for(const theme of ['dark','dim','warm','ocean','forest','rose','midnight-city','sunset','aurora','custom','modern','liquid','liquid-clear','liquid-dark','hello-kitty','kuromi','my-melody','sugarbunnies','attack-on-titan','genshin','miffy','totoro']) {
     await popup.evaluate(theme.startsWith('liquid')?`(()=>{const mode=document.querySelector('#liquid-mode');mode.value='${theme}';mode.dispatchEvent(new Event('change'))})()`:`document.querySelector('[value="${theme}"]').click()`);
     await fixture(cold,`https://learn.snhu.edu/late-cards-${theme}`);
     await cold.until(`window.lateFixture.card.shadowRoot.querySelector('style[data-brightspace-theme]')!==null`);
@@ -210,7 +217,7 @@ try {
   assert.equal(await cold.evaluate(`!!window.lateFixture.card.shadowRoot.querySelector('style[data-brightspace-theme]')`),false);
   await popup.evaluate(`document.querySelector('[value="warm"]').click()`);
   await cold.until(`window.lateFixture.card.shadowRoot.querySelector('style[data-brightspace-theme]')!==null`);
-  console.log('PASS: sixteen cold navigations, all six delayed nested roots, rerender style repair, Original teardown and re-enable; actual MV3 MAIN/isolated bridge. No refresh used.');
+  console.log('PASS: twenty-two cold navigations, all six delayed nested roots, rerender style repair, Original teardown and re-enable; actual MV3 MAIN/isolated bridge. No refresh used.');
   const exited=new Promise(resolve=>browser.once('exit',resolve));
   closingBrowser=true;
   await control.send('Browser.close').catch(()=>{}); await exited;
@@ -227,7 +234,7 @@ try {
   await restored.until(`getComputedStyle(document.body).backgroundColor==='rgb(243, 234, 216)'`);
   console.log('PASS: Chrome loaded actual MV3 extension; real chrome.storage.local; popup and two-tab synchronization; matching and srcdoc frames; open shadow root; off/on cleanup; outside host excluded; saved preferences and content theme survived full browser restart. All site responses were local fixtures.');
   console.log('PASS: both approved widget origins theme only below the SNHU top-level origin; nested root and frame surface colors synchronize; off removes styles; direct visits and unrelated embeddings remain unchanged.');
-  console.log('PASS: installed version and safe latest-release link; popup fits 360×600; no GitHub request made by the test. Screenshot: dist/popup.png.');
+  console.log('PASS: installed version and safe latest-release link; popup fits 440x600; no GitHub request made by the test. Screenshot: dist/popup.png.');
   console.log('PASS: three Liquid Glass modes synchronize across tabs/widgets; real worker popup messages, mocked public-release metadata, red update dot/toolbar badge and clearing when current. Screenshot dist/popup-update.png.');
   }
 } finally {

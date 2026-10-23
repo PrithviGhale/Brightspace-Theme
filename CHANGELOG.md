@@ -1,5 +1,90 @@
 # Changelog
 
+## 1.7.8 ? 2026-10-22
+
+## What's new
+
+- Six new character themes: My Melody, Sugarbunnies, Attack on Titan, Genshin Impact, Miffy and My Neighbor Totoro. Each has its own artwork, palette and layout details.
+- Redesigned extension popup with an always-visible, two-column character picker.
+- Illustrated Hello Kitty and Kuromi welcome cards, theme-matched heading fonts and softer image-to-color blends in photographic welcome banners.
+- Genshin page-specific backgrounds, Primogem course accents, calendar Paimon and game-style home/mail/chat/notices icons.
+- Bolder cartoon styling for Miffy and Gothic headings for Attack on Titan with a bundled font fallback.
+
+## Fixes and polish
+
+- Larger, consistent navigation icons; correctly centered home links and a balanced Paimon icon.
+- Transparent SNHU logo backing in every theme, with a subtle lettering contour on dark backgrounds.
+- Remove empty banners and large gaps inside course homepages. Character themes hide the native SNHU homepage photo; regular palettes, animated scenes, Prism and Liquid retain it.
+- Cleaner assignment submission panels and form rows, readable section titles and mobile labels, plus themed Add a File dialog shells without white padding.
+- Keep animated backgrounds outside embedded dialogs and reading areas.
+- Preserve native links, notification indicators, form contents, course/profile images, reduced-motion settings and clean-copy behavior.
+
+Earlier 1.7.x sections below record local development iterations; only v1.7.8 is published.
+
+## 1.7.7 - Local test build, not published
+
+- Center the native home-link host through the full navigation row height, rather than only centering the glyph inside its shorter anchor. Apply this correction to every themed appearance.
+- Reduce the Genshin Paimon artwork to 28px inside its existing 32px glyph slot and 44px link target. Preserve navigation, labels and other icons.
+- Reproduce the native inline-block host in the preview and verify home-link vertical centering across all 22 themed modes. No push or publication.
+
+## 1.7.6 - Local test build, not published
+
+- Enlarge navigation glyphs to matching 32px slots in every themed appearance, retaining 44px controls and native actions/labels. Account for padding in the Genshin mail/chat/notices artwork for consistent visible size.
+- Blend Genshin, Titan, Sugarbunnies and Totoro welcome photos into their palette using a masked image layer; retain title contrast, character-specific positioning and pointer transparency. Transparent character illustrations retain their existing composition.
+- Style the native assignment submission layout with aligned instruction/form panels and readable compact titles. Exclude legacy d_FG form tables from zebra striping; preserve content, comments and controls. Keep the submission section title readable over artwork and mobile field labels on one line.
+- Theme the observed legacy ddial_o2 Add a File shell, footer/buttons and frame backing. Stop animated scene backgrounds from leaking into embedded dialogs/readings.
+- Verify all 22 themed modes for icon containment, form geometry, non-striped fields, retained drafts/markup, matching dialog/frame surfaces and Original cleanup; render native-shaped fictional dialogs and mobile submissions. No uploads, submissions, new permissions, push or publication.
+
+## 1.7.5 - Local test build, not published
+
+- Add illustrated Hello Kitty/Kuromi welcome cards on My Home; prevent overlapping duplicate character art.
+- Hide the native SNHU Homepage Header Image only in the eight character themes. Restore it in all regular palettes, animated scenes, Prism and Liquid modes, plus Original/Off.
+- Remove decorative banners and excess spacing from native course-home headers across all 22 themes. Preserve the offscreen course h1 for assistive technology. Visible course headings remain compact.
+- Give Miffy bold ink outlines, rounded cards, solid shadows and yellow/orange/green panel accents.
+- Titan headings try installed Ditty/Cloister Black and otherwise use locally bundled OFL Pirata One; the linked forum offers suggestions, not a confirmed original font. Body text remains readable.
+- Replace Genshin native navigation glyphs with original game Paimon/home, mail, chat and notices artwork. Preserve links, dropdown buttons, labels and native unread indicators; other themes restore their native icons.
+- Add regressions for zero-height offscreen course headers in every theme, image-banner switching, welcome art, nested game glyphs, clickable openers and icon restoration. Package fonts/artwork locally with unchanged permissions. No push or release.
+
+## 1.7.4 - Local test build, not published
+
+- Remove Spider-Man and Cyberpunk theme choices/palettes/assets. Saved selections fall back to Dark. Remove only the Genshin five-character strip; retain page backgrounds, Primogems and Paimon.
+- Hide the specific native Homepage Header Image widget in themed modes; restore it with Original/Off. Course artwork, profile photos, announcements and other widgets remain intact.
+- Rework welcome headings with shorter vertically centered layouts, balanced name wrapping and theme-matched fonts. Genshin prefers an installed HYWenHei font, otherwise uses bundled Marcellus; cute themes use Nunito and Totoro/Titan use Bitter. All bundled fonts include OFL licenses and load locally.
+- Redesign the popup with an always-visible two-column, eight-character grid above everyday appearances. Additional palettes/designs remain under More themes. Maintain radio keyboard/focus behavior, copy helper and update notices.
+- Verify banner restoration, strip removal, removed-selection fallback, compact welcome geometry, real extension font loading, two-column grid, desktop/mobile and existing lifecycle/copy regressions. No push or release.
+
+## 1.7.3 - Local test build, not published
+
+- Restrict large character-world banners to Brightspace's native homepage heading. Tool pages use compact readable title strips and native action layout, preventing the floating Help layout caused by excessive banner padding.
+- Genshin Home banner now uses different artwork from the page background. Assignments/Content use Fontaine art, Discussions/Calendar/course pages use Archon art, Grades use Furina and Classlist uses Nahida. Categories are local presentation attributes only; no URLs are stored or transmitted.
+- Fix missing gallery/Paimon placement against read-only observed real Brightspace markup: d2l-my-courses-v2 and the Calendar widget's calendar link. Existing preview-only selectors were insufficient.
+- Add a repeating white rabbit-face fan pattern on blue for Miffy, with a solid Home heading backing for text readability.
+- Regression tests reproduce native widget selectors, compact Assignments/Help containment, page background changes, route cleanup, desktop/mobile and installed MV3 behavior. No push or release.
+
+## 1.7.2 - Local test build, not published
+
+- Rebuild Genshin Impact using the matching Moonlight Amidst Dreams festival background, violet panels, sakura-pink accents and pale-blue links. Remove the old landscape/party art.
+- Add a separate gallery of five-star characters: Furina, Raiden Shogun, Nahida, Kaedehara Kazuha and Hu Tao. Replace course-card picture stickers with local Primogem icons.
+- Place original Paimon artwork below recognized calendar widgets/month views, with reserved space and no pointer interception. No calendar data or tasks are added.
+- Retain unchanged site permissions; all decorative assets are bundled locally. Source and attribution records updated.
+- Test contrast, character themes across desktop/mobile page families, copying/reading panels in all 24 appearances and installed MV3 artwork/lifecycle/preferences. Live Brightspace/Opera testing remains pending. Nothing pushed or released.
+
+## 1.7.1 - Local test build, not published
+
+- Replace Edgerunners background with the Earthrise image matching the user reference; match slate/teal/lunar gold colors and remove all small Lucy thumbnails and separate character cutouts.
+- Rebuild Spider-Man using Spider-Verse comic covers featuring multiple variants, cream comic paper, halftone dots, ink borders, caption panels and hard offset shadows. Remove game screenshots and web background.
+- Add Miffy: official family illustration, simple primary-color blocks, uncluttered picture-book panels. Add My Neighbor Totoro: official film stills, forest greens, warm nostalgic paper and a separate night-flight vignette.
+- Preserve course artwork and supported native page controls. All assets remain local, with unchanged permissions.
+- All ten character worlds checked on desktop/mobile fixtures; all 24 copy/reading cases and real MV3 artwork/theme/lifecycle checks covered. Live Brightspace/Opera testing remains pending. No push or publication.
+
+## 1.7.0 - Local test build, not published
+
+- Add six independent themes: Spider-Man, Cyberpunk: Edgerunners, My Melody, Sugarbunnies, Attack on Titan and Genshin Impact under More themes > Character worlds.
+- Give each world its own typography, palette, panel geometry, patterns and image composition, including Lucy/David with an illustrated moon, Titan wall and Scout art, and Genshin landscape/party art.
+- Bundle publisher/official images locally with source records; no new permissions, no remote runtime artwork and no source media recoloring.
+- Extend Chrome desktop/mobile, reading/copy, late-root and actual MV3 selection/artwork regressions to the new appearances. Authenticated-site/Opera testing remains pending.
+- Local ZIP for user testing only. No Git push or release publication.
+
 ## 1.6.0 - 2026-10-22
 
 - Add separate Hello Kitty and Kuromi themes under More themes > Character worlds. Pink/cream bows and midnight/lilac stars each have locally bundled character background art, heading accents and card stickers.

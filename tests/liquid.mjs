@@ -45,7 +45,7 @@ try {
     await evaluate(`document.querySelector('nav [data-view="dashboard"]').click()`);
     const controls=await evaluate(`[...document.querySelectorAll('d2l-labs-navigation-dropdown-button-icon,d2l-labs-navigation-dropdown-button-custom')].map(e=>{const b=e.shadowRoot.querySelector('button'),r=b.getBoundingClientRect(),p=document.querySelector('.header-inner').getBoundingClientRect();return {height:r.height,offset:Math.abs(r.y+r.height/2-p.y-p.height/2)}})`);
     for(const c of controls){assert.equal(c.height,44);assert(c.offset<1);}
-    assert.equal(await evaluate(`document.querySelector('d2l-labs-navigation-dropdown-button-icon').shadowRoot.querySelector('d2l-icon').getBoundingClientRect().height`),22,'Native tier-3 header icons fit inside compact controls');
+    assert.equal(await evaluate(`document.querySelector('d2l-labs-navigation-dropdown-button-icon').shadowRoot.querySelector('d2l-icon').getBoundingClientRect().height`),32,'Enlarged header icons fit inside compact controls');
     assert.equal(await evaluate(`getComputedStyle(document.body,'::before').animationName`),'bs-liquid-drift');
     const box=await evaluate(`(()=>{const r=document.querySelector('d2l-card').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()`);
     await cdp('Input.dispatchMouseEvent',{type:'mouseMoved',...box});

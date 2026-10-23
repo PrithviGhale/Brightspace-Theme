@@ -13,7 +13,13 @@
     'liquid-clear': { bg:'#e2eefa', surface:'#f3f8ff', raised:'#d6e3f3', text:'#18253c', muted:'#3b4f6b', link:'#174b8a', border:'#7185a3', focus:'#1556a0', danger:'#9d2544', success:'#1e6049', scheme:'light' },
     'liquid-dark': { bg:'#0c1625', surface:'#18293d', raised:'#263e56', text:'#eff7ff', muted:'#b9ccdf', link:'#b0dcff', border:'#7994b0', focus:'#8cf4de', danger:'#ffbecd', success:'#a3ebca', scheme:'dark' },
     'hello-kitty': { bg:'#fce8ee', surface:'#fff8f9', raised:'#f5dce5', text:'#492839', muted:'#714555', link:'#8c2850', border:'#ad7087', focus:'#9b2454', danger:'#a51d35', success:'#28634b', scheme:'light' },
-    kuromi: { bg:'#151020', surface:'#241b36', raised:'#39294f', text:'#fbf1ff', muted:'#d2bce5', link:'#efb9eb', border:'#a38abb', focus:'#e5bcff', danger:'#ffb3ce', success:'#afe2cf', scheme:'dark' }
+    kuromi: { bg:'#151020', surface:'#241b36', raised:'#39294f', text:'#fbf1ff', muted:'#d2bce5', link:'#efb9eb', border:'#a38abb', focus:'#e5bcff', danger:'#ffb3ce', success:'#afe2cf', scheme:'dark' },
+    'my-melody': { bg:'#f8eaf0',surface:'#fff9f6',raised:'#f1dde6',text:'#4e3145',muted:'#705064',link:'#863458',border:'#a67d90',focus:'#8e3864',danger:'#a02f49',success:'#34634b',scheme:'light' },
+    sugarbunnies: { bg:'#f5eddf',surface:'#fffbf1',raised:'#ecdfc9',text:'#4a3527',muted:'#705441',link:'#80502b',border:'#a28466',focus:'#804a76',danger:'#9c3345',success:'#346248',scheme:'light' },
+    'attack-on-titan': { bg:'#171d19',surface:'#252c25',raised:'#373f34',text:'#f7f1df',muted:'#d6d0b9',link:'#efcc8f',border:'#9a9d7c',focus:'#f5cd80',danger:'#ffb4a0',success:'#b9e2b1',scheme:'dark' },
+    miffy: { bg:'#f4ead8',surface:'#fffaf0',raised:'#e8dfcf',text:'#292c30',muted:'#55575b',link:'#975025',border:'#53565a',focus:'#235482',danger:'#9d2834',success:'#35603d',scheme:'light' },
+    totoro: { bg:'#dfe4d3',surface:'#f7f0dd',raised:'#dce0cc',text:'#293d32',muted:'#4c6151',link:'#395e39',border:'#849177',focus:'#7e4c26',danger:'#9a3540',success:'#335d3b',scheme:'light' },
+    genshin: { bg:'#20182f',surface:'#30243f',raised:'#45344f',text:'#fff1f7',muted:'#e1c6df',link:'#b4ebf2',border:'#aa8db6',focus:'#f4d59b',danger:'#ffc1d0',success:'#b4e4cf',scheme:'dark' }
   });
   const customDefaults = { bg:'#171b2c', surface:'#222943', raised:'#303a5c', text:'#f2f2ff', muted:'#c2c6dc', link:'#9ad9ff', border:'#7382a8', focus:'#ffd27a', danger:'#ffb6b6', success:'#a5e7c2', scheme:'dark' };
   const themeScenes = Object.freeze({ 'midnight-city':'city-night', sunset:'city-sunset', aurora:'aurora' });
@@ -226,11 +232,14 @@
       background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;
     }
     :host(d2l-labs-navigation-button-icon) button,:host(d2l-labs-navigation-dropdown-button-icon) button {
-      width:44px!important; min-width:44px!important; padding:10px!important; justify-content:center!important;
+      width:44px!important; min-width:44px!important; padding:6px!important; justify-content:center!important;
     }
     :host(d2l-labs-navigation-button-icon) button d2l-icon,:host(d2l-labs-navigation-dropdown-button-icon) button d2l-icon {
-      width:22px!important;height:22px!important;flex-shrink:0!important;
+      width:32px!important;height:32px!important;flex-shrink:0!important;
     }
+    :host(d2l-labs-navigation-link-icon[icon="tier1:home"]) { display:inline-flex!important;align-items:center!important;justify-content:center!important;height:100%!important;vertical-align:middle!important;box-sizing:border-box!important; }
+    :host(d2l-labs-navigation-link-icon[icon="tier1:home"]) a { display:inline-flex!important;align-items:center!important;justify-content:center!important;width:44px!important;height:44px!important;margin-block:auto!important;flex:0 0 auto!important; }
+    :host(d2l-labs-navigation-link-icon[icon="tier1:home"]) d2l-icon { width:32px!important;height:32px!important; }
     :host(d2l-labs-navigation-dropdown-button-icon) .icon-container { display:inline-flex!important;align-items:center!important;line-height:0; }
     :host(d2l-labs-navigation-button-icon) button:hover,:host(d2l-labs-navigation-dropdown-button-icon) button:hover,
     :host(d2l-labs-navigation-dropdown-button-custom) button:hover,:host(d2l-labs-navigation-dropdown-button) button:hover {
@@ -557,26 +566,243 @@
         :host(d2l-card) .d2l-card-header::after { content:"";position:absolute;right:7px;bottom:6px;width:48px;height:48px;border-radius:16px;background:${picture} center/44px no-repeat,var(--bs-surface);border:1px solid ${line};pointer-events:none; }
       `:!embedded?`
         body::before { inset:0!important;animation:none!important;
-          background-image:${picture},${picture},${pattern},linear-gradient(145deg,${kitty?'#fff0e6,#fce5ef 65%,#f8dbe6':'#151020,#241536 65%,#191127'})!important;
-          background-position:left 1% bottom 5%,right 1% top 25%,0 0,center;
-          background-size:185px auto,145px auto,88px 88px,cover;background-repeat:no-repeat,no-repeat,repeat,no-repeat; }
+          background-image:${picture},${pattern},linear-gradient(145deg,${kitty?'#fff0e6,#fce5ef 65%,#f8dbe6':'#151020,#241536 65%,#191127'})!important;
+          background-position:left 1% bottom 5%,0 0,center;
+          background-size:185px auto,88px 88px,cover;background-repeat:no-repeat,repeat,no-repeat; }
         .d2l-page-header { position:relative;padding-inline-end:94px; }
         .d2l-page-header::after { content:"";position:absolute;right:0;top:0;width:84px;height:84px;background:${picture} center/contain no-repeat;pointer-events:none; }
         :where(.d2l-widget) { background-image:linear-gradient(115deg,${kitty?'#fff4e7':'#392346'}66,transparent 60%)!important; }
-        @media(max-width:650px) { body::before { background-size:100px auto,90px auto,88px 88px,cover; } .d2l-page-header { padding-inline-end:60px; } .d2l-page-header::after { width:55px;height:55px; } }
+        @media(max-width:650px) { body::before { background-size:100px auto,88px 88px,cover; } .d2l-page-header { padding-inline-end:60px; } .d2l-page-header::after { width:55px;height:55px; } }
       `:''}
       /* Decorative accents are never selectable or placed inside authored text. */
       @media(forced-colors:active) { .d2l-page-header::after,.d2l-widget-header::after,.d2l-widget-header::before { display:none; } }
+    `;
+  }
+  // Each world has independent art composition, geometry, typography and ornament.
+  const worlds = {
+    'my-melody': {hero:'my-melody.png',detail:'my-melody.png',radius:'38px 38px 18px 38px',accent:'#a75b83',line:'#cc9fb4',font:'"Trebuchet MS","Segoe UI",sans-serif',label:'A LITTLE GARDEN OF JOY',motif:'flower'},
+    sugarbunnies: {hero:'sugarbunnies-sweets.jpg',detail:'sugarbunnies.png',radius:'20px',accent:'#9a6c40',line:'#c3a886',font:'"Georgia","Times New Roman",serif',label:'SOMETHING SWEET FOR YOUR DAY',motif:'gingham'},
+    'attack-on-titan': {hero:'titan-wall.jpg',detail:'titan-scouts.jpg',radius:'3px',accent:'#c7aa6c',line:'#818569',font:'"Georgia","Times New Roman",serif',label:'BEYOND THE WALLS',motif:'stone'},
+    miffy: {hero:'miffy-friends.svg',detail:null,radius:'12px',accent:'#bf6b32',line:'#53565a',font:'"Trebuchet MS",sans-serif',label:'A SMALL MOMENT OF HAPPINESS',motif:'blocks'},
+    totoro: {hero:'totoro-forest.jpg',detail:null,radius:'6px 24px 6px 6px',accent:'#6a7d50',line:'#9aab85',font:'"Georgia",serif',label:'A QUIET DAY IN THE COUNTRYSIDE',motif:'leaves'},
+    genshin: {hero:'genshin-festival.jpg',detail:'genshin-primogem.png',radius:'24px 6px 24px 6px',accent:'#dc9fcf',line:'#a17eaf',font:'"Georgia","Times New Roman",serif',label:'MOONLIGHT AMIDST DREAMS',motif:'constellation'}
+  };
+  function worldRevisionCss(theme,asset,shadow,embedded) {
+    if(theme==='genshin') {
+      if(shadow)return `
+        :host(d2l-card) .d2l-card-header::after { width:42px!important;height:42px!important;border:0!important;background:${asset('genshin-primogem.png')} center/38px no-repeat!important; }
+        /* Glyphs only: preserve native links, labels, dropdowns and alert dots. */
+        :host(d2l-labs-navigation-link-icon[icon="tier1:home"]) d2l-icon { --bs-genshin-glyph:${asset('genshin-home.png')};--bs-genshin-native-opacity:0;--bs-genshin-glyph-size:28px; }
+        :host(d2l-labs-navigation-dropdown-button-icon[icon="tier3:email"]) d2l-icon { --bs-genshin-glyph:${asset('genshin-mail.png')};--bs-genshin-native-opacity:0;--bs-genshin-glyph-size:48px; }
+        :host(d2l-labs-navigation-dropdown-button-icon[icon="tier3:discussions"]) d2l-icon { --bs-genshin-glyph:${asset('genshin-chat.png')};--bs-genshin-native-opacity:0;--bs-genshin-glyph-size:38px; }
+        :host(d2l-labs-navigation-dropdown-button-icon[icon="tier3:notification-bell"]) d2l-icon { --bs-genshin-glyph:${asset('genshin-notices.png')};--bs-genshin-native-opacity:0;--bs-genshin-glyph-size:48px; }
+        :host(d2l-icon) { background:var(--bs-genshin-glyph,none) center/var(--bs-genshin-glyph-size,contain) no-repeat!important; }
+        :host(d2l-icon) svg { opacity:var(--bs-genshin-native-opacity,1)!important; }
+      `;
+      if(embedded)return '';
+      const calendar=':is(.d2l-widget:has(.week-strip,.month-grid,.d2l-calendar,.d2l-calendar-event,d2l-calendar),.d2l-widget-calendar,.d2l-widget:has(a[href*="/calendar/"]))';
+      return `
+        :root { --bs-page-art:${asset('genshin-festival.jpg')}; }
+        :root[data-bs-page="assignments"],:root[data-bs-page="submission"],:root[data-bs-page="content"] { --bs-page-art:${asset('genshin-fontaine.jpg')}; }
+        :root[data-bs-page="discussions"],:root[data-bs-page="calendar"],:root[data-bs-page="course"] { --bs-page-art:${asset('genshin-archons.jpg')}; }
+        :root[data-bs-page="grades"] { --bs-page-art:${asset('genshin-furina.png')}; }
+        :root[data-bs-page="classlist"] { --bs-page-art:${asset('genshin-nahida.png')}; }
+        :root:has([data-page="course"]:not([hidden])) { --bs-page-art:${asset('genshin-fontaine.jpg')}; }
+        :root:has([data-page="calendar"]:not([hidden])) { --bs-page-art:${asset('genshin-archons.jpg')}; }
+        body::before { background-image:linear-gradient(#20182f66,#20182fc9),var(--bs-page-art,${asset('genshin-festival.jpg')})!important;background-size:cover!important;background-position:center!important; }
+        .d2l-page-header { min-height:320px;background-image:linear-gradient(90deg,#30243ff5 2%,#30243fd0 35%,transparent 85%),${asset('genshin-archons.jpg')}!important;background-size:cover!important;background-position:center!important; }
+        .d2l-widget { background-color:#30243ff5!important;outline:1px solid #d8a7d333;outline-offset:-6px; }
+        .d2l-widget-header { border-bottom:1px solid #b69bc144!important;background-image:linear-gradient(100deg,#8c557a44,#7297bd22)!important; }
+        ${calendar} { position:relative; }
+        ${calendar}::after { content:'';display:block;height:150px;margin:4px 16px 12px;background:${asset('genshin-paimon.png')} right center/auto 140px no-repeat;pointer-events:none; }
+        :where(.d2l-calendar-event,.d2l-notification-item) { border-inline-start:3px solid #b6dcf0!important; }
+        @media(max-width:650px) { .d2l-page-header { min-height:300px;padding-bottom:100px!important;background-image:linear-gradient(#30243fee 5%,#30243f55),${asset('genshin-archons.jpg')}!important; } }
+        @media(forced-colors:active) { :where(.courses-widget,.d2l-widget:has(d2l-my-courses))::before,${calendar}::after { display:none; } }
+      `;
+    }
+    if(theme==='miffy'&&shadow)return `:host(d2l-card) { border:3px solid #292c30!important;border-radius:22px!important;box-shadow:3px 4px 0 #292c30!important; }`;
+    if(shadow||embedded)return '';
+    if(theme==='miffy')return `
+      :where(.d2l-widget,.d2l-panel,.d2l-user-profile-card) { border:3px solid #292c30!important;border-radius:24px!important;box-shadow:5px 6px 0 #292c30!important; }
+      :where(.d2l-widget-header h2,.d2l-widget-header h3) { font-weight:800!important;letter-spacing:0!important; }
+      :where(.d2l-button,.vui-button,button:not([role="menuitem"])) { border-radius:16px!important; }
+      body::before { background-image:${asset('miffy-faces.svg')}!important;background-size:440px 440px!important;background-repeat:repeat!important;background-position:0 0!important; }
+      .d2l-page-header.d2l-homepage-pageheader { border:2px solid #53565a!important;min-height:280px;background-color:#fffaf0!important;background-image:${asset('miffy-friends.svg')}!important;background-size:260px auto!important;background-position:right 16px center!important; }
+      .d2l-widget-header { border-bottom:3px solid #292c30!important;background:#f9d166!important;border-radius:20px 20px 0 0!important; }
+      .d2l-widget:nth-of-type(2) .d2l-widget-header { background:#f2b47c!important; }
+      .d2l-widget:nth-of-type(3) .d2l-widget-header { background:#b5d2c3!important; }
+      @media(max-width:650px) { .d2l-page-header { padding-bottom:155px!important;background-size:160px auto!important;background-position:right 8px bottom!important; } }
+    `;
+    if(theme==='totoro')return `
+      body::before { background-image:linear-gradient(#dfe4d3aa,#dfe4d3ee),${asset('totoro-rain.jpg')}!important;background-size:cover!important; }
+      .d2l-page-header { min-height:320px;background-image:linear-gradient(90deg,#f7f0dd 2%,#f7f0dded 35%,transparent 78%),${asset('totoro-forest.jpg')}!important;background-size:cover!important;background-position:center!important; }
+      .d2l-widget-header { border-bottom:1px solid #9aab85!important;background-image:linear-gradient(90deg,#e0e5cf,transparent)!important; }
+      .d2l-widget { box-shadow:0 3px 0 #93a28044,0 15px 30px #324b3620!important; }
+      .d2l-widget:nth-of-type(2)::after { content:"";display:block;height:145px;margin:12px;border-radius:3px;background:${asset('totoro-rain.jpg')} center/cover no-repeat;pointer-events:none; }
+      @media(max-width:650px) { .d2l-page-header { padding-bottom:150px!important;background-image:linear-gradient(#f7f0dd 5%,#f7f0dd33 85%),${asset('totoro-forest.jpg')}!important; } }
+    `;
+    return '';
+  }
+  function worldCss(theme,shadow,embedded) {
+    const w=worlds[theme],p=palettes[theme];
+    const asset=file=>file?`url("${globalThis.chrome?.runtime?.getURL?.(`art/${file}`)||`/extension/art/${file}`}")`:'none';
+    const motifs={
+      web:'<g fill="none" stroke="#8cb8e7" opacity=".2"><path d="M0 0L144 144M0 0L144 48M0 0L48 144M0 32Q28 20 32 0M0 72Q60 48 72 0M0 120Q100 85 120 0"/></g>',
+      circuit:'<g fill="none" stroke="#65d9e5" opacity=".16"><path d="M0 30H44L70 56H144M0 105H82L105 80H144M26 0V65L55 95V144"/><circle cx="70" cy="56" r="3"/><circle cx="55" cy="95" r="3"/></g>',
+      flower:'<g fill="#dbabc4" opacity=".35"><circle cx="72" cy="54" r="10"/><circle cx="90" cy="72" r="10"/><circle cx="72" cy="90" r="10"/><circle cx="54" cy="72" r="10"/></g><circle cx="72" cy="72" r="9" fill="#edd397" opacity=".65"/>',
+      gingham:'<path d="M0 30H144M0 102H144M30 0V144M102 0V144" stroke="#c29a70" stroke-width="16" opacity=".09"/>',
+      stone:'<g fill="none" stroke="#acaf91" opacity=".13"><path d="M0 0H144V144H0ZM0 48H144M0 96H144M60 0V48M112 48V96M38 96V144"/></g>',
+      constellation:'<g fill="none" stroke="#af9c61" opacity=".25"><path d="M25 35L70 64L113 22M70 64L104 119"/><circle cx="25" cy="35" r="3"/><circle cx="70" cy="64" r="4"/><circle cx="113" cy="22" r="3"/><path d="M104 110L107 116L113 119L107 122L104 128L101 122L95 119L101 116Z"/></g>'
+    };
+    const pattern=`url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="144" height="144">${motifs[w.motif]||''}</svg>`)}")`;
+    const dark=p.scheme==='dark',soft=theme==='my-melody'||theme==='sugarbunnies';
+    const border=theme==='sugarbunnies'?'1px dashed':'1px solid';
+    const shadowTone=theme==='attack-on-titan'?'inset 0 0 0 3px #424936,0 12px 26px #06090555':soft?'0 8px 0 #ba8c9e20,0 16px 34px #755c6120':'0 12px 32px #0c273326';
+    let special='';
+    if(theme==='sugarbunnies') special=`
+      .d2l-widget-header { background-image:repeating-linear-gradient(90deg,#e6c8b666 0 18px,transparent 18px 36px)!important;border-radius:19px 19px 0 0!important;border-bottom:1px dashed ${w.line}!important; }
+      :where(.d2l-button,.vui-button,button) { border-radius:14px!important; }
+    `;
+    if(theme==='my-melody') special=`
+      .d2l-page-header { background-size:215px auto,cover!important;background-position:right 15px center,center!important;background-image:${asset(w.hero)},linear-gradient(90deg,#f9ecf0 35%,#e6efdf88)!important; }
+      .d2l-widget-header::after { content:"";width:56px;height:56px;position:absolute;right:14px;top:8px;background:${asset(w.detail)} center/contain no-repeat;pointer-events:none; }
+      .d2l-widget-header { position:relative;padding-inline-end:82px!important; }
+      :where(.d2l-button,.vui-button,button) { border-radius:24px!important; }
+    `;
+    if(theme==='attack-on-titan') special=`
+      :where(.d2l-widget-header) { border-bottom:3px double #8f936c!important; }
+      :where(h1,h2,h3) { letter-spacing:.025em!important; }
+      :where(button,.d2l-button,.vui-button,select) { border-radius:3px!important; }
+    `;
+    return `
+      :root,:host { --bs-world:${theme};--bs-liquid-glass:${p.surface};--bs-nav-glass:${p.surface};--bs-nav-line:${w.line};--bs-liquid-shine:${dark?'#ffffff12':'#ffffffcc'}; }
+      :where(h1,h2,h3) { font-family:${w.font}!important; }
+      :where(.d2l-widget,.d2l-panel,.d2l-user-profile-card,dialog,.d2l-dialog-inner) { border:${border} ${w.line}!important;border-radius:${w.radius}!important;box-shadow:${shadowTone}!important; }
+      :where(.d2l-le-disc-post,.d2l-le-disc-post-border,.d2l-discussion-post,.d2l-filedrop) { border-radius:${soft?'22px':'8px'}!important; }
+      :where(.d2l-filedrop) { border-color:${w.accent}!important; }
+      :where(.d2l-widget-header) { padding-block:22px 14px!important; }
+      ${shadow?`
+        :host(d2l-card) { border:${border} ${w.line}!important;border-radius:${w.radius}!important;box-shadow:${shadowTone}!important; }
+        :host(d2l-card) .d2l-card-container,:host(d2l-card) .d2l-card-header { border-radius:${soft?'18px':'6px'}!important; }
+        :host(d2l-card) .d2l-card-header { position:relative; }
+        :host(d2l-card) .d2l-card-header::after { content:"";position:absolute;right:8px;bottom:8px;width:${soft?'64px':'76px'};height:48px;border:1px solid ${w.line};border-radius:${soft?'18px':'3px'};background:${asset(w.detail)} center/${soft?'contain':'cover'} no-repeat,${p.surface};pointer-events:none; }
+      `:!embedded?`
+        body::before { inset:0!important;animation:none!important;background-image:${pattern},linear-gradient(${p.bg}dd,${p.bg}ee),${asset(w.hero)}!important;background-size:144px 144px,cover,cover;background-position:0 0,center,center;background-repeat:repeat,no-repeat,no-repeat; }
+        .d2l-page-header { position:relative;box-sizing:border-box;min-height:232px;padding:42px 38% 30px 32px!important;margin-bottom:28px!important;border:1px solid ${w.line}!important;border-radius:${w.radius}!important;
+          background-color:${p.surface}!important;background-image:linear-gradient(90deg,${p.surface} 12%,${p.surface}ed 46%,${p.surface}00 88%),${asset(w.hero)}!important;background-size:cover,${theme==='attack-on-titan'?'auto 440px':theme==='sugarbunnies'?'auto 560px':'cover'};background-position:center,${theme==='attack-on-titan'?'right top':'right center'};background-repeat:no-repeat; }
+        .d2l-page-header::before { content:"${w.label}";position:absolute;left:32px;top:15px;font:600 10px/1.5 "Segoe UI",sans-serif;letter-spacing:.18em;color:var(--bs-muted);pointer-events:none; }
+        .d2l-page-header h1 { font-size:clamp(1.7rem,3vw,2.7rem)!important; }
+        .d2l-page-header a { position:relative;z-index:1; }
+        ${special}
+        @media(max-width:650px) { .d2l-page-header { min-height:210px;padding:40px 18px 22px!important;background-image:linear-gradient(90deg,${p.surface} 40%,${p.surface}c9 70%,${p.surface}88),${asset(w.hero)}!important; } .d2l-page-header::before { left:18px;top:14px;font-size:8px;letter-spacing:.08em; } .d2l-page-header h1 { font-size:1.65rem!important; } ${theme==='my-melody'?'.d2l-page-header { background-size:cover,125px auto!important;background-position:center,right -20px center!important; }':''} }
+      `:''}
+      ${['miffy','totoro'].includes(theme)?':host(d2l-card) .d2l-card-header::after { display:none!important; }':''}
+      ${worldRevisionCss(theme,asset,shadow,embedded)}
+      ${!shadow&&!embedded?`
+        /* Native tool-page headings keep their own title/action layout. */
+        .d2l-page-header:not(.d2l-homepage-pageheader) { min-height:0!important;height:auto!important;padding:12px 16px!important;margin-bottom:20px!important;background:var(--bs-surface)!important;border:0!important;border-radius:12px!important;box-shadow:none!important;outline:0!important; }
+        .d2l-page-header:not(.d2l-homepage-pageheader)::before,.d2l-page-header:not(.d2l-homepage-pageheader)::after { display:none!important; }
+        .d2l-page-header:not(.d2l-homepage-pageheader) h1 { font-size:clamp(1.65rem,2.6vw,2.25rem)!important; }
+      `:''}
+
+      @media(forced-colors:active) { .d2l-page-header { background-image:none!important;border:1px solid CanvasText!important; } .d2l-page-header::before,.d2l-widget-header::after { display:none; } }
+    `;
+  }
+  function welcomeCss(theme,shadow,embedded) {
+    const character=theme==='hello-kitty'||theme==='kuromi'||!!worlds[theme];
+    const cute=theme==='hello-kitty'||theme==='kuromi';
+    const fontFile=theme==='genshin'?'marcellus':theme==='attack-on-titan'?'pirataone':['hello-kitty','kuromi','my-melody','sugarbunnies','miffy'].includes(theme)?'nunito':theme==='totoro'?'bitter':null;
+    const font=fontFile?(theme==='genshin'?'local("HYWenHei-85W"),local("HYWenHei 85W"),':theme==='attack-on-titan'?'local("Ditty"),local("Cloister Black"),':'')+'url("'+(globalThis.chrome?.runtime?.getURL?.('fonts/'+fontFile+'.ttf')||'/extension/fonts/'+fontFile+'.ttf')+'") format("truetype")':null;
+    const home=':root[data-bs-page="home"] .d2l-page-header.d2l-homepage-pageheader';
+    const course=':root[data-bs-page="course"] .d2l-page-header.d2l-homepage-pageheader';
+    const picture='url("'+(globalThis.chrome?.runtime?.getURL?.('art/'+theme+'.png')||'/extension/art/'+theme+'.png')+'")';
+    const photo={genshin:['genshin-archons.jpg','70%','760px','center 5%'],'attack-on-titan':['titan-wall.jpg','48%','440px','center top'],sugarbunnies:['sugarbunnies-sweets.jpg','62%','640px','center'],totoro:['totoro-forest.jpg','65%','720px','center']}[theme];
+    const photoUrl=photo?'url("'+(globalThis.chrome?.runtime?.getURL?.('art/'+photo[0])||'/extension/art/'+photo[0])+'")':null;
+    return `
+      ${font?'@font-face { font-family:"After Hours Heading";src:'+font+';font-display:swap;font-weight:'+(fontFile==='nunito'||fontFile==='bitter'?'100 900':'400')+'; }':''}
+      :root,:host { --bs-welcome-font:${font?'"After Hours Heading",':''}"Segoe UI",system-ui,sans-serif; }
+      :where(.d2l-widget-header h2,.d2l-widget-header h3,.d2l-page-title) { font-family:var(--bs-welcome-font)!important; }
+      ${!shadow&&!embedded?`
+        [data-bs-home-banner="true"] { display:none!important; }
+        ${home} { box-sizing:border-box;display:flex!important;align-items:center!important;min-height:${character?'180px':'0'}!important;height:auto!important;padding:${character?'28px 32px':'16px 0'}!important;margin-block:18px 24px!important; }
+        ${home}::before { display:none!important; }
+        .d2l-homepage-pageheader h1 { margin:0!important;font-family:var(--bs-welcome-font)!important;font-size:clamp(1.85rem,3vw,2.75rem)!important;line-height:1.2!important;letter-spacing:-.015em!important;font-weight:${['marcellus','pirataone'].includes(fontFile)?'400':'650'}!important;text-wrap:balance;max-width:24ch; }
+        .d2l-homepage-pageheader .overline { display:none!important; }
+        .d2l-homepage-pageheader a { background:var(--bs-surface)!important;color:var(--bs-link)!important;padding:8px 12px;border-radius:12px; }
+        ${theme==='genshin'?home+' { background-size:cover,auto 340px!important;background-position:center,right top!important; }':theme==='miffy'?home+' { background-size:auto 150px!important;background-position:right 24px center!important;padding-inline-end:200px!important; }':''}
+        ${cute?`
+          ${home} { position:relative;border:1px solid var(--bs-border)!important;border-radius:${theme==='hello-kitty'?'32px':'28px 28px 10px 28px'}!important;background:linear-gradient(110deg,var(--bs-surface) 30%,var(--bs-raised))!important;box-shadow:0 6px 0 ${theme==='hello-kitty'?'#e8bbc955':'#0d081e88'}!important;padding-inline-end:210px!important; }
+          ${home}::after { content:"";position:absolute;inset:18px 32px 18px auto;width:144px;height:auto;background:${picture} center/contain no-repeat;pointer-events:none; }
+        `:''}
+        ${photo?`
+          ${home} { position:relative;isolation:isolate;background:linear-gradient(110deg,var(--bs-surface),var(--bs-raised))!important; }
+          ${home} > * { position:relative;z-index:1; }
+          ${home}::after { content:"";position:absolute;inset:0 0 0 auto;width:${photo[1]};max-width:${photo[2]};height:100%;z-index:0;border-radius:inherit;background:${photoUrl} ${photo[3]}/cover no-repeat;mask-image:linear-gradient(90deg,transparent 0%,#000 48%);pointer-events:none; }
+        `:''}
+        .d2l-homepage-pageheader .d2l-page-title-c { width:auto!important;max-width:100%; }
+        /* Native course titles are offscreen headings. Keep them accessible,
+           but do not turn their zero-height wrappers into decorative banners. */
+        ${course} { display:block!important;min-height:0!important;height:auto!important;padding:0!important;margin:0!important;border:0!important;outline:0!important;border-radius:0!important;background:none!important;box-shadow:none!important; }
+        ${course}::before,${course}::after { display:none!important; }
+        ${course} :where(.d2l-box,.d2l-box-layout,.d2l-page-title-c) { min-height:0!important;padding:0!important;margin:0!important; }
+        ${course}:has(h1:not(.d2l-offscreen)) { padding-block:16px!important; }
+        ${course} h1:not(.d2l-offscreen) { font-size:clamp(1.5rem,2.5vw,2rem)!important; }
+        @media(max-width:650px) {
+          ${home} { min-height:${character?'160px':'0'}!important;padding:${character?'24px 20px':'12px 0'}!important; }
+          .d2l-homepage-pageheader h1 { font-size:clamp(1.7rem,6vw,2rem)!important;max-width:18ch; }
+          ${cute||theme==='miffy'?`${home} { padding-inline-end:116px!important; } ${home}::after { right:12px;width:90px; }`:''}
+          ${theme==='miffy'?home+' { background-size:auto 90px!important;background-position:right 12px center!important; }':''}
+          ${photo?home+'::after { width:100%;max-width:none;opacity:.55;mask-image:linear-gradient(90deg,transparent 12%,#000 90%); }':''}
+        }
+      `:''}
+    `;
+  }
+  function submissionCss(shadow,embedded) {
+    if(shadow)return '';
+    return `
+      /* Legacy Add a File dialogs use ddial_* wrappers outside the iframe. */
+      .ddial_o[role="dialog"] { background:transparent!important;box-shadow:none!important; }
+      .ddial_o2 { background:var(--bs-surface)!important;color:var(--bs-text)!important;border:1px solid var(--bs-border)!important;border-radius:16px!important;box-shadow:0 18px 60px #0004!important; }
+      :where(.ddial_i,.ddial_t,.ddial_c,.ddial_c_frame,.d2l-dialog-footer,.d2l-dialog-buttons) { background-color:var(--bs-surface)!important;color:var(--bs-text)!important;border-color:var(--bs-border)!important; }
+      .ddial_c_frame { border:0!important; }
+      :is(.ddial_t,.d2l-dialog-buttons) :where(table,tbody,tr,td) { --bs-surface:var(--bs-panel);background-color:transparent!important;border:0!important; }
+      .ddial_t h1 { font:600 1.1rem/1.4 "Segoe UI",system-ui,sans-serif!important;margin:0!important; }
+      ${!embedded?`
+        :root[data-bs-page="submission"] .d2l-page-main { min-width:0!important; }
+        :root[data-bs-page="submission"] .d2l-page-header { min-height:0!important;height:auto!important;padding:20px 24px!important;margin:0 0 24px!important;border:1px solid var(--bs-border)!important;border-radius:16px!important;background:var(--bs-surface)!important;box-shadow:none!important; }
+        :root[data-bs-page="submission"] .d2l-page-header::before,:root[data-bs-page="submission"] .d2l-page-header::after { display:none!important; }
+        :root[data-bs-page="submission"] .d2l-page-header h1 { font-family:var(--bs-welcome-font)!important;font-size:clamp(1.6rem,2.8vw,2.35rem)!important;line-height:1.25!important; }
+        :root[data-bs-page="submission"] #d2l_form { max-width:100%; }
+        :root[data-bs-page="submission"] .d2l-dropbox-submissiontext,
+        :root[data-bs-page="submission"] #d2l_form > div > table.d_FG { box-sizing:border-box;width:100%!important;max-width:none!important;padding:24px!important;border:1px solid var(--bs-border)!important;border-radius:16px!important;background:var(--bs-surface)!important; }
+        :root[data-bs-page="submission"] .d2l-dropbox-submissiontext > .dco_c { width:100%!important;max-width:none!important;background:transparent!important; }
+        /* d_FG is a form layout, not a data table. Never stripe its rows. */
+        :root[data-bs-page="submission"] #d2l_form table.d_FG { width:100%!important;border-collapse:separate!important;border-spacing:0!important; }
+        :root[data-bs-page="submission"] #d2l_form table.d_FG :where(thead,tbody,tfoot,tr,td,th) { --bs-surface:var(--bs-panel);background-color:transparent!important;border:0!important; }
+        :root[data-bs-page="submission"] #d2l_form table.d_FG > tbody > tr > :is(td,th) { padding-block:10px!important;padding-inline:0!important; }
+        :root[data-bs-page="submission"] .d2l-htmlblock-untrusted { max-width:80ch!important;line-height:1.65; }
+        :root[data-bs-page="submission"] #d2l_form > div > h2 { margin-block:28px 0!important;padding:16px 24px!important;background:var(--bs-surface)!important;border:1px solid var(--bs-border)!important;border-bottom:0!important;border-radius:16px 16px 0 0!important; }
+        :root[data-bs-page="submission"] #d2l_form > div > h2 + table.d_FG { border-top:0!important;border-radius:0 0 16px 16px!important;padding-top:8px!important; }
+        :root[data-bs-page="submission"] .d2l-floating-buttons-container { border-top:1px solid var(--bs-border)!important;padding-block:18px!important;margin-top:20px!important; }
+        @media(max-width:650px) {
+          :root[data-bs-page="submission"] .d2l-page-header,
+          :root[data-bs-page="submission"] .d2l-dropbox-submissiontext,
+          :root[data-bs-page="submission"] #d2l_form > div > table.d_FG { padding:16px!important; }
+          :root[data-bs-page="submission"] #d2l_form table.d_FG :is(td,th) { overflow-wrap:anywhere; }
+          :root[data-bs-page="submission"] #d2l_form table.d_FG > tbody > tr > .fl_n { width:auto!important;min-width:12ch;white-space:nowrap!important; }
+        }
+      `:''}
     `;
   }
   function css(theme, shadow = false, embedded = false, customPalette) {
     const p = palettes[theme] || (theme === 'custom' ? { ...customDefaults, ...Object.fromEntries(Object.entries(customPalette || {}).filter(([key,value]) => key !== 'scheme' && /^#[\da-f]{6}$/i.test(value))) } : theme === 'sunset' ? { ...palettes.rose, bg:'#2b1c2b', surface:'#3a2938', raised:'#51394a', link:'#ffd0a1' } : themeScenes[theme] ? palettes.dark : null);
     if (!p) return '';
     const liquid=theme.startsWith('liquid');
-    const character=theme==='hello-kitty'||theme==='kuromi';
+    const world=!!worlds[theme];
+    const character=theme==='hello-kitty'||theme==='kuromi'||world;
     const polished=theme==='modern'||liquid||character;
-    const logo=p.scheme==='light'?'none':polished?'none':'drop-shadow(0 0 .5px #f4f6f9) drop-shadow(0 0 1px #f4f6f9)';
-    const tokens = `--bs-panel:${p.surface};--bs-logo-canvas:${polished && p.scheme === 'dark' ? '#f4f7fb' : 'transparent'};--bs-logo-contour:${logo};` + Object.entries(p).filter(([key]) => key !== 'scheme').map(([key,value]) => `--bs-${key}:${value};`).join('');
+    const logo=p.scheme==='light'?'none':'drop-shadow(0 0 .5px #f4f6f9) drop-shadow(0 0 1px #f4f6f9)';
+    const tokens = `--bs-panel:${p.surface};--bs-logo-canvas:transparent;--bs-logo-contour:${logo};` + Object.entries(p).filter(([key]) => key !== 'scheme').map(([key,value]) => `--bs-${key}:${value};`).join('');
     const hostSurfaces = shadow ? `
       :host(d2l-card), :host(d2l-enrollment-card),
       :host(d2l-my-courses-enrollment-card) d2l-card,
@@ -659,10 +885,10 @@
     ` : '';
     // Nested HTML/widget documents should blend into their containing course widget.
     const frameToken = embedded && !shadow ? `--bs-bg:${p.surface};` : '';
-    const scene = !shadow && themeScenes[theme] ? sceneCss(themeScenes[theme]) : '';
-    const redesign = (theme === 'modern' ? modernRules + (!shadow && !embedded ? modernCanvas : '') : liquid ? liquidCss(theme,shadow,embedded) : character ? liquidCss(theme==='kuromi'?'liquid-dark':'liquid',shadow,embedded)+characterCss(theme,shadow,embedded) : '')
-      + (polished ? navigationRules : '');
-    const redesignHosts = (shadow && theme === 'modern' ? modernHostRules : '') + (shadow && polished ? navigationHostRules : '');
+    const scene = !shadow && !embedded && themeScenes[theme] ? sceneCss(themeScenes[theme]) : '';
+    const redesign = (theme === 'modern' ? modernRules + (!shadow && !embedded ? modernCanvas : '') : liquid ? liquidCss(theme,shadow,embedded) : character ? liquidCss(p.scheme==='dark'?'liquid-dark':'liquid',shadow,embedded)+(world?worldCss(theme,shadow,embedded):characterCss(theme,shadow,embedded)) : '')
+      + (polished ? navigationRules : '') + welcomeCss(theme,shadow,embedded) + submissionCss(shadow,embedded);
+    const redesignHosts = (shadow && theme === 'modern' ? modernHostRules : '') + (shadow ? navigationHostRules : '');
     const reading = embedded && !shadow ? `
       /* Observed SNHU module template: preserve banner artwork and geometry. */
       body.content .intersect-content,body.content .intersect-wrapper,
@@ -699,6 +925,21 @@
     const startupHosts = new Set();
     const view = doc.defaultView;
     const rootEvent = 'brightspace-after-hours:shadow-attached';
+    function syncPageContext() {
+      if(!embedded&&doc.documentElement){
+        for(const widget of doc.querySelectorAll('.d2l-widget[aria-labelledby],.d2l-widget[data-bs-home-banner]')){
+          const ids=(widget.getAttribute('aria-labelledby')||'').split(/\s+/);
+          const banner=ids.some(id=>doc.getElementById(id)?.textContent?.trim()==='Homepage Header Image');
+          if((theme==='hello-kitty'||theme==='kuromi'||!!worlds[theme])&&banner)widget.setAttribute('data-bs-home-banner','true');else widget.removeAttribute('data-bs-home-banner');
+        }
+      }
+      if(!doc.documentElement||embedded)return;
+      if(theme==='original'){doc.documentElement.removeAttribute('data-bs-page');return;}
+      const path=doc.location?.pathname||'';
+      const page=/\/dropbox\/user\/folder_submit_files\.d2l$/i.test(path)?'submission':/\/(dropbox|assignments)(\/|$)/i.test(path)?'assignments':/\/discussions(\/|$)/i.test(path)?'discussions':/\/grades(\/|$)/i.test(path)?'grades':/\/classlist(\/|$)/i.test(path)?'classlist':/\/calendar(\/|$)/i.test(path)?'calendar':/\/content(\/|$)/i.test(path)?'content':/\/home\/\d+/i.test(path)?'course':'home';
+      if(doc.documentElement.getAttribute('data-bs-page')!==page)doc.documentElement.setAttribute('data-bs-page',page);
+    }
+    view.addEventListener('popstate',syncPageContext);
     function signalBridge() {
       doc.dispatchEvent(new view.CustomEvent(theme === 'original'
         ? 'brightspace-after-hours:shadow-stop' : 'brightspace-after-hours:shadow-start'));
@@ -753,6 +994,7 @@
       style.dataset.brightspaceTheme = 'after-hours';
       style.textContent = css(theme, root !== doc, embedded, customPalette);
       const observer = new view.MutationObserver(records => {
+        if(root===doc)syncPageContext();
         for (const record of records) for (const node of record.addedNodes) {
           if (node.nodeType === 1 && node !== style) pending.add(node);
         }
@@ -829,6 +1071,7 @@
       if (next === theme && !customChanged) return;
       const wasOriginal = theme === 'original';
       theme = next;
+      syncPageContext();
       customPalette = normalizedCustom;
       if (next === 'original') {
         doc.removeEventListener(rootEvent, onShadowAttached, true);

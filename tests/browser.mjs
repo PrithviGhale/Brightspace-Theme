@@ -40,7 +40,7 @@ try {
   const set=theme=>evaluate(`chrome.storage.local.set({theme:${JSON.stringify(theme)},enabled:true})`);
   const bg=()=>evaluate(`getComputedStyle(document.body).backgroundColor`);
   await evaluate(`(()=>{const box=document.createElement('div');box.id='copy-fixture';box.innerHTML='<h2 style="color:white;background:black">Sample heading</h2><p style="color:#ff0000;font-family:fantasy"><strong>Bold</strong> and <em>italic</em> — Unicode ✓</p><ul><li>List item</li></ul><a href="https://example.com/reading">Reading link</a>';document.body.append(box)})()`);
-  for(const theme of ['dark','dim','warm','ocean','forest','rose','midnight-city','sunset','aurora','custom','modern','liquid','liquid-clear','liquid-dark','hello-kitty','kuromi','original']) {
+  for(const theme of ['dark','dim','warm','ocean','forest','rose','midnight-city','sunset','aurora','custom','modern','liquid','liquid-clear','liquid-dark','hello-kitty','kuromi','my-melody','sugarbunnies','attack-on-titan','genshin','miffy','totoro','original']) {
     await set(theme);
     const copied=await evaluate(`(()=>{const box=document.querySelector('#copy-fixture'),sel=document.getSelection(),r=document.createRange();r.selectNodeContents(box);sel.removeAllRanges();sel.addRange(r);const expected=sel.toString(),data=new DataTransfer(),event=new ClipboardEvent('copy',{clipboardData:data,bubbles:true,cancelable:true});box.dispatchEvent(event);return {html:data.getData('text/html'),plain:data.getData('text/plain'),expected,prevented:event.defaultPrevented,source:box.querySelector('p').getAttribute('style')}})()`);
     assert(copied.prevented,theme+': handles selected text copy');
@@ -73,7 +73,7 @@ try {
   console.log('PASS: trusted Ctrl+C / Ctrl+V into a separate unthemed rich editor yields black, unhighlighted text; later page copy override cannot replace it.');
   await evaluate(`chrome.storage.local.set({enabled:false})`);
   assert.equal(await evaluate(`(()=>{const e=new ClipboardEvent('copy',{clipboardData:new DataTransfer(),bubbles:true,cancelable:true});document.querySelector('#copy-fixture').dispatchEvent(e);document.getSelection().removeAllRanges();document.querySelector('#copy-fixture').remove();return e.defaultPrevented})()`),false,'Off restores native copy');
-  console.log('PASS: explicit black/white copy across sixteen themes and Original, embedded readings, unchanged source and Off restoration.');
+  console.log('PASS: explicit black/white copy across twenty-two themes and Original, embedded readings, unchanged source and Off restoration.');
   for (const [theme,expected,frameColor] of [['dark','rgb(18, 24, 32)','rgb(28, 37, 48)'],['dim','rgb(37, 43, 52)','rgb(48, 57, 69)'],['warm','rgb(243, 234, 216)','rgb(255, 247, 232)']]) {
     await set(theme);
     await until(`getComputedStyle(document.querySelector('.content').contentDocument.body).backgroundColor === ${JSON.stringify(frameColor)}`);
@@ -83,11 +83,11 @@ try {
     assert.equal(colors[2],colors[3]);
     await cdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false}).then(r=>writeFile(path.join(root,'dist',`preview-${theme}.png`),Buffer.from(r.data,'base64')));
   }
-  for(const theme of ['dark','dim','warm','ocean','forest','rose','midnight-city','sunset','aurora','custom','modern','liquid','liquid-clear','liquid-dark','hello-kitty','kuromi']) {
+  for(const theme of ['dark','dim','warm','ocean','forest','rose','midnight-city','sunset','aurora','custom','modern','liquid','liquid-clear','liquid-dark','hello-kitty','kuromi','my-melody','sugarbunnies','attack-on-titan','genshin','miffy','totoro']) {
     await set(theme);
     await until(`(()=>{const d=document.querySelector('.content').contentDocument;const panel=d.querySelector('.intersect-content');const hex=getComputedStyle(d.documentElement).getPropertyValue('--bs-surface').trim();const parts=hex.slice(1).match(/../g)?.map(v=>parseInt(v,16));return parts&&getComputedStyle(panel).backgroundColor==='rgb('+parts.join(', ')+')'})()`);
   }
-  console.log('PASS: embedded SNHU intersect-content reading panel follows all sixteen themed appearances.');
+  console.log('PASS: embedded SNHU intersect-content reading panel follows all twenty-two themed appearances.');
   await set('modern');
   await until(`getComputedStyle(document.body).backgroundColor==='rgb(12, 16, 33)'`);
   const modernSurface=await evaluate(`(()=>{const card=document.querySelector('.cards .d2l-widget');const reveal=getComputedStyle(card);return {radius:reveal.borderRadius,timeline:reveal.animationTimeline,frame:getComputedStyle(document.querySelector('.content').contentDocument.body).backgroundColor,media:getComputedStyle(document.querySelector('img')).filter}})()`);
@@ -251,7 +251,7 @@ try {
   await set('original');
   await evaluate(`document.body.classList.add('test-collision')`);
   assert.equal(await evaluate(`document.querySelector('.reply-row img').getBoundingClientRect().width`),0,'defensive fixture reproduces a collapsed photo before protection');
-  for(const theme of ['dark','dim','warm','original']) {
+  for(const theme of ['dark','dim','warm','ocean','forest','rose','midnight-city','sunset','aurora','custom','modern','liquid','liquid-clear','liquid-dark','hello-kitty','kuromi','my-melody','sugarbunnies','attack-on-titan','genshin','miffy','totoro','original']) {
     await set(theme);
     await until(`!!document.querySelector('style[data-brightspace-theme]') === ${theme!=='original'}`);
     // Defensive collision case, distinct from the still-unconfirmed live cause.
@@ -263,7 +263,8 @@ try {
     assert.equal(await evaluate(`getComputedStyle(document.querySelector('.d2l-imagelink')).backgroundColor`),'rgba(0, 0, 0, 0)',`${theme}: image control must not receive an action-button fill`);
     assert.equal(await evaluate(`getComputedStyle(document.querySelector('.d2l-navigation-s-logo')).backgroundColor`),'rgba(0, 0, 0, 0)');
     const filter=await evaluate(`getComputedStyle(document.querySelector('.d2l-navigation-s-logo').shadowRoot.querySelector('img')).filter`);
-    assert.equal(filter.includes('drop-shadow'),theme==='dark'||theme==='dim');
+    assert.equal(filter.includes('drop-shadow'),theme!=='original'&&await evaluate(`getComputedStyle(document.documentElement).colorScheme==='dark'`));
+    if(theme!=='original')assert.equal(await evaluate(`getComputedStyle(document.querySelector('.d2l-navigation-s-logo').shadowRoot.querySelector('img')).backgroundColor`),'rgba(0, 0, 0, 0)','Logo backing is transparent in every themed appearance');
     await evaluate(`document.querySelector('.d2l-imagelink').focus()`);
     if(theme!=='original')assert.equal(await evaluate(`getComputedStyle(document.querySelector('.d2l-imagelink')).outlineWidth`),'3px');
     await cdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false}).then(r=>writeFile(path.join(root,'dist',`profiles-${theme}.png`),Buffer.from(r.data,'base64')));

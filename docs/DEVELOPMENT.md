@@ -1,6 +1,6 @@
 # Development guide
 
-Current version: **1.6.0**. Manifest V3, local JavaScript/CSS, no runtime dependencies. Read the [README](../README.md) for installation, appearances, update notices and permissions.
+Current release: **1.7.8**. Manifest V3, local JavaScript/CSS, no runtime dependencies. Read the [README](../README.md) for installation, appearances, update notices and permissions.
 
 ## Architecture
 
@@ -56,9 +56,9 @@ node tests/extension.mjs
 - Update units: stable numeric versions, dedup/cache, credential/referrer policy, invalid releases, offline retention, fixed links and badge clearing.
 - Browser: existing theme, card, frame, table, menu, profile and late-root regressions.
 - Liquid: every mode on dashboard/course/calendar plus discussions, submissions, feedback, attachments, tables, menus/settings/progress and photos. Desktop/mobile, focus, hover, reduced motion, no horizontal overflow and Original cleanup.
-- Actual MV3: Chrome validates/loads the extension. Real storage, two tabs, widget/frame scope, restart persistence, sixteen cold navigations with six delayed roots, rerender repair, glass-mode sync, real popup/worker messages and red badges. Release responses are stubbed in that isolated worker and external GitHub DNS is blocked. SNHU responses are locally intercepted fictional documents. No live account/network data enters artifacts.
+- Actual MV3: Chrome validates/loads the extension. Real storage, two tabs, widget/frame scope, restart persistence, twenty-two cold navigations with six delayed roots, rerender repair, glass-mode sync, real popup/worker messages and red badges. Release responses are stubbed in that isolated worker and external GitHub DNS is blocked. SNHU responses are locally intercepted fictional documents. No live account/network data enters artifacts.
 
-Browser suites create independent disposable profiles inside ignored `dist/`. They may need permission to launch Chrome outside a restricted process sandbox. Screenshots in `dist/liquid-*.png` and `dist/prism-*.png` contain fictional data. Package verification requires exactly 20 assets, including both updater files and the lifecycle helper, with root-level manifest and no preview/test adapter.
+Browser suites create independent disposable profiles inside ignored `dist/`. They may need permission to launch Chrome outside a restricted process sandbox. Screenshots in `dist/liquid-*.png` and `dist/prism-*.png` contain fictional data. Package verification requires exactly 49 files, including both updater files and the lifecycle helper, with root-level manifest and no preview/test adapter.
 
 For an explicit real-network smoke check, set `AFTER_HOURS_LIVE_UPDATE_SMOKE=1` and run `node tests/extension.mjs`, then unset it. That mode loads only the worker and reads the real public release endpoint; it does not open SNHU or run the fictional page suite. Normal tests do not need network access. This live check passed after the connection policy was updated.
 
@@ -81,3 +81,27 @@ Popup uses an intrinsic 440 by 600 canvas with scrolling to avoid initial viewpo
 ## Character themes (local 1.6.0)
 
 Hello Kitty and Kuromi share the theme lifecycle and glass geometry, with independent contrast-checked palettes and local decoration. characterCss applies to document/open-root surfaces while embedded readings remain uncluttered. Only two art PNGs are web-accessible, scoped to existing supported SNHU/widget origins; no additional permissions or remote runtime assets. Attribution is in extension/art/SOURCES.md. tests/characters.mjs covers both across the page fixture families, desktop/mobile, focus, photos, motion and Original cleanup. Actual MV3 tests decode both packaged PNGs from the SNHU fixture and select both popup radios.
+
+## Local 1.7.0 worlds
+
+worldCss uses independent per-theme geometry, typography and ornaments, layered on existing lifecycle/accessibility rules. Decoration is CSS/pseudo-elements; authored content and native actions are preserved. Every image is explicitly web-accessible with unchanged approved origins. world-sources.json records build-time URLs; tools/fetch-character-art.mjs optionally restores those files and is not shipped. The current package verifier expects 34 files, including 15 images and two attribution/source files. No runtime fetch is added. Tests cover all eight character worlds and all 22 appearances for embedded reading/copy behavior. Version 1.7.0 remains local pending user testing.
+
+Local 1.7.1 changes replace the game/cutout assets with reference Earthrise and comic-cover images; Miffy and Totoro are independent world designs with no card-thumbnail repetition. 15 explicit image resources (including one original SVG) are scoped to the existing origins. Package count: 34. No permission expansion.
+
+Local 1.7.2 Genshin uses 21 total explicit image resources (40 packaged files). New image art is used only in CSS backgrounds/pseudo-elements. The gallery is attached to recognized course widgets; Paimon to widgets containing calendar markup, including supported month views. Native data/actions remain intact. Unsupported closed or differently authored calendar components may require additional selectors; no broad page mutation is used.
+
+Local 1.7.3 uses a coarse data-bs-page category computed locally from pathname; no raw route is persisted or transmitted. Full navigation, popstate and existing DOM lifecycle checks update it. Original clears it. Native homepage class controls banner scope. Native courses-v2 and Calendar href selectors were observed read-only on authenticated Brightspace; tests mirror them and verify compact Help/title geometry. Miffy uses a code-native repeating vector pattern.
+
+Local 1.7.4 removes two themes and gallery-only assets. syncPageContext marks only the aria-labelledby widget whose heading exactly matches Homepage Header Image, observing normal document lifecycle; Original clears the owned marker. welcomeCss adds local OFL font faces and scoped UI-heading styles without rewriting names or authored content. Popup characters use a standalone two-column grid before the additional appearance panel. Fonts are explicitly exposed on the existing approved origins; no extra permissions.
+
+
+Local 1.7.5 corrects the preceding banner rules: only eight character themes mark the exact Homepage Header Image widget. Normal appearances remove that owned marker. Coarse page context scopes illustrated greetings to the global home; /home/<id> course headers reset decorative styles and spacing while retaining the native offscreen h1. This reproduces read-only observed SNHU markup, not an assumed empty DOM node. Genshin glyph substitutions use the observed navigation host/icon attributes, inherited CSS variables and the nested d2l-icon SVG opacity. No links, labels, handlers, DOM contents or native unread badges are replaced. Four UI PNGs and Pirata One/OFL are bundled; 49 package files total. Fonts try locally installed Ditty/Cloister Black before the Gothic fallback. The forum does not establish a definitive logo typeface. Tests cover course header geometry and photo switching for all 22 active themes, welcome cards, game glyph clickability, restoration, real MV3 resource loading and existing lifecycle/copy regressions.
+
+
+Local 1.7.6 applies navigationHostRules to every themed shadow root (not just glass/character appearances), with 32px glyphs inside 44px openers and Genshin artwork-padding compensation. welcomeCss places photographic art in a pointer-transparent masked pseudo-element, leaving text above a stable palette backing. submissionCss covers the observed native d_FG layout tables and ddial_o2/ddial_i/ddial_t/ddial_c shell. The fixed folder_submit_files.d2l path produces only the coarse submission presentation attribute, without retaining query strings or course data. Form-table cell tokens reset to bs-panel to avoid alternating nested surfaces. The scene layer is excluded from embedded documents so frame bodies match their enclosing dialog or widget. All behavior remains CSS-only apart from existing coarse context classification. New fictional submission-native/picker fixtures reproduce observed structure without upload or submit handlers; they are not packaged.
+
+
+Local 1.7.7 centers the home-link custom-element host, which was omitted from the earlier navigation alignment rules. The preview now reproduces the native inline-block host, with a 22-theme assertion against the full header row center. Paimon uses 28px artwork inside the existing accessible target.
+
+
+Local 1.7.8 removes the light logo canvas from polished dark themes. All themed logo containers/images stay transparent; dark palettes use the existing subtle lettering contour instead of a rectangular backing. This is limited to navigation logos; course/profile media remain unfiltered. The browser profile fixture covers all 22 themes, native logo shadow roots, contour selection and Original restoration.

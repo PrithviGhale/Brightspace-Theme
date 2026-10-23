@@ -4,3 +4,6 @@
 @media(max-width:650px){.header-inner{height:72px;padding:0 18px}.demo-label{display:none}.d2l-navigation-s-main{padding:9px 12px;gap:3px}.d2l-navigation-s-main button{font-size:12px!important;padding:9px 10px!important}.theme-control{width:100%;justify-content:space-between;margin:8px 5px 0}.welcome{display:block}.calendar-link{display:inline-block;margin-top:18px}main{padding:28px 16px 12px}.course-grid,.side-stack{grid-template-columns:1fr}.course-grid d2l-card img[slot=header]{height:165px}.preview-footer{display:block}.preview-footer span{display:block;margin-top:8px}.month-grid{gap:3px}.month-grid .d2l-calendar-day{padding:6px;min-height:88px}.month-grid .d2l-calendar-event{font-size:8px;overflow-wrap:anywhere;padding:4px}.month-weekday{font-size:9px}.quiet-label{font-size:9px}}
 
 @media(min-width:1001px) and (max-width:1200px){.course-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+@media(max-width:650px){.preview-brand strong{display:none}.header-actions{gap:2px}.d2l-navigation-s-notifications-wrapper{display:flex}}
+.d2l-navigation-s-notification{display:flex;align-items:center;height:100%}

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
+<rect width="500" height="500" fill="#607fa8"/>
+<defs><g id="b" fill="#fffdf7" stroke="#25262b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+<path d="M-31-9C-44-42-34-82-24-79C-14-77-17-45-11-29C-4-30 3-30 10-28C14-47 14-83 25-81C38-78 38-40 30-10C62 18 48 55 1 57C-48 60-63 22-31-9Z"/>
+<g fill="#25262b" stroke="none"><ellipse cx="-19" cy="14" rx="3" ry="4"/><ellipse cx="19" cy="14" rx="3" ry="4"/></g><path d="M-5 29L5 37M5 29L-5 37" stroke-width="3"/></g></defs>
+<use href="#b" transform="translate(90 105) rotate(-13) scale(.78)"/><use href="#b" transform="translate(310 70) rotate(12) scale(.7)"/><use href="#b" transform="translate(440 190) rotate(-9) scale(.5)"/><use href="#b" transform="translate(230 240) rotate(7) scale(.57)"/><use href="#b" transform="translate(55 355) rotate(-5) scale(.6)"/><use href="#b" transform="translate(365 400) rotate(10) scale(.84)"/><use href="#b" transform="translate(175 460) rotate(4) scale(.48)"/>
+</svg>

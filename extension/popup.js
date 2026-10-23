@@ -10,8 +10,8 @@
   const morePanel = document.querySelector('#more-panel');
   const radios = [...document.querySelectorAll('[name="theme"]')];
   const liquidMode=document.querySelector('#liquid-mode');
-  const extraThemes = new Set(['ocean','forest','rose','midnight-city','sunset','aurora','custom','modern','liquid','liquid-clear','liquid-dark','hello-kitty','kuromi']);
-  const names = { dark:'Dark', dim:'Dim', warm:'Warm / sepia', original:'Original', ocean:'Ocean', forest:'Forest', rose:'Rose', 'midnight-city':'Midnight City', sunset:'Sunset City', aurora:'Aurora', custom:'Custom colors', modern:'Prism glass', liquid:'Liquid Glass · Default', 'liquid-clear':'Liquid Glass · Transparent', 'liquid-dark':'Liquid Glass · Dark', 'hello-kitty':'Hello Kitty', kuromi:'Kuromi' };
+  const extraThemes = new Set(['ocean','forest','rose','midnight-city','sunset','aurora','custom','modern','liquid','liquid-clear','liquid-dark']);
+  const names = { dark:'Dark', dim:'Dim', warm:'Warm / sepia', original:'Original', ocean:'Ocean', forest:'Forest', rose:'Rose', 'midnight-city':'Midnight City', sunset:'Sunset City', aurora:'Aurora', custom:'Custom colors', modern:'Prism glass', liquid:'Liquid Glass · Default', 'liquid-clear':'Liquid Glass · Transparent', 'liquid-dark':'Liquid Glass · Dark', 'hello-kitty':'Hello Kitty', kuromi:'Kuromi', 'my-melody':"My Melody",'sugarbunnies':"Sugarbunnies",'attack-on-titan':"Attack on Titan",'genshin':"Genshin Impact",miffy:'Miffy',totoro:'My Neighbor Totoro' };
   let state = prefs.normalize({});
   const copyStatus=document.querySelector('#copy-status');
   function renderCopy(value) {
