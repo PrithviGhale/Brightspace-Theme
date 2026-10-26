@@ -6,7 +6,15 @@ A theme extension for **SNHU Brightspace**, built for Chrome and Opera. Choose a
 
 I made this because I'm used to having dark mode, and Brightspace felt too bright. I wanted it to look better and feel easier to use without changing how my courses work.
 
-**[Download v1.7.8](https://github.com/PrithviGhale/Brightspace-Theme/releases/tag/v1.7.8)** · [Report a problem](https://github.com/PrithviGhale/Brightspace-Theme/issues) · [Changelog](CHANGELOG.md)
+**[Download v1.8.1](https://github.com/PrithviGhale/Brightspace-Theme/releases/tag/v1.8.1)** · [Report a problem](https://github.com/PrithviGhale/Brightspace-Theme/issues) · [Changelog](CHANGELOG.md)
+
+## v1.8.1: Performance mode and page copying
+
+**Performance mode** in the popup keeps theme colors, artwork and fonts, stops decorative motion and hover animations, removes glass blur and soft panel shadows, and uses solid theme-colored panels. It applies across open Brightspace tabs, including embedded readers, and also works with custom appearance off. This reduces decorative rendering work; actual CPU/GPU/RAM savings depend on the page and device and have not been measured. It does not accelerate Brightspace servers or remove course media.
+
+**Copy page text** is now directly in the popup. It copies readable loaded text from Brightspace, open shadow roots and accessible same-origin frames, with themes on or off. Hidden text, form fields and editable drafts are excluded. PDFs, image text and inaccessible embeds are unsupported. Very long pages are capped at 300,000 characters with a notice. Copied text is never saved or automatically sent anywhere. ChatGPT/Claude and the study sidebar have been removed.
+
+Only **clipboardWrite** is added for explicit copying; no clipboard reading or AI website permissions.
 
 ## v1.7.8: character worlds and interface polish
 
@@ -94,12 +102,13 @@ ZIP installs cannot replace their own files automatically. This project has not 
 
 ## Privacy and access
 
-Preferences stay in your browser profile. There are no analytics, ads, tracking, remote scripts, remote fonts, or runtime dependencies. The theme inspects element/shadow-root structure to place styles; it does **not automatically collect or save grades, assignment text, passwords, form values or discussion content**. The copy action handles only the selection you explicitly copy, without storing it.
+Preferences stay in your browser profile. There are no analytics, ads, tracking, remote extension scripts, remote fonts, or runtime dependencies. The theme inspects element/shadow-root structure to place styles; it does **not automatically collect or save grades, assignment text, passwords, form values or discussion content**. The selection-copy action handles only your explicit selection. The popup reads loaded page text only after you click Copy page text. Neither action stores copied text or sends it to a website automatically.
 
 | Access | Purpose |
 | --- | --- |
-| `storage` | Save appearance and public-release check results locally |
+| `storage` | Save appearance, Performance mode and public-release check results locally |
 | `alarms` | Schedule a release check every six hours |
+| `clipboardWrite` | Copy page text after an explicit click; cannot read your clipboard |
 | `https://learn.snhu.edu/*` | Theme Brightspace pages and eligible HTML frames |
 | `https://d1i6rhttasws5m.cloudfront.net/production/*` | Theme SNHU's embedded grade widget |
 | `https://d1zg7b99iisfa6.cloudfront.net/production/*` | Theme SNHU's embedded discussion widget |

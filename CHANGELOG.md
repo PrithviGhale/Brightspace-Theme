@@ -1,6 +1,13 @@
 # Changelog
 
-## 1.7.8 ? 2026-10-22
+## 1.8.1 - 2026-10-26
+
+- Drop the experimental ChatGPT/Claude sidebar from the local test build. This release has no chat sidebar, chat shortcut, sidePanel permission or AI website integration.
+- Add Copy page text as a standalone popup button, working with themes on or off; readable text stays transient and plain.
+- Add a saved Performance mode independent of appearance. Keep artwork, fonts and palette; stop decorative motion, glass blur and soft panel shadows. No polling or background AI processes.
+- Rendering savings are not quantified; course features and media remain available.
+
+## 1.7.8 - 2026-10-22
 
 ## What's new
 

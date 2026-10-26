@@ -794,7 +794,7 @@
       `:''}
     `;
   }
-  function css(theme, shadow = false, embedded = false, customPalette) {
+  function baseCss(theme, shadow = false, embedded = false, customPalette) {
     const p = palettes[theme] || (theme === 'custom' ? { ...customDefaults, ...Object.fromEntries(Object.entries(customPalette || {}).filter(([key,value]) => key !== 'scheme' && /^#[\da-f]{6}$/i.test(value))) } : theme === 'sunset' ? { ...palettes.rose, bg:'#2b1c2b', surface:'#3a2938', raised:'#51394a', link:'#ffd0a1' } : themeScenes[theme] ? palettes.dark : null);
     if (!p) return '';
     const liquid=theme.startsWith('liquid');
@@ -910,8 +910,30 @@
     const art = city ? `body::after{content:"";position:fixed;z-index:-1;pointer-events:none;inset:0;background-image:${artwork};background-position:center bottom;background-size:100% min(42vh,420px);background-repeat:repeat-x;opacity:.62}` : '';
     return `html{isolation:isolate}body{background-color:transparent!important}body::before{content:"";position:fixed;z-index:-1;pointer-events:none;inset:-3%;background:${sky};animation:brightspace-ambience 32s ease-in-out infinite alternate;will-change:transform,opacity}${art}@keyframes brightspace-ambience{from{transform:translate3d(-.7%,0,0) scale(1);opacity:.76}to{transform:translate3d(.7%,.5%,0) scale(1.025);opacity:1}}@media(prefers-reduced-motion:reduce){body::before{animation:none!important;will-change:auto}}`;
   }
+  // Only decorative UI is simplified: media, progress indicators and editors stay functional.
+  function performanceCss(themed, shadow = false) {
+    const surfaces='.d2l-navigation-s-header,.d2l-navigation-s-main-wrapper,.d2l-panel,dialog,.d2l-dialog-inner,.d2l-widget,.d2l-page-header,.d2l-navigation-s,.d2l-navigation-header,.d2l-navigation-main-header,.d2l-navigation-main-footer,d2l-navigation-main-header,d2l-navigation-main-footer,d2l-card,.d2l-card-container,.d2l-card-content,.d2l-enrollment-card,.d2l-dialog,.ddial_o2';
+    const hosts=shadow?',:host(d2l-card:hover),:host(d2l-card),:host(d2l-enrollment-card),:host(d2l-my-courses-enrollment-card),:host(d2l-navigation-main-header),:host(d2l-navigation-main-footer),:host(d2l-labs-navigation-main-header),:host(d2l-labs-navigation-main-footer)':'';
+    return surfaces+hosts+'{transition:none!important;animation:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important;will-change:auto!important;'+(themed?'background-color:var(--bs-surface)!important;':'')+'}'+
+      'button,.d2l-button{transition:none!important;animation:none!important}'+(themed?'body::before,body::after{animation:none!important;transform:none!important;will-change:auto!important}'+'.d2l-widget,d2l-card,.d2l-enrollment-card'+(shadow?',:host(d2l-card),:host(d2l-card:hover)':'')+'{animation:none!important;transform:none!important;translate:none!important}':'');
+  }
+  function css(theme, shadow = false, embedded = false, customPalette, performanceMode = false) {
+    const base=baseCss(theme,shadow,embedded,customPalette);
+    return base+(performanceMode?performanceCss(!!base,shadow):'');
+  }
   function create(doc, { embedded = false } = {}) {
     let theme = 'original';
+    let performanceMode = false;
+    let performanceStyle = null;
+    function syncPerformance() {
+      if(!doc.documentElement)return;
+      if(performanceMode && theme==='original') {
+        if(!performanceStyle){performanceStyle=doc.createElement('style');performanceStyle.dataset.brightspacePerformance='true';}
+        performanceStyle.textContent=performanceCss(false);
+        if(!performanceStyle.isConnected)doc.documentElement.append(performanceStyle);
+      } else {performanceStyle?.remove();performanceStyle=null;}
+    }
+    doc.addEventListener('DOMContentLoaded',syncPerformance,{once:true});
     let customPalette = null;
     let queued = false;
     let readyObserver = null;
@@ -992,7 +1014,7 @@
       if (roots.has(root)) return;
       const style = doc.createElement('style');
       style.dataset.brightspaceTheme = 'after-hours';
-      style.textContent = css(theme, root !== doc, embedded, customPalette);
+      style.textContent = css(theme, root !== doc, embedded, customPalette, performanceMode);
       const observer = new view.MutationObserver(records => {
         if(root===doc)syncPageContext();
         for (const record of records) for (const node of record.addedNodes) {
@@ -1063,14 +1085,17 @@
         }
       }
     }
-    function apply(next, custom) {
+    function apply(next, custom, performance = false) {
       if (readyObserver) { readyObserver.disconnect(); readyObserver = null; }
       next = palettes[next] || next === 'custom' || next === 'midnight-city' || next === 'sunset' || next === 'aurora' ? next : 'original';
       const normalizedCustom = next === 'custom' ? { ...customDefaults, ...Object.fromEntries(Object.entries(custom || {}).filter(([key,value]) => key !== 'scheme' && /^#[\da-f]{6}$/i.test(value))) } : null;
       const customChanged = JSON.stringify(normalizedCustom) !== JSON.stringify(customPalette);
-      if (next === theme && !customChanged) return;
+      const modeChanged=performanceMode !== (performance === true);
+      performanceMode=performance === true;
+      if (next === theme && !customChanged && !modeChanged) return;
       const wasOriginal = theme === 'original';
       theme = next;
+      syncPerformance();
       syncPageContext();
       customPalette = normalizedCustom;
       if (next === 'original') {
@@ -1089,7 +1114,7 @@
           theme = 'original';
           readyObserver = new view.MutationObserver(() => {
             if (!doc.documentElement) return;
-            apply(next, normalizedCustom);
+            apply(next, normalizedCustom, performanceMode);
           });
           readyObserver.observe(doc, {childList: true});
           return;
@@ -1100,7 +1125,7 @@
         signalBridge();
         register(doc); scan(doc);
       } else {
-        for (const [root, {style}] of roots) style.textContent = css(theme, root !== doc, embedded, customPalette);
+        for (const [root, {style}] of roots) style.textContent = css(theme, root !== doc, embedded, customPalette, performanceMode);
       }
     }
     return Object.freeze({ apply });

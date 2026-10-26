@@ -37,6 +37,10 @@
     return wrapper.outerHTML;
   }
   globalThis.chrome?.runtime?.onMessage?.addListener((message,sender,reply)=>{
+    if(sender.id===chrome.runtime.id&&sender.url===chrome.runtime.getURL('popup.html')&&message?.type==='read-brightspace-page'){
+      if(!embedded&&location.hostname==='learn.snhu.edu')reply(BrightPageText.read(document));
+      return;
+    }
     if(sender.id!==chrome.runtime.id||sender.url!==chrome.runtime.getURL('popup.html')||message?.type!=='copy-clean-selection'||!state.enabled)return;
     const text=selectedText();
     if(text)reply({text,html:cleanHtml(text)});
@@ -65,14 +69,14 @@
   prefs.subscribe(patch => {
     Object.assign(initialPatch, patch);
     state = prefs.normalize({ ...state, ...patch });
-    engine.apply(prefs.effective(state), state.customPalette);
+    engine.apply(prefs.effective(state), state.customPalette, state.performanceMode);
   });
   // Paint the default theme at document_start while the saved choice loads.
   // This avoids showing the unthemed dashboard on a fresh navigation. The
   // storage read below immediately replaces it with the user's saved setting.
-  engine.apply(prefs.effective(state), state.customPalette);
+  engine.apply(prefs.effective(state), state.customPalette, state.performanceMode);
   prefs.read().then(value => {
     state = prefs.normalize({ ...value, ...initialPatch });
-    engine.apply(prefs.effective(state), state.customPalette);
-  }).catch(() => engine.apply(Object.keys(initialPatch).length ? prefs.effective(state) : 'original', state.customPalette));
+    engine.apply(prefs.effective(state), state.customPalette, state.performanceMode);
+  }).catch(() => engine.apply(Object.keys(initialPatch).length ? prefs.effective(state) : 'original', state.customPalette, state.performanceMode));
 })();

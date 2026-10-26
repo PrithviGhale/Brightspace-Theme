@@ -5,7 +5,7 @@
   function read() { try { return JSON.parse(localStorage.getItem(key)) || {}; } catch { return {}; } }
   function notify(old, next) {
     const changes = {};
-    for (const name of ['enabled', 'theme', 'customPalette']) if (old[name] !== next[name]) changes[name] = { oldValue: old[name], newValue: next[name] };
+    for (const name of ['enabled', 'theme', 'customPalette', 'performanceMode']) if (old[name] !== next[name]) changes[name] = { oldValue: old[name], newValue: next[name] };
     if (Object.keys(changes).length) for (const listener of listeners) listener(changes, 'local');
   }
   window.chrome = { storage: {

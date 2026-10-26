@@ -121,3 +121,5 @@ main { padding:14px 20px 6px; }
 .primary-themes .choice { min-height:64px; }
 #more-themes { background:#23324d;border-color:#5b7396;font-weight:600; }
 footer { background:#131d30;border-top:1px solid #354865; }
+
+.utility-card{border:1px solid #435773;border-radius:16px;padding:12px;margin-bottom:16px;background:#18253a}.utility-card .power{padding:0;border:0;background:none;margin-bottom:12px}.utility-card small{font-size:11px;line-height:1.5}#copy-page{width:100%;padding:10px 12px;border:1px solid #718bac;border-radius:10px;background:#2c4260;color:#edf4ff;font:600 13px system-ui;cursor:pointer}#copy-page:hover{background:#375477}#copy-page:focus-visible{outline:3px solid #ffd580;outline-offset:2px}#page-copy-status{font-size:11px;line-height:1.5;color:#c4d1e5;margin:9px 0 0}#copy-page:disabled{opacity:.6;cursor:wait}

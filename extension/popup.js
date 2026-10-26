@@ -3,6 +3,7 @@
   const prefs = BrightPreferences;
   const version = chrome.runtime?.getManifest?.().version;
   document.querySelector('#version').textContent = version ? `v${version}` : 'Local preview';
+  const performance = document.querySelector('#performance-mode');
   const enabled = document.querySelector('#enabled');
   const fieldset = document.querySelector('#themes');
   const status = document.querySelector('#status');
@@ -35,6 +36,18 @@
     } catch { copyStatus.textContent='Select text in Brightspace, open this popup, then try Copy selection cleanly. If blocked, use Ctrl+C and check this status.'; }
     finally {button.disabled=false;}
   });
+  document.querySelector('#copy-page').addEventListener('click',async()=>{
+    const button=document.querySelector('#copy-page'), notice=document.querySelector('#page-copy-status');button.disabled=true;
+    try {
+      const [tab]=await chrome.tabs.query({active:true,currentWindow:true});
+      if(!Number.isInteger(tab?.id))throw new Error();
+      const result=await chrome.tabs.sendMessage(tab.id,{type:'read-brightspace-page'},{frameId:0});
+      if(!result?.text)throw new Error();
+      await navigator.clipboard.writeText(result.text);
+      notice.textContent='Copied '+result.text.length.toLocaleString()+' characters as plain text.'+(result.truncated?' Long page: text was capped.':'')+(result.inaccessible?' Some embedded content could not be read.':'');
+    } catch {notice.textContent='Open a Brightspace page with readable text, then try again. Reload older open tabs after updating the extension.';}
+    finally {button.disabled=false;}
+  });
   const initialPatch = {};
   let writes = Promise.resolve();
   function setMore(open) {
@@ -44,6 +57,7 @@
   }
   function render() {
     enabled.checked = state.enabled;
+    performance.checked = state.performanceMode;
     for (const radio of radios) radio.checked = radio.value==='liquid' ? state.theme.startsWith('liquid') : radio.value === state.theme;
     if(state.theme.startsWith('liquid'))liquidMode.value=state.theme;
     for (const input of document.querySelectorAll('[data-color]')) input.value = state.customPalette[input.dataset.color];
@@ -64,8 +78,9 @@
   prefs.subscribe(patch => { Object.assign(initialPatch, patch); state = prefs.normalize({ ...state, ...patch }); render(); });
   prefs.read().then(value => {
     state = prefs.normalize({ ...value, ...initialPatch });
-    render(); enabled.disabled = false; fieldset.disabled = false;
+    render(); performance.disabled = false; enabled.disabled = false; fieldset.disabled = false;
   }).catch(() => { status.textContent = 'Could not load preferences. Reopen the popup to retry.'; });
+  performance.addEventListener('change', () => save({performanceMode:performance.checked}));
   enabled.addEventListener('change', () => save({ enabled: enabled.checked }));
   for (const radio of radios) radio.addEventListener('change', () => { if (radio.checked) save({ theme: radio.value==='liquid'?liquidMode.value:radio.value }); });
   liquidMode.addEventListener('change',()=>save({theme:liquidMode.value}));

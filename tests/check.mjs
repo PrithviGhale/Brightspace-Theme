@@ -19,7 +19,7 @@ for(const size of [16,32,48,128]) {
   assert.equal(icon.readUInt32BE(16),size);assert.equal(icon.readUInt32BE(20),size);
 }
 assert.match(popupHtml,/class="mark" src="icons\/icon-128.png"/);
-assert.deepEqual(manifest.permissions, ['storage','alarms']);
+assert.deepEqual(manifest.permissions, ['storage','alarms','clipboardWrite']);
 assert.equal(manifest.background.service_worker, 'background.js');
 assert.deepEqual(manifest.host_permissions, ['https://api.github.com/*']);
 assert.equal(manifest.content_security_policy.extension_pages,"script-src 'self'; object-src 'none'; connect-src https://api.github.com/repos/PrithviGhale/Brightspace-Theme/releases/latest");
@@ -78,8 +78,8 @@ const context = vm.createContext({chrome});
 vm.runInContext(await read('preferences.js'), context);
 const p = context.BrightPreferences;
 const plain = x => JSON.parse(JSON.stringify(x));
-assert.deepEqual(plain(await p.read()), {enabled:true, theme:'dark', customPalette:plain(p.DEFAULTS.customPalette)});
-assert.deepEqual(plain(p.normalize({enabled:'yes',theme:'unknown',grade:'ignored'})), {enabled:true, theme:'dark', customPalette:plain(p.DEFAULTS.customPalette)});
+assert.deepEqual(plain(await p.read()), {enabled:true, performanceMode:false, theme:'dark', customPalette:plain(p.DEFAULTS.customPalette)});
+assert.deepEqual(plain(p.normalize({enabled:'yes',theme:'unknown',grade:'ignored'})), {enabled:true, performanceMode:false, theme:'dark', customPalette:plain(p.DEFAULTS.customPalette)});
 assert.equal(p.effective({enabled:false,theme:'warm'}), 'original');
 assert.equal(p.effective({enabled:true,theme:'original'}), 'original');
 let patch;
@@ -158,3 +158,8 @@ console.log('PASS: manifest scope/assets; JavaScript syntax/privacy checks; pref
 
 assert.equal(context.BrightPreferences.normalize({theme:'spider-man'}).theme,'dark');
 assert.equal(context.BrightPreferences.normalize({theme:'edgerunners'}).theme,'dark');
+
+assert.equal(p.normalize({performanceMode:'yes'}).performanceMode,false);
+await p.write({performanceMode:true});assert.equal((await p.read()).performanceMode,true);
+await p.write({performanceMode:'false'});assert.equal((await p.read()).performanceMode,true);
+assert(!manifest.side_panel && !manifest.commands && !manifest.permissions.includes('sidePanel'));

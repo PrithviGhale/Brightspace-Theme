@@ -1,5 +1,8 @@
 # Verification record
 
+Release **v1.8.1** (2026-10-26): static/preferences/contrast checks, updater units, browser theme regressions, installed MV3 extension regressions and the new performance suite pass. The performance suite covers all 23 appearances: preserved text colors/artwork, no panel blur or ambient animation, effect restoration, dynamic shadow cards, independent Off/Original cleanup and saved popup toggle. Real clipboard paste works with appearance on/off; hidden/editable text is excluded, shadow/same-origin readings are included, worker-origin page reads are rejected, and copied text is not persisted. Popup screenshot visually checked at 440x600. All SNHU responses were fictional local fixtures; no coursework or live account requests. CPU/GPU/RAM savings are not measured. Package verification confirms 50 files, a root-level manifest and no chat-sidebar or test assets.
+
+
 Release **v1.7.8**: final static, updater, browser, Liquid, character/submission/dialog and actual MV3 extension suites all passed. Package verifier confirms 49 files with a root-level manifest and no preview/test adapters. Release contains the consolidated 1.7.x changes; earlier local-build notes below describe development checkpoints. Authenticated installed Brightspace/Opera and desktop Word remain user-tested surfaces.
 
 

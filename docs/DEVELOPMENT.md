@@ -1,12 +1,12 @@
 # Development guide
 
-Current release: **1.7.8**. Manifest V3, local JavaScript/CSS, no runtime dependencies. Read the [README](../README.md) for installation, appearances, update notices and permissions.
+Current release: **1.8.1** (2026-10-26). Manifest V3, local JavaScript/CSS, no runtime dependencies. Read the [README](../README.md) for installation, appearances, update notices and permissions.
 
 ## Architecture
 
-- `preferences.js`: validated theme IDs and hex colors; browser-local storage; partial writes and cross-tab events. No page content.
+- `preferences.js`: validated theme IDs, hex colors and independent Performance mode; browser-local storage; partial writes and cross-tab events. No page content.
 - `content.js`: subscribes before its initial preference read so later changes win. Applies the default immediately, then reconciles saved appearance.
-- `theme-engine.js`: semantic D2L color tokens, legacy selectors, open-shadow styles, supported frames, Prism and Liquid Glass designs. Theme switches replace owned style text. Original/Off removes styles and observers.
+- `theme-engine.js`: semantic D2L color tokens, legacy selectors, open-shadow styles, supported frames, Prism and Liquid Glass designs. Theme switches replace owned style text. Original/Off removes theme styles and observers; enabled Performance mode keeps only a small document style.
 - `shadow-lifecycle.js`: MAIN-world, document-start helper. While appearance is active, wraps native `attachShadow` and signals only the host of each new open root. No event details, course data or preferences. Preserves native arguments/result/errors. Stops/restores on Off/Original, without clobbering a later library wrapper. The ready/start handshake handles injection order.
 - Existing root observers discover added subtrees and repair only owned styles removed by template replacement. No polling, repeated whole-page scans, or reading authored course content. Missing registries and components attaching after load have regression fixtures.
 - `widget-context.js`: permits the two production widget paths only below SNHU's top-level origin, before DOM or storage access. The MAIN helper has the same origin guard. Closed roots stay closed.
@@ -49,6 +49,7 @@ node tests/browser.mjs
 node tests/liquid.mjs
 node tests/characters.mjs
 node tests/extension.mjs
+node tests/performance.mjs
 ./tools/package.ps1
 ```
 
@@ -58,7 +59,7 @@ node tests/extension.mjs
 - Liquid: every mode on dashboard/course/calendar plus discussions, submissions, feedback, attachments, tables, menus/settings/progress and photos. Desktop/mobile, focus, hover, reduced motion, no horizontal overflow and Original cleanup.
 - Actual MV3: Chrome validates/loads the extension. Real storage, two tabs, widget/frame scope, restart persistence, twenty-two cold navigations with six delayed roots, rerender repair, glass-mode sync, real popup/worker messages and red badges. Release responses are stubbed in that isolated worker and external GitHub DNS is blocked. SNHU responses are locally intercepted fictional documents. No live account/network data enters artifacts.
 
-Browser suites create independent disposable profiles inside ignored `dist/`. They may need permission to launch Chrome outside a restricted process sandbox. Screenshots in `dist/liquid-*.png` and `dist/prism-*.png` contain fictional data. Package verification requires exactly 49 files, including both updater files and the lifecycle helper, with root-level manifest and no preview/test adapter.
+Browser suites create independent disposable profiles inside ignored `dist/`. They may need permission to launch Chrome outside a restricted process sandbox. Screenshots in `dist/liquid-*.png` and `dist/prism-*.png` contain fictional data. Package verification requires exactly 50 files, including both updater files and the lifecycle helper, with root-level manifest and no preview/test adapter.
 
 For an explicit real-network smoke check, set `AFTER_HOURS_LIVE_UPDATE_SMOKE=1` and run `node tests/extension.mjs`, then unset it. That mode loads only the worker and reads the real public release endpoint; it does not open SNHU or run the fictional page suite. Normal tests do not need network access. This live check passed after the connection policy was updated.
 
@@ -105,3 +106,12 @@ Local 1.7.7 centers the home-link custom-element host, which was omitted from th
 
 
 Local 1.7.8 removes the light logo canvas from polished dark themes. All themed logo containers/images stay transparent; dark palettes use the existing subtle lettering contour instead of a rectangular backing. This is limited to navigation logos; course/profile media remain unfiltered. The browser profile fixture covers all 22 themes, native logo shadow roots, contour selection and Original restoration.
+
+
+## 1.8.1 performance and copy tools
+
+performanceMode is a separately validated boolean preference. Content scripts update the existing owned document/shadow styles without new polling. Active themes append focused UI overrides; Original uses a small separate style without enabling theme discovery observers. Switching back restores normal effects. Course media, progress indicators, forms and editor behavior are untouched. Artwork remains loaded, so bitmap memory is not claimed to decrease.
+
+page-text.js accepts requests only from the exact extension popup URL, only in the top-level learn.snhu.edu frame. Copy page text traverses rendered open shadow/slot trees and readable same-origin frames, excludes hidden and editable fields, caps results, and writes plain text on explicit click. No content persistence or network transfer. clipboardWrite remains; sidePanel, commands and AI framing are removed. Package verifier expects 50 files.
+
+Run node tests/performance.mjs for actual MV3 copy/paste, theme/performance toggles and cleanup. Fixtures are fictional SNHU pages fulfilled locally.

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Brightspace After Hours",
-  "version": "1.7.8",
+  "version": "1.8.1",
   "icons": {
     "16": "icons/icon-16.png",
     "32": "icons/icon-32.png",
@@ -12,7 +12,8 @@
   "description": "Private, local color and redesigned themes for SNHU Brightspace.",
   "permissions": [
     "storage",
-    "alarms"
+    "alarms",
+    "clipboardWrite"
   ],
   "host_permissions": [
     "https://api.github.com/*"
@@ -38,6 +39,7 @@
       "js": [
         "preferences.js",
         "theme-engine.js",
+        "page-text.js",
         "content.js"
       ],
       "run_at": "document_start",
